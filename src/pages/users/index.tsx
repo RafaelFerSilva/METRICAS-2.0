@@ -22,14 +22,15 @@ import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { SideBar } from "../../components/SideBar";
-import { api } from "../../services/api";
+import { setupAPIClient } from "../../services/api";
 import { useUsers } from "../../services/hooks/useUsers";
 import { queryClient } from "../../services/queryCliente";
+import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export default function UserList() {
   const [page, setPage] = useState(1);
   const { data, isLoading, isFetching, error } = useUsers(page);
-
+  const apiClient = setupAPIClient()
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
@@ -37,7 +38,7 @@ export default function UserList() {
 
   async function hendlePrefetchUser(userId: string) {
     await queryClient.prefetchQuery(['user', userId], async () => {
-      const response = await api.get(`users/${userId}`)
+      const response = await apiClient.get(`users/${userId}`)
 
       response.data;
     }, {
@@ -140,3 +141,15 @@ export default function UserList() {
     </Box>
   );
 }
+
+export const getServerSideProps = withSSRAuth(async (ctx) => {
+  const apiClient = setupAPIClient(ctx);
+  const response = await apiClient.get("/me");
+
+  return {
+    props: {},
+  };
+}, {
+  permissions: ['users.list'],
+  roles: ['administrator'],
+});

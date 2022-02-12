@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { api } from "../api";
+import { setupAPIClient } from "../api";
 
 type User = {
   id: string;
@@ -14,7 +14,8 @@ type GetUsersResponse = {
 }
 
 export async function getUsers(page: number): Promise<GetUsersResponse> {
-  const { data, headers } = await api.get('/users', { 
+  const apiClient =  setupAPIClient()
+  const { data, headers } = await apiClient.get('/users', { 
     params: {
       page,
     }
