@@ -1,19 +1,27 @@
-import { Stack } from "@chakra-ui/react";
-import { RiContactsLine, RiDashboardLine } from "react-icons/ri";
-import { NavLink } from "./NavLink";
 import { NavSection } from "./NavSection";
+import { TeamsListsMenu} from './TeamsListsMenu'
 
-export function SidebarNav() {
+
+interface Team {
+  description: string;
+  id: string;
+  identityUrl: string;
+  name: string;
+  projectId: string;
+  projectName: string;
+  url: string;
+}
+
+interface SideBarNavProps {
+  setTeam: (team: Team) => void;
+}
+
+export function SidebarNav({setTeam}: SideBarNavProps) {
+
   return (
-    <Stack spacing="12" align="flex-start">
-      <NavSection title="Geral">
-        <NavLink icon={RiDashboardLine} href="/dashboard">Dashboard</NavLink>
-        <NavLink icon={RiContactsLine} href="/users">Usuários</NavLink>
-      </NavSection>
-      <NavSection title="AUTOMAÇÃO">
-        <NavLink icon={RiDashboardLine} href="forms">Formulários</NavLink>
-        <NavLink icon={RiContactsLine} href="automation">Automação</NavLink>
-      </NavSection>
-    </Stack>
+    <NavSection >
+      <TeamsListsMenu setTeam={setTeam}/>
+    </NavSection>
+    
   );
 }
