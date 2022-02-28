@@ -11,9 +11,22 @@ import {
 import { useSidebarDrawer } from "../../contexts/SidebarDraweContext";
 import { SidebarNav } from "./SidebarNav";
 
-export function SideBar() {
-  const { isOpen, onClose } = useSidebarDrawer();
+interface Team {
+  description: string;
+  id: string;
+  identityUrl: string;
+  name: string;
+  projectId: string;
+  projectName: string;
+  url: string;
+}
 
+interface SideBarProps {
+  setTeam?: (team: Team) => void;
+}
+
+export function SideBar({setTeam}: SideBarProps) {
+  const { isOpen, onClose } = useSidebarDrawer();
   const isDrawerSideBar = useBreakpointValue({
     base: true,
     lg: false,
@@ -26,9 +39,8 @@ export function SideBar() {
           <DrawerContent bg="gray.800" p="4">
             <DrawerCloseButton mt="6" />
             <DrawerHeader>Navegação</DrawerHeader>
-
             <DrawerBody>
-              <SidebarNav />
+              <SidebarNav setTeam={setTeam}/>
             </DrawerBody>
           </DrawerContent>
         </DrawerOverlay>
@@ -37,8 +49,8 @@ export function SideBar() {
   }
 
   return (
-    <Box as="aside" w="64" mr="8">
-      <SidebarNav />
+    <Box as="aside" >
+      <SidebarNav setTeam={setTeam}/>
     </Box>
   );
 }
