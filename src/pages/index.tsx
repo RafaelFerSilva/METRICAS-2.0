@@ -77,7 +77,7 @@ export default function Dashboard() {
                     </TabPanel>
                     <TabPanel>
                       {report
-                        .returnAllTasksByWorkItemType(tasks, "Bug")
+                        .returnAllTasksByWorkItemType(tasks, "User Story")
                         .map((task) => {
                           return <RelatedBugs key={task.ID} task={task} />;
                         })}

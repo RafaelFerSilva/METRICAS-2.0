@@ -89,34 +89,13 @@ export function RelatedBugs({ task }: RelatedBugsProps) {
     );
   }
 
-  function returnBugs2() {
-    const bugs = relatedItem?.filter(
-      (item) => item["Work Item Type"] === "Bug"
-    );
-
-    return typeof bugs?.length !== "undefined" ? (
-      bugs?.map((item: Task, key: any) => {
-        return (
-          <Text key={key} fontSize="12">
-            {item.ID} - {item.Title}
-          </Text>
-        );
-      })
-    ) : (
-      <Text fontSize="12">Está US não teve bugs relacionados</Text>
-    );
-  }
-
   return (
     <Box mb="8">
       <Heading as="h3" size="sm">
         {task.ID} - {task.Title}
       </Heading>
-      {bug?.map((b) => {
-        if(b["Work Item Type"] === 'Bug'){
-          return <Text>{b.ID} - {b.Title}</Text>
-        }
-      })}
+      
+      {returnBugs()}
       <Divider />
     </Box>
   );
