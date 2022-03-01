@@ -89,6 +89,8 @@ export function RelatedBugs({ task }: RelatedBugsProps) {
     );
   }
 
+<<<<<<< HEAD
+=======
   function returnBugs2() {
     const bugs = relatedItem?.filter(
       (item) => item["Work Item Type"] === "Bug"
@@ -107,16 +109,22 @@ export function RelatedBugs({ task }: RelatedBugsProps) {
     );
   }
 
+>>>>>>> origin
   return (
     <Box mb="8">
       <Heading as="h3" size="sm">
         {task.ID} - {task.Title}
       </Heading>
+<<<<<<< HEAD
+      
+      {returnBugs()}
+=======
       {bug?.map((b) => {
         if(b["Work Item Type"] === 'Bug'){
           return <Text>{b.ID} - {b.Title}</Text>
         }
       })}
+>>>>>>> origin
       <Divider />
     </Box>
   );

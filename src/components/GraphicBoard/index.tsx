@@ -85,7 +85,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           borderRadius={8}
           pb="4"
           mb="4"
-          maxWidth="1020px" minWidth="720px"
+          maxWidth="1020px" minWidth="920px"
         >
           <LineChart
             data={report.returnLifeCicleByWorkItemType(tasks, "User Story")}
@@ -103,7 +103,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           borderRadius={8}
           pb="4"
           mb="4"
-          maxWidth="1020px" minWidth="720px"
+          maxWidth="1020px" minWidth="920px"
         >
           <VerticalBar
             title="Pontos por User Story"
@@ -125,7 +125,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           borderRadius={8}
           pb="4"
           mb="4"
-          maxWidth="1020px" minWidth="720px"
+          maxWidth="1020px" minWidth="920px"
         >
           <VerticalBar
             title="User Story por State"
@@ -147,7 +147,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           borderRadius={8}
           pb="4"
           mb="4"
-          maxWidth="1020px" minWidth="720px"
+          maxWidth="1020px" minWidth="920px"
         >
           <VerticalBar
             title="Pontos Entregues x Pontos a Entregar"
@@ -178,7 +178,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           borderRadius={8}
           pb="4"
           mb="4"
-          maxWidth="1020px" minWidth="720px"
+          maxWidth="1020px" minWidth="920px"
         >
           <LineChart
             data={report.returnLifeCicleByWorkItemType(tasks, "Bug")}
@@ -195,7 +195,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           borderRadius={8}
           pb="4"
           mb="4"
-          maxWidth="1020px" minWidth="720px"
+          maxWidth="1020px" minWidth="920px"
         >
           <VerticalBar
             title="Bugs por State"
@@ -217,7 +217,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           borderRadius={8}
           pb="4"
           mb="4"
-          maxWidth="1020px" minWidth="720px"
+          maxWidth="1020px" minWidth="920px"
         >
           <VerticalBar
             title="User Story X Bugs X Melhorias"
@@ -231,16 +231,6 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           />
         </Box>
        </Flex >
-
-      <SimpleGrid >
-     
-
-        
-        
-       
-       
-        
-      </SimpleGrid>
     </>
   );
 }
