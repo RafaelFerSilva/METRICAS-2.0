@@ -231,16 +231,6 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           />
         </Box>
        </Flex >
-
-      <SimpleGrid >
-     
-
-        
-        
-       
-       
-        
-      </SimpleGrid>
     </>
   );
 }
