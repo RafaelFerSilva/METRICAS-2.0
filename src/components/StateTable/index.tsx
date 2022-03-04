@@ -4,7 +4,7 @@ import { returnDateDiff } from "../../model/tasks";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableRow from "@mui/material/TableRow";
-import { Box, Stack } from "@chakra-ui/react";
+import { Box, Divider, Stack } from "@chakra-ui/react";
 import { GenericTable } from "../GenericTable";
 import Report from "../../data/report";
 import { setupAPIMetrics } from "../../services/api";
@@ -147,12 +147,13 @@ export function StateTable({ task }: StateTable) {
   }, [task.ID, task.Title]);
 
   return (
-    <Box mt="3" >
+    <Box mb="3" maxWidth={1020}>
         <GenericTable
           title=""
           labels={stateTime?.stateElement}
           data={stateTime?.timeElement}
         />
+         <Divider mt="5" orientation='horizontal' />
     </Box>
   );
 }

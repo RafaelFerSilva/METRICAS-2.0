@@ -39,7 +39,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
   const report = new Report();
   return (
     <>
-      <Box width="100%">
+      <Flex justifyContent="center" >
         <Summary
           sprintTasks={
             report.returnAllTasksByWorkItemType(tasks, "User Story").length
@@ -76,7 +76,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
             report.returnAllTasksByWorkItemType(tasks, "Melhoria").length
           }
         />
-      </Box>
+      </Flex>
 
       <Flex justifyContent="center" >
         <Box

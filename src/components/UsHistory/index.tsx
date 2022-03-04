@@ -40,15 +40,16 @@ export function UsHistory({ tasks, workItemType }: UsHistoryProps) {
   const report = new Report();
 
   return (
-    <Flex justifyContent="center">
-      <Box >
+    <Flex >
+      <Box width="100%">
         {report
           .returnAllTasksByWorkItemType(tasks, workItemType)
           .map((item: Task) => {
             return (
-              < >
-                <StateItemGraph key={item.ID} task={item} />
-              </>
+              <Box key={item.ID} >
+                <StateItemGraph  task={item} />
+                <StateTable task={item} />
+              </Box>
             );
           })}
       </Box>

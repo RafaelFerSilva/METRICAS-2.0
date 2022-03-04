@@ -11,8 +11,8 @@ export function Summary(props: {
   melhorias: number;
 }) {
   return (
-    <SimpleGrid columns={[2, null, 3]} spacing='40px' mb="3">
-      <Box borderRadius="8" bg="AliceBlue" maxWidth={370}>
+    <SimpleGrid columns={[2, null, 3]} spacing='250px' mb="3">
+      <Box borderRadius="8" bg="AliceBlue" maxWidth={370} >
         <Heading bg="PowderBlue" borderTopRadius="8" p="3" textAlign="center" fontSize="30">
           Stories na Sprint
         </Heading>
