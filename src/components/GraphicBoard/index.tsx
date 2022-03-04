@@ -4,7 +4,7 @@ import { LineChart } from "../Charts/ChartLine";
 import { VerticalBar } from "../Charts/ChartVerticalBar";
 import { Summary } from "../Summary";
 
-export interface Task {
+interface Task {
   ID: string;
   Title: string;
   "Work Item Type": string;
@@ -29,6 +29,7 @@ export interface Task {
   "Time Total": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
+  Activity: string;
 }
 
 interface GraphicBoardProps {

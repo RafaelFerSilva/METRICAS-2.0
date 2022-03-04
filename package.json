@@ -15,6 +15,7 @@
     "@emotion/styled": "^11.6.0",
     "@hookform/resolvers": "^2.8.8",
     "@mui/material": "^5.4.1",
+    "@types/axios": "^0.14.0",
     "@types/dotenv": "^8.2.0",
     "@types/react-chartjs-2": "^2.5.7",
     "apexcharts": "^3.33.0",

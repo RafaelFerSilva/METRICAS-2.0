@@ -18,7 +18,7 @@ export interface WorkRelations {
   };
 }
 
-export interface Task {
+interface Task {
   ID: string;
   Title: string;
   "Work Item Type": string;
@@ -43,6 +43,7 @@ export interface Task {
   "Time Total": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
+  Activity: string;
 }
 
 interface SelectSprintProps {

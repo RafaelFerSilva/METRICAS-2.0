@@ -1,9 +1,8 @@
 import Report from "../../data/report";
-import { SummaryTable } from "../SummaryTable";
 import { GenericTable } from "../GenericTable";
 import { Box, Stack } from "@chakra-ui/react";
 
-export interface Task {
+interface Task {
   ID: string;
   Title: string;
   "Work Item Type": string;
@@ -28,6 +27,7 @@ export interface Task {
   "Time Total": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
+  Activity: string;
 }
 
 interface GeneralTableBoardProps {

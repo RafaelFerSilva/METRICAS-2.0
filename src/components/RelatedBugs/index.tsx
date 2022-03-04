@@ -6,7 +6,7 @@ import {
 import { RelatedItem } from "../../hooks/RelatedItem";
 import { Box, Divider, Heading, Link, Text } from "@chakra-ui/react";
 
-export interface Task {
+interface Task {
   ID: string;
   Title: string;
   "Work Item Type": string;
@@ -31,6 +31,7 @@ export interface Task {
   "Time Total": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
+  Activity: string;
 }
 
 interface RelatedBugsProps {

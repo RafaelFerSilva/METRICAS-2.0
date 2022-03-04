@@ -1,4 +1,4 @@
-export interface Task {
+interface Task {
   ID: string;
   Title: string;
   "Work Item Type": string;
@@ -23,6 +23,7 @@ export interface Task {
   "Time Total": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
+  Activity: string;
 }
 
 export interface ChartData {
@@ -54,9 +55,7 @@ class Report {
   returnAllTasksByWorkItemType(tasks: Task[], workItemType: string) {
     let task = tasks.filter(function (item) {
       return (
-        item["Work Item Type"] === workItemType &&
-        item.Tags !== "Bug" &&
-        item.Tags !== "Melhoria"
+        item["Work Item Type"] === workItemType 
       );
     });
 
@@ -201,6 +200,12 @@ class Report {
     });
 
     return total;
+  }
+
+  returnBugs(tasks: Task[]) {
+    let bugs = this.returnAllTasksByWorkItemType(tasks, "Bug")
+
+    return bugs;
   }
 }
 

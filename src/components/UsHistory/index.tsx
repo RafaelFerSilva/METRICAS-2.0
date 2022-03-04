@@ -4,7 +4,7 @@ import { Box, Flex, Heading, Link, SimpleGrid, Stack } from "@chakra-ui/react";
 import { StateTable } from "../StateTable";
 import { RelatedBugs } from "../RelatedBugs";
 
-export interface Task {
+interface Task {
   ID: string;
   Title: string;
   "Work Item Type": string;
@@ -29,6 +29,7 @@ export interface Task {
   "Time Total": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
+  Activity: string;
 }
 
 interface UsHistoryProps {

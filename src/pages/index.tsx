@@ -1,10 +1,13 @@
 import {
+  Box,
+  Divider,
   Flex,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
 } from "@chakra-ui/react";
 
 import { Header } from "../components/Header";
@@ -16,7 +19,7 @@ import { UsHistory } from "../components/UsHistory";
 import Report from "../data/report";
 import { RelatedBugs } from "../components/RelatedBugs";
 
-export interface Task {
+interface Task {
   ID: string;
   Title: string;
   "Work Item Type": string;
@@ -41,6 +44,7 @@ export interface Task {
   "Time Total": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
+  Activity: string;
 }
 
 export default function Dashboard() {
@@ -67,6 +71,7 @@ export default function Dashboard() {
                     <Tab>Graphics</Tab>
                     <Tab>Tasks</Tab>
                     <Tab>Related Bug</Tab>
+                    <Tab>Bugs - Roots Causes</Tab>
                   </TabList>
                   <TabPanels>
                     <TabPanel>
@@ -80,6 +85,19 @@ export default function Dashboard() {
                         .returnAllTasksByWorkItemType(tasks, "User Story")
                         .map((task) => {
                           return <RelatedBugs key={task.ID} task={task} />;
+                        })}
+                    </TabPanel>
+                    <TabPanel>
+                      {report
+                        .returnBugs(tasks)
+                        .map((bug) => {
+                          return (
+                            <Box key={bug.ID} mb="8">
+                              <Text>{bug.ID} - {bug.Title}</Text>
+                              <Text><strong>Causa Raiz: </strong>{bug.Activity}</Text>
+                              <Divider />
+                            </Box>
+                          )
                         })}
                     </TabPanel>
                   </TabPanels>

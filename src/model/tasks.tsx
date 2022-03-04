@@ -1,4 +1,5 @@
 import moment from "moment";
+import { string } from "yup";
 
 export function returnDateDiff(
   past: string | undefined,
@@ -14,7 +15,7 @@ export function returnDateDiff(
   return parseInt(duration.asDays().toFixed());
 }
 
-export interface Task {
+interface Task {
   ID: string;
   Title: string;
   "Work Item Type": string;
@@ -39,6 +40,7 @@ export interface Task {
   "Time Total": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
+  Activity: string;
 }
 
 class NewTasks {
@@ -115,6 +117,7 @@ class NewTasks {
         "Time Total": timeTotal,
         "Sprint Start Date": sprint,
         Tags: campos["System.Tags"],
+        Activity: campos["Microsoft.VSTS.Common.Activity"]
       };
 
       return task;
