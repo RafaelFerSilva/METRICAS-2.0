@@ -139,7 +139,7 @@ export function StateItemGraph({ task }: StateItemGraphProps) {
   }, [task.ID, task.Title]);
 
   return (
-    <Box p={["4", "6"]} bg="Snow" borderRadius={8} pb="4" mb="4" maxWidth="1020px" minWidth="720px">
+    <Box key={task.ID} p={["4", "6"]} bg="Snow" borderRadius={8} pb="4" mb="4" maxWidth="1020px" minWidth="720px">
       <VerticalBar
         key={task.ID}
         title={titleList}
