@@ -44,7 +44,7 @@ export function UsHistory({ tasks, workItemType }: UsHistoryProps) {
       <Box >
         {report
           .returnAllTasksByWorkItemType(tasks, workItemType)
-          .map((item: Task, key: any) => {
+          .map((item: Task) => {
             return (
               < >
                 <StateItemGraph key={item.ID} task={item} />
