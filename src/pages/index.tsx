@@ -68,8 +68,9 @@ export default function Dashboard() {
               {sprintTeam && (
                 <Tabs size="md" variant="enclosed" bg="white">
                   <TabList>
-                    <Tab>Graphics</Tab>
+                    <Tab>General</Tab>
                     <Tab>Tasks</Tab>
+                    <Tab>Bugs</Tab>
                     <Tab>Related Bug</Tab>
                     <Tab>Bugs - Roots Causes</Tab>
                   </TabList>
@@ -79,6 +80,9 @@ export default function Dashboard() {
                     </TabPanel>
                     <TabPanel>
                       <UsHistory tasks={tasks} workItemType="User Story" />
+                    </TabPanel>
+                    <TabPanel>
+                      <UsHistory tasks={tasks} workItemType="Bug" />
                     </TabPanel>
                     <TabPanel>
                       {report
