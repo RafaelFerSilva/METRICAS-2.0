@@ -71,6 +71,7 @@ export default function Dashboard() {
                     <Tab>General</Tab>
                     <Tab>Tasks</Tab>
                     <Tab>Bugs</Tab>
+                    <Tab>Melhorias</Tab>
                     <Tab>Related Bug</Tab>
                     <Tab>Bugs - Roots Causes</Tab>
                   </TabList>
@@ -83,6 +84,9 @@ export default function Dashboard() {
                     </TabPanel>
                     <TabPanel>
                       <UsHistory tasks={tasks} workItemType="Bug" />
+                    </TabPanel>
+                    <TabPanel>
+                      <UsHistory tasks={report.returnAllTasksByWorkItemTag(tasks, "Melhoria")} workItemType="User Story" />
                     </TabPanel>
                     <TabPanel>
                       {report
