@@ -14,7 +14,7 @@ export function Summary(props: {
     <SimpleGrid columns={[2, null, 3]} spacing='250px' mb="3">
       <Box borderRadius="8" bg="AliceBlue" maxWidth={370} >
         <Heading bg="PowderBlue" borderTopRadius="8" p="3" textAlign="center" fontSize="30">
-          Stories na Sprint
+          Stories in Sprint
         </Heading>
         <Text textAlign="center" fontSize="30">
           <strong>{props.sprintTasks}</strong>
@@ -41,7 +41,7 @@ export function Summary(props: {
 
       <Box borderRadius="8" bg="AliceBlue" maxWidth={370}>
         <Heading bg="PowderBlue" borderTopRadius="8" p="3" textAlign="center" fontSize="30">
-          Pontos da Sprint
+          Sprint Points
           {/* <span><TimelineRoundedIcon sx={{ fontSize: 30 }} /></span> */}
         </Heading>
         <Text textAlign="center" fontSize="30">

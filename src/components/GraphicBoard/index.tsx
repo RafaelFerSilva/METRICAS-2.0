@@ -90,8 +90,8 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
         >
           <LineChart
             data={report.returnLifeCicleByWorkItemType(tasks, "User Story")}
-            title="Ciclo de vida das User Story"
-            label="Número de Dias:"
+            title="User Story Lifecycle"
+            label="Number of days:"
           />
         </Box>
       </Flex>
@@ -107,7 +107,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           maxWidth="1020px" minWidth="920px"
         >
           <VerticalBar
-            title="Pontos por User Story"
+            title="Points per User Story"
             labels={report.returnTaskTitle(
               report.returnAllTasksByWorkItemType(tasks, "User Story")
             )}
@@ -129,14 +129,14 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           maxWidth="1020px" minWidth="920px"
         >
           <VerticalBar
-            title="User Story por State"
+            title="User Story for State"
             labels={report.returnStates(
               report.returnAllTasksByWorkItemType(tasks, "User Story")
             )}
             data={report.returnArraySprintTasksStateCount(
               report.returnAllTasksByWorkItemType(tasks, "User Story")
             )}
-            label="Tasks por State"
+            label="Tasks by State State"
           />
         </Box>
       </Flex >
@@ -151,7 +151,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           maxWidth="1020px" minWidth="920px"
         >
           <VerticalBar
-            title="Pontos Entregues x Pontos a Entregar"
+            title="Points delivered x Points to be delivered"
             labels={["Pontos Entregues", "Pontos A Entregar"]}
             data={[
               report.returnTasksPoints(
@@ -183,8 +183,8 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
         >
           <LineChart
             data={report.returnLifeCicleByWorkItemType(tasks, "Bug")}
-            title="Ciclo de vida dos Bugs"
-            label="Número de Dias:"
+            title="Bug life cycle"
+            label="Number of days:"
           />
         </Box>
        </Flex >
@@ -199,14 +199,14 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           maxWidth="1020px" minWidth="920px"
         >
           <VerticalBar
-            title="Bugs por State"
+            title="Bugs by state"
             labels={report.returnStates(
               report.returnAllTasksByWorkItemType(tasks, "Bug")
             )}
             data={report.returnArraySprintTasksStateCount(
               report.returnAllTasksByWorkItemType(tasks, "Bug")
             )}
-            label="Bugs por State"
+            label="Bugs by state"
           />
         </Box>
        </Flex >
@@ -221,14 +221,14 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           maxWidth="1020px" minWidth="920px"
         >
           <VerticalBar
-            title="User Story X Bugs X Melhorias"
+            title="User Story X Bugs X Improvements"
             labels={["User Story", "Bug", "Melhorias"]}
             data={[
               report.returnAllTasksByWorkItemType(tasks, "User Story").length,
               report.returnAllTasksByWorkItemType(tasks, "Bug").length,
               report.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
             ]}
-            label="Quantidade de USs"
+            label="Amount of USs"
           />
         </Box>
        </Flex >

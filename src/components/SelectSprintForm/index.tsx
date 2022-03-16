@@ -104,7 +104,7 @@ export default function SelectSprint({ team, setTasks }: SelectSprintProps) {
       />
       <HStack spacing="4">
         <Button type="submit" colorScheme="blue" size="lg">
-          Pesquisar
+        Search
         </Button>
       </HStack>
     </Box>

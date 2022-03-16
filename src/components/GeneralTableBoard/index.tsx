@@ -41,7 +41,7 @@ export function GeneralTableBoard( { tasks }: GeneralTableBoardProps) {
     <Box>
       <Stack gap="3">
         <GenericTable
-          title="User Story por State"
+          title="User Story for State"
           labels={report.returnStates(
             report.returnAllTasksByWorkItemType(tasks, "User Story")
           )}
@@ -51,7 +51,7 @@ export function GeneralTableBoard( { tasks }: GeneralTableBoardProps) {
         />
 
         <GenericTable
-          title="Pontos Entregues x Pontos a Entregar"
+          title="Points delivered x Points to be delivered"
           labels={["Pontos Entregues", "Pontos A Entregar"]}
           data={[
             report.returnTasksPoints(
@@ -70,7 +70,7 @@ export function GeneralTableBoard( { tasks }: GeneralTableBoardProps) {
         />
 
         <GenericTable
-          title="Bugs por State"
+          title="Bugs by state"
           labels={report.returnStates(
             report.returnAllTasksByWorkItemType(tasks, "Bug")
           )}
@@ -79,7 +79,7 @@ export function GeneralTableBoard( { tasks }: GeneralTableBoardProps) {
           )}
         />
         <GenericTable
-          title="User Story X Bugs X Melhorias"
+          title="User Story X Bugs X Improvements"
           labels={["User Story", "Bug", "Melhorias"]}
           data={[
             report.returnAllTasksByWorkItemType(tasks, "User Story")

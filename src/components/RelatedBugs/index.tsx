@@ -86,7 +86,7 @@ export function RelatedBugs({ task }: RelatedBugsProps) {
         );
       })
     ) : (
-      <Text fontSize="12">Está US não teve bugs relacionados</Text>
+      <Text fontSize="12">This US had no related bugs</Text>
     );
   }
 

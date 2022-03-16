@@ -69,9 +69,9 @@ export default function Dashboard() {
                 <Tabs size="md" variant="enclosed" bg="white">
                   <TabList>
                     <Tab>General</Tab>
-                    <Tab>Tasks</Tab>
+                    <Tab>User Stories</Tab>
                     <Tab>Bugs</Tab>
-                    <Tab>Melhorias</Tab>
+                    <Tab>Improvements</Tab>
                     <Tab>Related Bug</Tab>
                     <Tab>Bugs - Roots Causes</Tab>
                   </TabList>
@@ -102,7 +102,7 @@ export default function Dashboard() {
                           return (
                             <Box key={bug.ID} mb="8">
                               <Text>{bug.ID} - {bug.Title}</Text>
-                              <Text><strong>Causa Raiz: </strong>{bug.Activity}</Text>
+                              <Text><strong>Root Cause: </strong>{bug.Activity}</Text>
                               <Divider />
                             </Box>
                           )

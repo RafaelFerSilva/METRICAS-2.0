@@ -45,7 +45,7 @@ export function SummaryTable(props: {
           <TableHead>
             <TableRow>
               <StyledTableCell align="center">
-                Stories na Sprint
+                Stories in Sprint
               </StyledTableCell>
               <StyledTableCell align="center">
                 Stories Finalizadas
@@ -53,7 +53,7 @@ export function SummaryTable(props: {
               <StyledTableCell align="center">
                 Stories Para Finalizar
               </StyledTableCell>
-              <StyledTableCell align="center">Pontos da Sprint</StyledTableCell>
+              <StyledTableCell align="center">Sprint Points</StyledTableCell>
               <StyledTableCell align="center">Pontos Entregues</StyledTableCell>
               <StyledTableCell align="center">
                 Pontos Para Entregar

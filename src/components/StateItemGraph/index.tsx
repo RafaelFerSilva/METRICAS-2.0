@@ -146,7 +146,7 @@ export function StateItemGraph({ task }: StateItemGraphProps) {
         title={titleList}
         labels={stateTime?.stateElement}
         data={stateTime?.timeElement}
-        label="Dias"
+        label="Days"
       />
     </Box>
   );
