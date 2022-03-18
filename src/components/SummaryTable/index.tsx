@@ -59,7 +59,7 @@ export function SummaryTable(props: {
                 Pontos Para Entregar
               </StyledTableCell>
               <StyledTableCell align="center">Bugs</StyledTableCell>
-              <StyledTableCell align="center">Melhorias</StyledTableCell>
+              <StyledTableCell align="center">Improvements</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>

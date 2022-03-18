@@ -222,7 +222,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
         >
           <VerticalBar
             title="User Story X Bugs X Improvements"
-            labels={["User Story", "Bug", "Melhorias"]}
+            labels={["User Story", "Bug", "Improvements"]}
             data={[
               report.returnAllTasksByWorkItemType(tasks, "User Story").length,
               report.returnAllTasksByWorkItemType(tasks, "Bug").length,

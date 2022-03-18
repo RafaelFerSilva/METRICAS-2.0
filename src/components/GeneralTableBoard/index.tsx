@@ -80,7 +80,7 @@ export function GeneralTableBoard( { tasks }: GeneralTableBoardProps) {
         />
         <GenericTable
           title="User Story X Bugs X Improvements"
-          labels={["User Story", "Bug", "Melhorias"]}
+          labels={["User Story", "Bug", "Improvements"]}
           data={[
             report.returnAllTasksByWorkItemType(tasks, "User Story")
               .length,
