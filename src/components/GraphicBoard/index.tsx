@@ -293,22 +293,24 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
         >
           <VerticalBar
             title="User Story X Bugs X Improvements"
-            labels={["User Story", "Bug", "Improvements"]}
+            labels={["User Story", "Bug", "Improvements", "Not Expected"]}
             data={[
               report.returnAllTasksByWorkItemType(tasks, "User Story").length,
               report.returnAllTasksByWorkItemType(tasks, "Bug").length,
               report.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
+              report.returnAllTasksByWorkItemTag(tasks, "Não prevista").length
             ]}
             label="Amount of USs"
           />
 
           <GenericTable
             title=""
-            labels={["User Story", "Bug", "Improvements"]}
+            labels={["User Story", "Bug", "Improvements", "Not Expected"]}
             data={[
               report.returnAllTasksByWorkItemType(tasks, "User Story").length,
               report.returnAllTasksByWorkItemType(tasks, "Bug").length,
               report.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
+              report.returnAllTasksByWorkItemTag(tasks, "Não prevista").length
             ]}
           />
         </Box>
