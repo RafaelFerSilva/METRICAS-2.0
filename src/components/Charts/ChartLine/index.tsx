@@ -10,19 +10,19 @@ import {
   Title,
   Tooltip,
   Legend,
-  BarElement
-} from 'chart.js';
-
-ChartJS.register(
+  BarElement,
+  } from 'chart.js';
+  
+  ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
   Title,
   Tooltip,
-  Legend, 
-  BarElement
-);
+  Legend,
+  BarElement,
+  );
 
 function createOptions(title: string){
 const options = {

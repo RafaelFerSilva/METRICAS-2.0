@@ -1,5 +1,4 @@
 import moment from "moment";
-import { string } from "yup";
 
 export function returnDateDiff(
   past: string | undefined,
@@ -34,10 +33,7 @@ interface Task {
   Description: string | undefined;
   Reason: string;
   "Story Points": number | undefined | string;
-  "Time To Resolve Task": number | undefined;
-  "Time To Change State": number | undefined;
-  "Time To Autorize": number | undefined;
-  "Time Total": number | undefined;
+  "Cycle Time": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
   Activity: string;
@@ -50,10 +46,7 @@ class NewTasks {
     board = json.map((value: any) => {
       let campos = value["fields"];
 
-      let timeToResolveTask: number | undefined;
-      let timeToChangeState: number | undefined;
-      let timeToAutorized: number | undefined;
-      let timeTotal: number | undefined;
+      let cycleTime: number | undefined;
 
       let createdDate = campos["System.CreatedDate"].split("T", 1).toString();
       let activatedDate = campos["Microsoft.VSTS.Common.ActivatedDate"]
@@ -69,8 +62,10 @@ class NewTasks {
       let sprint = iteration.split(" ").slice(0)[0].toString();
 
       if (
+        campos["System.State"] !== "Resolved" &&
         campos["System.State"] !== "Approved" &&
         campos["System.State"] !== "Releasing" &&
+        campos["System.State"] !== "Removed" &&
         campos["System.State"] !== "Closed"
       ) {
         let today = new Date();
@@ -78,9 +73,9 @@ class NewTasks {
         let mm = String(today.getMonth() + 1).padStart(2, "0");
         let yyyy = today.getFullYear();
 
-        timeTotal = returnDateDiff(activatedDate, `${yyyy}-${mm}-${dd}`);
+        cycleTime = returnDateDiff(activatedDate, `${yyyy}-${mm}-${dd}`);
       } else {
-        timeTotal = returnDateDiff(activatedDate, stateChangeDate);
+        cycleTime = returnDateDiff(activatedDate, stateChangeDate);
       }
 
       let activateBy =
@@ -111,10 +106,7 @@ class NewTasks {
         Description: campos["System.Description"],
         Reason: campos["System.Reason"],
         "Story Points": campos["Microsoft.VSTS.Scheduling.StoryPoints"],
-        "Time To Resolve Task": timeToResolveTask,
-        "Time To Change State": timeToChangeState,
-        "Time To Autorize": timeToAutorized,
-        "Time Total": timeTotal,
+        "Cycle Time": cycleTime,
         "Sprint Start Date": sprint,
         Tags: campos["System.Tags"],
         Activity: campos["Microsoft.VSTS.Common.Activity"]

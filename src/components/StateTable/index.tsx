@@ -42,10 +42,7 @@ interface Task {
   Description: string | undefined;
   Reason: string;
   "Story Points": number | undefined | string;
-  "Time To Resolve Task": number | undefined;
-  "Time To Change State": number | undefined;
-  "Time To Autorize": number | undefined;
-  "Time Total": number | undefined;
+  "Cycle Time": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
   Activity: string;
@@ -59,8 +56,6 @@ const axiosInstance = setupAPIMetrics();
 
 export function StateTable({ task }: StateTable) {
   const [stateTime, setStateTime] = useState<StateTimeInterface>();
-  // const reducer = (previousValue: number, currentValue: number) =>
-  //   previousValue + currentValue;
 
   const report = new Report();
 
@@ -95,10 +90,28 @@ export function StateTable({ task }: StateTable) {
           );
         }
         ind += 1;
-        stateElement.push(state);
-        timeElement.push(time);
+        if (state !== undefined) {
+          stateElement.push(state);
+          timeElement.push(time);
+        }
       }
 
+      let removeClosedTime = Array.from(timeElement);
+
+      stateElement.forEach((element, index) => {
+        if(element === "Closed"){
+          removeClosedTime.splice(index, 1)
+        }
+      });
+
+      stateElement.push("Lead Time")
+      const leadTime = removeClosedTime.reduce(
+        (previousValue, currentValue) => previousValue + currentValue,
+        0
+      );
+      
+      timeElement.push(leadTime)
+      setStateTime({ stateElement, timeElement });
       setStateTime({ stateElement, timeElement });
     }
 
@@ -148,7 +161,7 @@ export function StateTable({ task }: StateTable) {
   }, [task.ID, task.Title]);
 
   return (
-    <Box mb="3" maxWidth={1020}>
+    <Box mb="3" maxWidth={2020}>
         <GenericTable
           title=""
           labels={stateTime?.stateElement}

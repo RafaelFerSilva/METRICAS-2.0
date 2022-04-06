@@ -38,25 +38,32 @@ interface WorkItemState {
   stateChangeDate: string;
 }
 
-interface StateTimeInterface {
+interface ColumTimeInterface {
   stateElement: string[];
   timeElement: number[];
 }
 
-interface StateItemGraphProps {
+interface ColumItemGraphItemGraphProps {
   task: Task;
+}
+
+interface RevisionsItens {
+  id: string;
+  title: string;
+  column: string;
+  data: string;
 }
 
 const axiosInstance = setupAPIMetrics();
 
-export function StateItemGraph({ task }: StateItemGraphProps) {
-  const [stateTime, setStateTime] = useState<StateTimeInterface>();
+export function ColumItemGraph({ task }: ColumItemGraphItemGraphProps) {
+  const [stateTime, setStateTime] = useState<ColumTimeInterface>();
   let titleList = `${task.ID} - ${task.Title}`;
 
   useEffect(() => {
-    let itens: WorkItemState[] = [];
+    let itens: RevisionsItens[] = [];
 
-    function calcularTime(item: WorkItemState[]) {
+    function calcularTime(item: RevisionsItens[]) {
       let ind = 0;
       let stateElement: string[] = [];
       let timeElement: any[] = [];
@@ -66,75 +73,54 @@ export function StateItemGraph({ task }: StateItemGraphProps) {
         let time: number | undefined;
 
         if (item[ind + 1] !== undefined) {
-          state = item[ind].state;
-          time = returnDateDiff(
-            item[ind].stateChangeDate,
-            item[ind + 1].stateChangeDate
-          );
+          if (item[ind].column !== item[ind + 1].column) {
+            state = item[ind].column;
+            time = returnDateDiff(item[ind].data, item[ind + 1].data);
+          }
         } else {
           let today = new Date();
           let dd = String(today.getDate()).padStart(2, "0");
           let mm = String(today.getMonth() + 1).padStart(2, "0");
           let yyyy = today.getFullYear();
 
-          state = item[ind].state;
-          time = returnDateDiff(
-            item[ind].stateChangeDate,
-            `${yyyy}-${mm}-${dd}`
-          );
+          state = item[ind].column;
+          time = returnDateDiff(item[ind].data, `${yyyy}-${mm}-${dd}`);
         }
         ind += 1;
-        stateElement.push(state);
-        timeElement.push(time);
-      }
 
+        if (state !== undefined) {
+          stateElement.push(state);
+          timeElement.push(time);
+        }
+      }
+      
       setStateTime({ stateElement, timeElement });
     }
 
     axiosInstance
-      .get(`wit/workItems/${task.ID}/updates?api-version=6.0`)
+      .get(`wit/workItems/${task.ID}/revisions`)
       .then((response) => {
         if (response.status === 200) {
           response.data.value.map((element: any) => {
-            let Id: string;
-            let revisedBy: string;
-            let reason: string;
-            let state: string;
-            let stateChangeDate: string;
+            let item: RevisionsItens;
 
-            if (typeof element.fields !== "undefined") {
-              if (typeof element.fields["System.State"] !== "undefined") {
-                Id = element.workItemId;
-                revisedBy = element.revisedBy.displayName;
-                reason = element.fields["System.Reason"].newValue;
-                state = element.fields["System.State"].newValue;
-                stateChangeDate = element.fields[
-                  "Microsoft.VSTS.Common.StateChangeDate"
-                ].newValue
-                  .split("T", 1)
-                  .toString();
-
-                let item = {
-                  workItemId: Id,
-                  title: task.Title,
-                  revisedBy: revisedBy,
-                  reason: reason,
-                  state: state,
-                  stateChangeDate: stateChangeDate,
-                };
-
-                if (typeof item !== "undefined") {
-                  itens.push(item);
-                }
-              }
+            item = {
+              id: element.id,
+              title: element.fields["System.Title"],
+              column: element.fields["System.BoardColumn"],
+              data: element.fields["Microsoft.VSTS.Common.StateChangeDate"].split("T", 1).toString()
             }
 
-            calcularTime(itens);
+            itens.push(item)
+            
             return itens;
           });
         }
+
+        calcularTime(itens)
       });
-  }, [task.ID, task.Title]);
+    
+  }, [task.ID]);
 
   return (
     <Box key={task.ID} p={["4", "6"]} bg="Snow" borderRadius={8}  mb="4"  maxWidth={1020}>

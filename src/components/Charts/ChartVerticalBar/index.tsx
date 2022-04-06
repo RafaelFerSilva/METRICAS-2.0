@@ -1,6 +1,29 @@
 import { Box, Divider, Heading } from '@chakra-ui/react';
 import { Bar } from 'react-chartjs-2';
 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  } from 'chart.js';
+  
+  ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  );
+
 function createChart(labels: string[] | undefined, values: any, label: string){
 
   let truncatedLabel = labels?.map(item => {

@@ -25,10 +25,7 @@ interface Task {
   Description: string | undefined;
   Reason: string;
   "Story Points": number | undefined | string;
-  "Time To Resolve Task": number | undefined;
-  "Time To Change State": number | undefined;
-  "Time To Autorize": number | undefined;
-  "Time Total": number | undefined;
+  "Cycle Time": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
   Activity: string;
@@ -86,7 +83,7 @@ export function RelatedBugs({ task }: RelatedBugsProps) {
         );
       })
     ) : (
-      <Text fontSize="12">This US had no related bugs</Text>
+      <Text fontSize="12">There are no related bugs</Text>
     );
   }
 

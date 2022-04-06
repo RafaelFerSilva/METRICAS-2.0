@@ -43,10 +43,7 @@ interface Task {
   Description: string | undefined;
   Reason: string;
   "Story Points": number | undefined | string;
-  "Time To Resolve Task": number | undefined;
-  "Time To Change State": number | undefined;
-  "Time To Autorize": number | undefined;
-  "Time Total": number | undefined;
+  "Cycle Time": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
   Activity: string;
@@ -57,16 +54,19 @@ interface SelectSprintProps {
   setSprintTeam?: (team: any) => any;
 }
 
-export default function SelectSprint({ setTasks, setSprintTeam }: SelectSprintProps) {
+export default function SelectSprint({
+  setTasks,
+  setSprintTeam,
+}: SelectSprintProps) {
   const [team, setTeam] = useState<Team>();
 
   useEffect(() => {
-    setSprintTeam(team)
-  },[setSprintTeam, team])
+    setSprintTeam(team);
+  }, [setSprintTeam, team]);
 
   return (
     <Box d="flex" borderRadius={8} bg="white" p={["6", "8"]} gap="5">
-      <TeamSelect setTeam={setTeam} setTask={setTasks}/>
+      <TeamSelect setTeam={setTeam} setTask={setTasks} />
       {team && <SelectSprintForm team={team} setTasks={setTasks} />}
     </Box>
   );

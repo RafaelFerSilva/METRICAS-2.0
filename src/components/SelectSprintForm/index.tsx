@@ -37,10 +37,7 @@ interface Task {
   Description: string | undefined;
   Reason: string;
   "Story Points": number | undefined | string;
-  "Time To Resolve Task": number | undefined;
-  "Time To Change State": number | undefined;
-  "Time To Autorize": number | undefined;
-  "Time Total": number | undefined;
+  "Cycle Time": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
   Activity: string;

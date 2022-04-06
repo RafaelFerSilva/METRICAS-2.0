@@ -1,7 +1,7 @@
 import Report from "../../data/report";
-import { StateItemGraph } from "../StateItemGraph";
 import { Box, Flex } from "@chakra-ui/react";
-import { StateTable } from "../StateTable";
+import { ColumItemGraph } from "../ColumItemGraph";
+import { ColumItemTable } from "../ColumItemTable";
 
 interface Task {
   ID: string;
@@ -33,7 +33,7 @@ interface UsHistoryProps {
   workItemType: string;
 }
 
-export function UsHistory({ tasks, workItemType }: UsHistoryProps) {
+export function Revisions({ tasks, workItemType }: UsHistoryProps) {
   const report = new Report();
 
   return (
@@ -41,11 +41,11 @@ export function UsHistory({ tasks, workItemType }: UsHistoryProps) {
       <Box >
         {report
           .returnAllTasksByWorkItemType(tasks, workItemType)
-          .map((item: Task, key) => {
+          .map((item: Task) => {
             return (
-              <Box key={key} >
-                <StateItemGraph  task={item} />
-                <StateTable task={item} />
+              <Box key={item.ID} >
+                <ColumItemGraph  task={item} />
+                <ColumItemTable task={item} />
               </Box>
             );
           })}

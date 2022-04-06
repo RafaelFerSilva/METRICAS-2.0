@@ -1,6 +1,29 @@
-import { Box, Text, theme } from "@chakra-ui/react";
+import { Text, theme } from "@chakra-ui/react";
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  } from 'chart.js';
+  
+  ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  );
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,

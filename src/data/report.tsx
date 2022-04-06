@@ -17,10 +17,7 @@ interface Task {
   Description: string | undefined;
   Reason: string;
   "Story Points": number | undefined | string;
-  "Time To Resolve Task": number | undefined;
-  "Time To Change State": number | undefined;
-  "Time To Autorize": number | undefined;
-  "Time Total": number | undefined;
+  "Cycle Time": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
   Activity: string;
@@ -39,17 +36,44 @@ class Report {
     cicle = sprintTask.map((item) => {
       return {
         labels: `${item.ID} - ${item.Title}`,
-        data: item["Time Total"],
+        data: item["Cycle Time"],
       };
     });
 
     return cicle;
   }
 
+  returnCicleTimeByWorkItemType(tasks: Task[], workItemType: string) {
+    let cicle: any;
+
+    let sprintTask = this.returnAllTasksByWorkItemType(tasks, workItemType);
+    cicle = sprintTask.map((item) => {
+      return item["Cycle Time"]
+    });
+    return cicle;
+  }
+
   returnTaskTitle(tasks: Task[]) {
-    let task_name = tasks.map((item) => `${item.ID} - ${item.Title}`);
+
+    let task_name = tasks.map((item) => {
+      let title = `${item.ID} - ${item.Title}`
+
+      if(title.length < 40){
+        return title
+      }
+        return `${title.slice(0, 40)}...`
+    });
 
     return task_name;
+  }
+
+  returnTaskID(tasks: Task[]) {
+
+    let id = tasks.map((item) => {
+      return item.ID
+    });
+
+    return id;
   }
 
   returnAllTasksByWorkItemType(tasks: Task[], workItemType: string) {
@@ -68,7 +92,7 @@ class Report {
     });
 
     let splitTag = tags.filter((item) => {
-      let element = item["Tags"].split(";");
+      let element = item["Tags"].split("; ");
       return element.includes(tag);
     });
 
@@ -81,7 +105,7 @@ class Report {
     cicle = sprintTask.map((item) => {
       return {
         labels: item.Title,
-        data: item["Time Total"],
+        data: item["Cycle Time"],
       };
     });
 
@@ -160,6 +184,7 @@ class Report {
         item.State === "In Production"
       );
     });
+
 
     return array;
   }

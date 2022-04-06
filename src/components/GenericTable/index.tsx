@@ -30,9 +30,9 @@ export function GenericTable({ title, labels, data }: GenericTableProps) {
           <Table colorScheme="twitter" size='sm' >
             <Thead>
               <Tr>
-                {labels.map((label: any) => {
+                {labels.map((label: any, key) => {
                   return (
-                    <Th key={label} textAlign="center">
+                    <Th key={key} textAlign="center">
                       {label}
                     </Th>
                   );

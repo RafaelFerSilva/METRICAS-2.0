@@ -18,6 +18,7 @@ import { GraphicBoard } from "../components/GraphicBoard";
 import { UsHistory } from "../components/UsHistory";
 import Report from "../data/report";
 import { RelatedBugs } from "../components/RelatedBugs";
+import { Revisions } from "../components/Revisions";
 
 interface Task {
   ID: string;
@@ -38,10 +39,7 @@ interface Task {
   Description: string | undefined;
   Reason: string;
   "Story Points": number | undefined | string;
-  "Time To Resolve Task": number | undefined;
-  "Time To Change State": number | undefined;
-  "Time To Autorize": number | undefined;
-  "Time Total": number | undefined;
+  "Cycle Time": number | undefined;
   "Sprint Start Date": string;
   Tags: string;
   Activity: string;
@@ -58,7 +56,7 @@ export default function Dashboard() {
         <GridItem colSpan={5} m="1">
           <Header />
         </GridItem>
-        <GridItem colSpan={5} mr="2" w="100%">
+        <GridItem colSpan={5} mr="2">
           <>
             <Flex direction="column" ml="1" justify="center" gap="2">
               <SelectSprintForm
@@ -69,7 +67,8 @@ export default function Dashboard() {
                 <Tabs size="md" variant="enclosed" bg="white">
                   <TabList>
                     <Tab>General</Tab>
-                    <Tab>User Stories</Tab>
+                    <Tab>State Graph</Tab>
+                    <Tab>Board Column</Tab>
                     <Tab>Bugs</Tab>
                     <Tab>Improvements</Tab>
                     <Tab>Related Bug</Tab>
@@ -83,6 +82,9 @@ export default function Dashboard() {
                       <UsHistory tasks={tasks} workItemType="User Story" />
                     </TabPanel>
                     <TabPanel>
+                      <Revisions tasks={tasks} workItemType="User Story" />
+                    </TabPanel>
+                    <TabPanel>
                       <UsHistory tasks={tasks} workItemType="Bug" />
                     </TabPanel>
                     <TabPanel>
@@ -91,16 +93,16 @@ export default function Dashboard() {
                     <TabPanel>
                       {report
                         .returnAllTasksByWorkItemType(tasks, "User Story")
-                        .map((task) => {
-                          return <RelatedBugs key={task.ID} task={task} />;
+                        .map((task, key) => {
+                          return <RelatedBugs key={key} task={task} />;
                         })}
                     </TabPanel>
                     <TabPanel>
                       {report
                         .returnBugs(tasks)
-                        .map((bug) => {
+                        .map((bug, key) => {
                           return (
-                            <Box key={bug.ID} mb="8">
+                            <Box key={key} mb="8">
                               <Text>{bug.ID} - {bug.Title}</Text>
                               <Text><strong>Root Cause: </strong>{bug.Activity}</Text>
                               <Divider />
