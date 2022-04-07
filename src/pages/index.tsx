@@ -89,10 +89,28 @@ export default function Dashboard() {
                       <UsHistory tasks={tasks} workItemType="Bug" />
                     </TabPanel>
                     <TabPanel>
-                      <UsHistory tasks={report.returnAllTasksByWorkItemTag(tasks, "Melhoria")} workItemType="User Story" />
+                    {
+                        report.returnAllTasksByWorkItemTag(tasks, "Melhoria").map((item, key) => {
+                          return (
+                            <Box key={key} mb="8">
+                              <Text>{item.ID} - {item.Title}</Text>
+                              <Divider />
+                          </Box>
+                          )
+                        })
+                      }
                     </TabPanel>
                     <TabPanel>
-                      <UsHistory tasks={report.returnAllTasksByWorkItemTag(tasks, "Não prevista")} workItemType="User Story" />
+                      {
+                        report.returnAllTasksByWorkItemTag(tasks, "Não prevista").map((item, key) => {
+                          return (
+                            <Box key={key} mb="8">
+                              <Text>{item.ID} - {item.Title}</Text>
+                              <Divider />
+                          </Box>
+                          )
+                        })
+                      }
                     </TabPanel>
                     <TabPanel>
                       {report
