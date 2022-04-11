@@ -15,7 +15,6 @@ interface TeamsProviderProps {
   children: ReactNode;
 }
 
-let organization = process.env.ORGANIZATION;
 export const TeamsContext = createContext<Team[]>([]);
 
 export function TeamsProvider({ children }: TeamsProviderProps) {
@@ -30,7 +29,11 @@ export function TeamsProvider({ children }: TeamsProviderProps) {
       .then((response) => setTeams(response.data.value));
   }, []);
 
+  let sortTeam = teams.sort(function (a, b) {
+    return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
+  });
+
   return (
-    <TeamsContext.Provider value={teams}>{children}</TeamsContext.Provider>
+    <TeamsContext.Provider value={sortTeam}>{children}</TeamsContext.Provider>
   );
 }
