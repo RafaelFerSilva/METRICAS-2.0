@@ -26,7 +26,13 @@ export function TeamsProvider({ children }: TeamsProviderProps) {
       .get(
         `https://dev.azure.com/${process.env.NEXT_PUBLIC_ORGANIZATION}/_apis/projects/${process.env.NEXT_PUBLIC_PROJECT}/teams?api-version=6.0`
       )
-      .then((response) => setTeams(response.data.value));
+      .then((response) => {
+        if (response.status === 200) {
+          setTeams(response.data.value)
+        }
+      }).catch(error => {
+        console.warn(error.response)
+    });
   }, []);
 
   let sortTeam = teams.sort(function (a, b) {

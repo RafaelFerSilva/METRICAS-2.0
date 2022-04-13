@@ -133,7 +133,9 @@ export function StateItemGraph({ task }: StateItemGraphProps) {
             return itens;
           });
         }
-      });
+      }).catch(error => {
+        console.warn(error.response)
+    });
   }, [task.ID, task.Title]);
 
   return (

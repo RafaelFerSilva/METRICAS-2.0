@@ -40,7 +40,7 @@ export function RelatedItem(task: Task) {
       .then((response) => {
         if (response.status === 200) {
           response.data.value.map((element: any) => {
-
+            
             if (typeof element.relations !== "undefined") {
               if (typeof element.relations.added !== "undefined") {
                 element.relations.added.map((added: any) => {
@@ -58,7 +58,9 @@ export function RelatedItem(task: Task) {
           });
         }
         setRelatedItems(itens)
-      });
+      }).catch(error => {
+        console.warn(error.response)
+    });
   }, [task]);
 
   return relateds;

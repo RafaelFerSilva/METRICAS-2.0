@@ -40,7 +40,6 @@ const axiosInstance = setupAPIMetrics();
 export function RelatedBugs({ task }: RelatedBugsProps) {
   const workRelated = RelatedItem(task);
   const [relatedItem, setRelateItem] = useState<Task[]>();
-  const [bug, setBug ] = useState<Task[]>();
 
   useEffect(() => {
     if (workRelated.length !== 0) {
@@ -56,18 +55,12 @@ export function RelatedBugs({ task }: RelatedBugsProps) {
             );
             setRelateItem(formatedTasks);
           }
-        });
+        }).catch(error => {
+          console.warn("Related item error: " + error.response.data.message)
+      });
     }
     
   }, [workRelated]);
-
-  useEffect(() => {
-    const bugs = relatedItem?.filter(
-      (item) => item["Work Item Type"] === "Bug"
-    );
-
-    setBug(bugs)
-  },[relatedItem])
 
   function returnBugs() {
     const bugs = relatedItem?.filter(

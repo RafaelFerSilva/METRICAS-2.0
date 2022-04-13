@@ -67,11 +67,11 @@ export default function SelectSprint({ team, setTasks }: SelectSprintProps) {
     setTasksList(workItemRelations);
   });
 
-  function handleCreateNewReport(event: any) {
+  async function handleCreateNewReport(event: any) {
     event.preventDefault();
 
     if (workitens.length !== 0) {
-      axiosInstance
+      await axiosInstance
         .get(`wit/workitems?ids=${workitens}&expand=all&api-version=6.0`)
         .then((response) => {
           if (response.status === 200) {

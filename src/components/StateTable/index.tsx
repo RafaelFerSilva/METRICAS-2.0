@@ -157,7 +157,9 @@ export function StateTable({ task }: StateTable) {
             return itens;
           });
         }
-      });
+      }).catch(error => {
+        console.warn(error.response)
+    });
   }, [task.ID, task.Title]);
 
   return (

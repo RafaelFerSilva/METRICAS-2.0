@@ -73,8 +73,12 @@ export default function SprintSelect({
         `https://dev.azure.com/${process.env.NEXT_PUBLIC_ORGANIZATION}/${process.env.NEXT_PUBLIC_PROJECT}/${teamId}/_apis/work/teamsettings/iterations?api-version=6.0`
       )
       .then((response) => {
-        setSprint(response.data.value.reverse());
-      });
+        if(response.status === 200) {
+          setSprint(response.data.value.reverse());
+        } 
+      }).catch(error => {
+        console.warn(error.response)
+    });
   }, [teamId]);
 
   const handleChange = (event: any) => {
@@ -84,9 +88,13 @@ export default function SprintSelect({
       .get(
         `https://dev.azure.com/${process.env.NEXT_PUBLIC_ORGANIZATION}/${process.env.NEXT_PUBLIC_PROJECT}/${teamId}/_apis/work/teamsettings/iterations/${event.target.value}/workitems?api-version=6.0-preview.1`
       )
-      .then((response) =>
-        setworkItemRelations(response.data.workItemRelations)
-      );
+      .then((response) => {
+        if(response.status === 200) {
+          setworkItemRelations(response.data.workItemRelations)
+        }
+      }).catch(error => {
+        console.warn(error.response)
+    });
 
     setTasks([]);
   };
