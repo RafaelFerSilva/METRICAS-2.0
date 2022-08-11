@@ -72,7 +72,7 @@ export default function Dashboard() {
                     <Tab>Bugs</Tab>
                     <Tab>Improvements</Tab>
                     <Tab>Not Expected</Tab>
-                    <Tab>Related Bug</Tab>
+                    {/* <Tab>Related Bug</Tab> */}
                     <Tab>Bugs - Roots Causes</Tab>
                   </TabList>
                   <TabPanels>
@@ -112,13 +112,13 @@ export default function Dashboard() {
                         })
                       }
                     </TabPanel>
-                    <TabPanel>
+                    {/* <TabPanel>
                       {report
                         .returnAllTasksByWorkItemType(tasks, "User Story")
                         .map((task, key) => {
                           return <RelatedBugs key={key} task={task} />;
                         })}
-                    </TabPanel>
+                    </TabPanel> */}
                     <TabPanel>
                       {report
                         .returnBugs(tasks)
