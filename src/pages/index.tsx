@@ -102,7 +102,7 @@ export default function Dashboard() {
                     </TabPanel>
                     <TabPanel>
                       {
-                        report.returnAllTasksByWorkItemTag(tasks, "Não prevista").map((item, key) => {
+                        report.returnAllTasksByWorkItemTag(tasks, "não previsto").map((item, key) => {
                           return (
                             <Box key={key} mb="8">
                               <Text>{item.ID} - {item.Title}</Text>
