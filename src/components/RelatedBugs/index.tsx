@@ -5,6 +5,7 @@ import {
 } from "../../services/api";
 import { RelatedItem } from "../../hooks/RelatedItem";
 import { Box, Divider, Heading, Link, Text } from "@chakra-ui/react";
+import { tokenService } from "../../services/auth/tokenService";
 
 interface Task {
   ID: string;
@@ -35,7 +36,11 @@ interface RelatedBugsProps {
   task: Task;
 }
 
-const axiosInstance = setupAPIMetrics();
+const token = tokenService.getToken()
+const project_id = tokenService.getProjectId()
+const organization = tokenService.getOrganization()
+
+const axiosInstance = setupAPIMetrics({organization, project_id ,token} );
 
 export function RelatedBugs({ task }: RelatedBugsProps) {
   const workRelated = RelatedItem(task);

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { setupAPIMetrics } from "../services/api";
+import { tokenService } from "../services/auth/tokenService";
 
 interface Task {
   ID: string;
@@ -27,7 +28,11 @@ interface Task {
 }
 
 
-const axiosInstance = setupAPIMetrics();
+const token = tokenService.getToken()
+const project_id = tokenService.getProjectId()
+const organization = tokenService.getOrganization()
+
+const axiosInstance = setupAPIMetrics({organization, project_id ,token} );
 
 export function RelatedItem(task: Task) {
   const [relateds, setRelatedItems] = useState<string[]>([]);

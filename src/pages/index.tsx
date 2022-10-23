@@ -1,144 +1,85 @@
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { authService } from '../services/auth/authService'
+import { useToast } from '@chakra-ui/react'
+
 import {
-  Box,
-  Divider,
   Flex,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-} from "@chakra-ui/react";
+  Heading,
+  Input,
+  Button,
+  FormControl,
+  FormLabel,
+} from '@chakra-ui/react';
 
-import { Header } from "../components/Header";
-import { Grid, GridItem } from "@chakra-ui/react";
-import { useState } from "react";
-import SelectSprintForm from "../components/SelectSprint";
-import { GraphicBoard } from "../components/GraphicBoard";
-import { UsHistory } from "../components/UsHistory";
-import Report from "../data/report";
-import { RelatedBugs } from "../components/RelatedBugs";
-import { Revisions } from "../components/Revisions";
-
-interface Task {
-  ID: string;
-  Title: string;
-  "Work Item Type": string;
-  State: string;
-  "State Change Date": string;
-  Area: string;
-  "Iteration Path": string;
-  "Activated By": string;
-  "Activated Date": string;
-  "Assigned To": string | undefined;
-  "Changed By": string;
-  "Changed Date": string;
-  "Completed Work": string | undefined;
-  "Created By": string;
-  "Created Date": string;
-  Description: string | undefined;
-  Reason: string;
-  "Story Points": number | undefined | string;
-  "Cycle Time": number | undefined;
-  "Sprint Start Date": string;
-  Tags: string;
-  Activity: string;
-}
-
-export default function Dashboard() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [sprintTeam, setSprintTeam] = useState("");
-  const report = new Report();
+export default function LoginScreen() {
+  // Router é um hook do react para redirecionamento de páginas
+  const router = useRouter();
+  const toast = useToast()
+  const [organization, setOrganization] = useState('');
+  const [projectId, setProjectId] = useState('');
+  const [token, setToken] = useState('');
 
   return (
-    <Flex direction="column" h="100vh">
-      <Grid h="200px" templateColumns="repeat(5, 1fr)">
-        <GridItem colSpan={5} m="1">
-          <Header />
-        </GridItem>
-        <GridItem colSpan={5} mr="2">
-          <>
-            <Flex direction="column" ml="1" justify="center" gap="2">
-              <SelectSprintForm
-                setTasks={setTasks}
-                setSprintTeam={setSprintTeam}
-              />
-              {sprintTeam && (
-                <Tabs size="md" variant="enclosed" bg="white">
-                  <TabList>
-                    <Tab>General</Tab>
-                    <Tab>State Graph</Tab>
-                    <Tab>Board Column</Tab>
-                    <Tab>Bugs</Tab>
-                    <Tab>Improvements</Tab>
-                    <Tab>Not Expected</Tab>
-                    {/* <Tab>Related Bug</Tab> */}
-                    <Tab>Bugs - Roots Causes</Tab>
-                  </TabList>
-                  <TabPanels>
-                    <TabPanel>
-                      <GraphicBoard tasks={tasks} />
-                    </TabPanel>
-                    <TabPanel>
-                      <UsHistory tasks={tasks} workItemType="User Story" />
-                    </TabPanel>
-                    <TabPanel>
-                      <Revisions tasks={tasks} workItemType="User Story" />
-                    </TabPanel>
-                    <TabPanel>
-                      <UsHistory tasks={tasks} workItemType="Bug" />
-                    </TabPanel>
-                    <TabPanel>
-                    {
-                        report.returnAllTasksByWorkItemTag(tasks, "Melhoria").map((item, key) => {
-                          return (
-                            <Box key={key} mb="8">
-                              <Text>{item.ID} - {item.Title}</Text>
-                              <Divider />
-                          </Box>
-                          )
-                        })
-                      }
-                    </TabPanel>
-                    <TabPanel>
-                      {
-                        report.returnAllTasksByWorkItemTag(tasks, "não previsto").map((item, key) => {
-                          return (
-                            <Box key={key} mb="8">
-                              <Text>{item.ID} - {item.Title}</Text>
-                              <Divider />
-                          </Box>
-                          )
-                        })
-                      }
-                    </TabPanel>
-                    {/* <TabPanel>
-                      {report
-                        .returnAllTasksByWorkItemType(tasks, "User Story")
-                        .map((task, key) => {
-                          return <RelatedBugs key={key} task={task} />;
-                        })}
-                    </TabPanel> */}
-                    <TabPanel>
-                      {report
-                        .returnBugs(tasks)
-                        .map((bug, key) => {
-                          return (
-                            <Box key={key} mb="8">
-                              <Text>{bug.ID} - {bug.Title}</Text>
-                              <Text><strong>Root Cause: </strong>{bug.Activity}</Text>
-                              <Divider />
-                            </Box>
-                          )
-                        })}
-                    </TabPanel>
-                  </TabPanels>
-                </Tabs>
-              )}
-            </Flex>
-          </>
-        </GridItem>
-      </Grid>
-    </Flex>
+    <form onSubmit={(event) => {
+      // Onsubmit -> Controller (pega dados do usuário e passa para o serviço)
+      // authService -> Serviço
+      event.preventDefault();
+      authService.login({
+        organization: organization,
+        project_id: projectId,
+        token: token
+      }).then(() => {
+        router.push('/home');
+      })
+        .catch((err) => {
+          toast({
+            title: `Organization, Project ID ou Token inválidos!!!`,
+            status: 'error',
+            position: 'top-right',
+            isClosable: true,
+          })
+        })
+    }}>
+      <FormControl isRequired>
+        <Flex h="100vh" alignItems="center" justifyContent="center">
+          <Flex
+            flexDirection="column"
+            p={12}
+            borderRadius={8}
+            boxShadow="lg"
+          >
+            <Heading mb={6} color="rgb(0, 120, 212)">Azure Metrics</Heading>
+            <FormLabel>Organization</FormLabel>
+            <Input
+              placeholder="Organization"
+              type="organization"
+              variant="filled"
+              mb={3}
+              onChange={event => setOrganization(event.currentTarget.value)}
+            />
+            <FormLabel>Project ID</FormLabel>
+            <Input
+              placeholder="Project ID"
+              type="password"
+              variant="filled"
+              mb={6}
+              onChange={event => setProjectId(event.currentTarget.value)}
+            />
+            <FormLabel>Personal Token</FormLabel>
+            <Input
+              placeholder="Personal Token"
+              type="password"
+              variant="filled"
+              mb={6}
+              onChange={event => setToken(event.currentTarget.value)}
+            />
+            <Button colorScheme="blue" mb={8} type="submit">
+              Log In
+            </Button>
+          </Flex>
+        </Flex>
+      </FormControl>
+    </form>
   );
 }

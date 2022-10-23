@@ -1,6 +1,7 @@
 import { Select, SimpleGrid, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { setupAPIMetrics } from "../../services/api";
+import { tokenService } from "../../services/auth/tokenService";
 
 export interface WorkRelations {
   rel: string;
@@ -57,7 +58,11 @@ export interface Iterations {
   url: string;
 }
 
-const axiosInstance = setupAPIMetrics();
+const token = tokenService.getToken()
+const project_id = tokenService.getProjectId()
+const organization = tokenService.getOrganization()
+
+const axiosInstance = setupAPIMetrics({organization, project_id ,token} );
 
 export default function SprintSelect({
   teamId,
@@ -70,7 +75,7 @@ export default function SprintSelect({
   useEffect(() => {
     axiosInstance
       .get(
-        `https://dev.azure.com/${process.env.NEXT_PUBLIC_ORGANIZATION}/${process.env.NEXT_PUBLIC_PROJECT}/${teamId}/_apis/work/teamsettings/iterations?api-version=6.0`
+        `https://dev.azure.com/${organization}/${project_id}/${teamId}/_apis/work/teamsettings/iterations?api-version=6.0`
       )
       .then((response) => {
         if(response.status === 200) {
@@ -86,7 +91,7 @@ export default function SprintSelect({
 
     axiosInstance
       .get(
-        `https://dev.azure.com/${process.env.NEXT_PUBLIC_ORGANIZATION}/${process.env.NEXT_PUBLIC_PROJECT}/${teamId}/_apis/work/teamsettings/iterations/${event.target.value}/workitems?api-version=6.0-preview.1`
+        `https://dev.azure.com/${organization}/${project_id}/${teamId}/_apis/work/teamsettings/iterations/${event.target.value}/workitems?api-version=6.0-preview.1`
       )
       .then((response) => {
         if(response.status === 200) {

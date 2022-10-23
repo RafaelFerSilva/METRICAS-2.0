@@ -1,9 +1,10 @@
-import { Box, Button, Divider, Heading, HStack } from "@chakra-ui/react";
+import { Box, Button, HStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import NewTasks from "../../model/tasks";
 import { setupAPIMetrics } from "../../services/api";
 import SprintSelect from "../SprintSelect";
 import { useToast } from '@chakra-ui/react'
+import { tokenService } from "../../services/auth/tokenService";
 
 interface Team {
   id: string;
@@ -48,7 +49,11 @@ interface SelectSprintProps {
   setTasks?: (task: Task[]) => any;
 }
 
-const axiosInstance = setupAPIMetrics();
+const token = tokenService.getToken()
+const project_id = tokenService.getProjectId()
+const organization = tokenService.getOrganization()
+
+const axiosInstance = setupAPIMetrics({organization, project_id ,token} );
 
 export default function SelectSprint({ team, setTasks }: SelectSprintProps) {
   const [workItemRelations, setworkItemRelations] = useState<WorkRelations[]>(

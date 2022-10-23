@@ -1,9 +1,6 @@
-import { Box, Button, Divider, Heading, HStack } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import NewTasks from "../../model/tasks";
-import { setupAPIMetrics } from "../../services/api";
 import SelectSprintForm from "../SelectSprintForm";
-import SprintSelect from "../SprintSelect";
 import TeamSelect from "../TeamSelect";
 
 interface Team {

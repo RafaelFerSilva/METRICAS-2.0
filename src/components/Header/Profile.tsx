@@ -1,38 +1,39 @@
-import { Flex, Box, Text, Avatar, Button, Icon } from "@chakra-ui/react";
-import { useContext } from "react";
+import { Flex, Box, Avatar, Button, Icon } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { RiLogoutCircleLine } from "react-icons/ri";
-import { AuthContext } from "../../contexts/AuthContext";
 
-interface ProfileProps {
-  showProfileData: boolean;
-}
+export function Profile() {
+  const router = useRouter();
 
-export function Profile({ showProfileData }: ProfileProps) {
-  const { user, signOut } = useContext(AuthContext);
-
+  const signOut = () => {
+    router.push('/logout')
+  }
+  
   return (
-    <Flex align="center">
-      {showProfileData && (
+    <Flex>
+      <Box p='4'>
+        {/* {showProfileData && (
         <Box mr="4" textAlign="right">
           <Text>{user?.roles}</Text>
           <Text color="gray.300" fontSize="small">
             {user?.email}
           </Text>
         </Box>
-      )}
+      )} */}
 
-      <Avatar size="md" name="Rafael Fernandes" />
-      <Button
-        as="a"
-        ml="4"
-        size="sm"
-        fontSize="sm"
-        colorScheme="red"
-        leftIcon={<Icon as={RiLogoutCircleLine} fontSize="20" />}
-        onClick={signOut}
-      >
-        Sair
-      </Button>
+        {/* <Avatar size="md" name="Rafael Fernandes" /> */}
+        <Button
+          ml="4"
+          mt='2'
+          size="sm"
+          fontSize="sm"
+          colorScheme="red"
+          leftIcon={<Icon as={RiLogoutCircleLine} fontSize="20" />}
+          onClick={signOut}
+        >
+          Sair
+        </Button>
+      </Box>
     </Flex>
   );
 }

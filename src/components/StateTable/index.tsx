@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import { returnDateDiff } from "../../model/tasks";
-
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableRow from "@mui/material/TableRow";
 import { Box, Divider, Stack } from "@chakra-ui/react";
 import { GenericTable } from "../GenericTable";
 import Report from "../../data/report";
 import { setupAPIMetrics } from "../../services/api";
+import { tokenService } from "../../services/auth/tokenService";
 
 interface WorkItemState {
   workItemId: string;
@@ -52,7 +49,11 @@ interface StateTable {
   task: Task;
 }
 
-const axiosInstance = setupAPIMetrics();
+const token = tokenService.getToken()
+const project_id = tokenService.getProjectId()
+const organization = tokenService.getOrganization()
+
+const axiosInstance = setupAPIMetrics({organization, project_id ,token} );
 
 export function StateTable({ task }: StateTable) {
   const [stateTime, setStateTime] = useState<StateTimeInterface>();

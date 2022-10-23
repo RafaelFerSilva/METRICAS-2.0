@@ -3,6 +3,7 @@ import { returnDateDiff } from "../../model/tasks";
 import { setupAPIMetrics } from "../../services/api";
 import { Box, Divider } from "@chakra-ui/react";
 import { GenericTable } from "../GenericTable";
+import { tokenService } from "../../services/auth/tokenService";
 
 interface Task {
   ID: string;
@@ -54,7 +55,11 @@ interface RevisionsItens {
   data: string;
 }
 
-const axiosInstance = setupAPIMetrics();
+const token = tokenService.getToken()
+const project_id = tokenService.getProjectId()
+const organization = tokenService.getOrganization()
+
+const axiosInstance = setupAPIMetrics({organization, project_id ,token} );
 
 export function ColumItemTable({ task }: ColumItemGraphItemGraphProps) {
   const [stateTime, setStateTime] = useState<ColumTimeInterface>();

@@ -3,6 +3,7 @@ import { returnDateDiff } from "../../model/tasks";
 import { setupAPIMetrics } from "../../services/api";
 import { Box } from "@chakra-ui/react";
 import { VerticalBar } from "../Charts/ChartVerticalBar";
+import { tokenService } from "../../services/auth/tokenService";
 
 interface Task {
   ID: string;
@@ -47,7 +48,11 @@ interface StateItemGraphProps {
   task: Task;
 }
 
-const axiosInstance = setupAPIMetrics();
+const token = tokenService.getToken()
+const project_id = tokenService.getProjectId()
+const organization = tokenService.getOrganization()
+
+const axiosInstance = setupAPIMetrics({organization, project_id ,token} );
 
 export function StateItemGraph({ task }: StateItemGraphProps) {
   const [stateTime, setStateTime] = useState<StateTimeInterface>();
