@@ -52,6 +52,7 @@ export default function LoginScreen() {
             <Heading mb={6} color="rgb(0, 120, 212)">Azure Metrics</Heading>
             <FormLabel>Organization</FormLabel>
             <Input
+              id="organization"
               placeholder="Organization"
               type="organization"
               variant="filled"
@@ -60,6 +61,7 @@ export default function LoginScreen() {
             />
             <FormLabel>Project ID</FormLabel>
             <Input
+              id="project_id"
               placeholder="Project ID"
               type="password"
               variant="filled"
@@ -68,6 +70,7 @@ export default function LoginScreen() {
             />
             <FormLabel>Personal Token</FormLabel>
             <Input
+              id="token"
               placeholder="Personal Token"
               type="password"
               variant="filled"
