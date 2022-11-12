@@ -14,7 +14,7 @@ import {
 import { Header } from "../components/Header";
 import { Grid, GridItem } from "@chakra-ui/react";
 import { useState } from "react";
-import SelectSprintForm from "../components/SelectSprint";
+import SelectSprint from "../components/SelectSprint";
 import { GraphicBoard } from "../components/GraphicBoard";
 import { UsHistory } from "../components/UsHistory";
 import Report from "../data/report";
@@ -61,7 +61,7 @@ export default function Home() {
           <GridItem colSpan={5} mr="2">
             <>
               <Flex direction="column" ml="1" justify="center" gap="2">
-                <SelectSprintForm
+                <SelectSprint
                   setTasks={setTasks}
                   setSprintTeam={setSprintTeam}
                 />

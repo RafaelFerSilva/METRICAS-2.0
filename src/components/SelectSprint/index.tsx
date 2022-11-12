@@ -12,15 +12,6 @@ interface Team {
   url: string;
 }
 
-export interface WorkRelations {
-  rel: string;
-  source: string;
-  target: {
-    id: number;
-    url: string;
-  };
-}
-
 interface Task {
   ID: string;
   Title: string;
@@ -62,7 +53,7 @@ export default function SelectSprint({
   }, [setSprintTeam, team]);
 
   return (
-    <Box d="flex" borderRadius={8} bg="white" p={["6", "8"]} gap="5">
+    <Box display="flex" borderRadius={8} bg="white" p={["6", "8"]} gap="5">
       <TeamSelect setTeam={setTeam} setTask={setTasks} />
       {team && <SelectSprintForm team={team} setTasks={setTasks} />}
     </Box>

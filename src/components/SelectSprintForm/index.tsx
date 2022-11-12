@@ -55,7 +55,7 @@ const organization = tokenService.getOrganization()
 
 const axiosInstance = setupAPIMetrics({organization, project_id ,token} );
 
-export default function SelectSprint({ team, setTasks }: SelectSprintProps) {
+export default function SelectSprintForm({ team, setTasks }: SelectSprintProps) {
   const [workItemRelations, setworkItemRelations] = useState<WorkRelations[]>(
     []
   );
@@ -98,7 +98,7 @@ export default function SelectSprint({ team, setTasks }: SelectSprintProps) {
   }
 
   return (
-    <Box d="flex" gap="4" as="form" onSubmit={handleCreateNewReport}>
+    <Box display="flex" gap="4" as="form" onSubmit={handleCreateNewReport}>
       <SprintSelect
         teamId={team}
         setworkItemRelations={setworkItemRelations}
