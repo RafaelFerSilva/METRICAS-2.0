@@ -3,12 +3,12 @@ import { Box, ListIcon, ListItem } from "@chakra-ui/react";
 interface MenuItem {
     itemName: string;
     itemUrl: string;
-    // icon: any;
+    icon: any;
 }
 
 interface MenuProps {
     menuItem: MenuItem;
-    key: number;
+    key: string;
 }
 
 export default function HomeMenuItem({menuItem, key}: MenuProps) {
@@ -21,8 +21,8 @@ export default function HomeMenuItem({menuItem, key}: MenuProps) {
             _focus={{
                 bg: 'green.700',
             }}>
-            <ListItem as="a" href={menuItem.itemUrl}>
-                {/* <ListIcon as={menuItem.icon} color='blue.500' /> */}
+            <ListItem as="a" href={menuItem.itemUrl} fontSize=".975rem">
+                <ListIcon as={menuItem.icon} fontSize="30" color='blue.500' />
                 {menuItem.itemName}
             </ListItem>
         </Box>

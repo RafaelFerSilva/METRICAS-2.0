@@ -76,13 +76,19 @@ export default function RunsSelect({
   const toast = useToast()
 
   const returnSelectRunsData = (id: string) => {
+    let selectedRunId: RunsId;
     let selectRuns = runsItens.filter(function (run: any) {
       return (
         run.build.id === id
       );
     });
-    let selectedRunId: RunsId = {
-      id: selectRuns[0].id,
+
+    if(selectRuns.length !== 0){
+      selectedRunId = {
+        id: selectRuns[0].id,
+      }
+    } else {
+     <div>Teste</div>
     }
 
     return selectedRunId
@@ -92,13 +98,14 @@ export default function RunsSelect({
     event.preventDefault();
     setSeletedRun(event.target.value);
     const runsData = returnSelectRunsData(event.target.value)
+    let condensedData: RunsCondensedData;
 
     if (runsData !== undefined) {
       await axiosInstance
         .get(`https://dev.azure.com/${organization}/Satelital/_apis/test/Runs/${runsData.id}`)
         .then((response) => {
           if (response.status === 200) {
-            let condensedData: RunsCondensedData = {
+            condensedData = {
               id: response.data.id,
               name: response.data.name,
               startedDate: response.data.startedDate,
@@ -147,9 +154,10 @@ export default function RunsSelect({
         });
 
     } else {
+      setRunTests([])
       toast({
-        title: `Nenhuma run foi selecionada ou esta pipeline não tem dados para serem exibidos!!!`,
-        status: 'error',
+        title: `Esta pipeline não tem dados para serem exibidos. Provavelmente não foi finalizada ou foi cancelada. `,
+        status: 'warning',
         position: 'top-right',
         isClosable: true,
       })
