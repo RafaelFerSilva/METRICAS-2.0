@@ -12,7 +12,7 @@ export default function Home() {
       templateAreas={`"header header"
                   "nav main"`}
       gridTemplateRows={'8vh 1fr 30px'}
-      gridTemplateColumns={'45vh 1fr'}
+      gridTemplateColumns={'47vh 1fr'}
       h='100vh'
     >
       <GridItem area={'header'}>
