@@ -8,9 +8,7 @@ export function Header() {
     <Flex
       as="header"
       bg="white"
-      borderRadius="8"
-      px="6"
-      h="20"
+      h="8vh"
     >
       <Logo />
       <Spacer />

@@ -11,7 +11,7 @@ export function Profile() {
   
   return (
     <Flex>
-      <Box p='4'>
+      <Box p='3'>
         {/* {showProfileData && (
         <Box mr="4" textAlign="right">
           <Text>{user?.roles}</Text>
@@ -23,8 +23,6 @@ export function Profile() {
 
         {/* <Avatar size="md" name="Rafael Fernandes" /> */}
         <Button
-          ml="4"
-          mt='2'
           size="sm"
           fontSize="sm"
           colorScheme="red"

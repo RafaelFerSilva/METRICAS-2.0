@@ -26,6 +26,8 @@ interface RunsItens {
 
 interface SelectPipelineProps {
   setPipelineRuns: (item: any) => void;
+  setRunCondensedData: (item: any) => void;
+  setRunTests: (item: any) => void;
 }
 
 const token = tokenService.getToken()
@@ -34,7 +36,7 @@ const organization = tokenService.getOrganization()
 
 const axiosInstance = setupAPIMetrics({ organization, project_id, token });
 
-export default function PipelineSelect({ setPipelineRuns }: SelectPipelineProps) {
+export default function PipelineSelect({ setPipelineRuns, setRunCondensedData, setRunTests }: SelectPipelineProps) {
   const [selectedPipeline, setSeletedPepiline] = useState("");
   const pipelines = useContext(PipelineContext);
 
@@ -51,6 +53,8 @@ export default function PipelineSelect({ setPipelineRuns }: SelectPipelineProps)
   const handleChange = (event: any) => {
     event.preventDefault();
     setSeletedPepiline(event.target.value);
+    setRunCondensedData([])
+    setRunTests([])
     const pipelineData = returnSelectPipelineData(event.target.value)
 
     let runsData: Run[] | void;
