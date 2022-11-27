@@ -122,10 +122,7 @@ export function ColumItemGraph({ task }: ColumItemGraphItemGraphProps) {
           });
         }
         calcularTime(itens)
-      }).catch(error => {
-        console.warn(error.response)
-    });
-    
+      })
   }, [task.ID]);
 
   return (

@@ -44,9 +44,7 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
 
             return (pipelineItens)
           }
-        }).catch(error => {
-          console.warn(error.response)
-        });
+        })
 
       setPipelines(data)
     }

@@ -17,27 +17,33 @@ interface TeamsProviderProps {
 }
 
 export const TeamsContext = createContext<Team[]>([]);
+const token = tokenService.getToken()
+const project_id = tokenService.getProjectId()
+const organization = tokenService.getOrganization()
+const axiosInstance = setupAPIMetrics({ organization, project_id, token });
 
 export function TeamsProvider({ children }: TeamsProviderProps) {
   const [teams, setTeams] = useState<Team[]>([]);
-  const token = tokenService.getToken()
-  const project_id = tokenService.getProjectId()
-  const organization = tokenService.getOrganization()
 
   useEffect(() => {
-    const axiosInstance = setupAPIMetrics({organization, project_id ,token} );
-    axiosInstance
-      .get(
-        `https://dev.azure.com/${organization}/_apis/projects/${project_id}/teams?api-version=6.0`
-      )
-      .then((response) => {
-        if (response.status === 200) {
-          setTeams(response.data.value)
-        }
-      }).catch(error => {
-        console.warn(error.response)
-    });
-  }, [organization, project_id, token]);
+    const fetchData = async () => {
+      let data: any;
+      data = await axiosInstance
+        .get(
+          `https://dev.azure.com/${organization}/_apis/projects/${project_id}/teams?api-version=6.0`
+        )
+        .then((response) => {
+          let teams: any;
+          if (response.status === 200) {
+            teams = response.data.value
+          }
+          return teams;
+        })
+      setTeams(data)
+    }
+
+    fetchData()
+  }, []);
 
   let sortTeam = teams.sort(function (a, b) {
     return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
