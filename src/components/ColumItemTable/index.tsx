@@ -136,9 +136,7 @@ export function ColumItemTable({ task }: ColumItemGraphItemGraphProps) {
         });
       } 
       calcularTime(itens);
-    }).catch(error => {
-      console.warn(error.response)
-  });
+    })
   }, [task.ID]);
 
   return (

@@ -45,9 +45,7 @@ export function AllRunsProvider({ children }: AllRunsProviderProps) {
 
             return (runsItens)
           }
-        }).catch(error => {
-          console.warn(error.response)
-        });
+        })
 
         setRuns(data)
     }

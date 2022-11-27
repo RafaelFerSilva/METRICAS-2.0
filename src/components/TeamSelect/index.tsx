@@ -53,9 +53,7 @@ export default function SprintSelect({ setSprint, setTask, setTeam }: SelectTeam
         if(response.status === 200) {
           setSprint(response.data.value.reverse());
         } 
-      }).catch(error => {
-        console.warn(error.response)
-    });
+      })
     setTask([])
   };
 
