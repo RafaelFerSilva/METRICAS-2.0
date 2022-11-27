@@ -63,9 +63,7 @@ export function RelatedItem(task: Task) {
           });
         }
         setRelatedItems(itens)
-      }).catch(error => {
-        console.warn(error.response)
-    });
+      })
   }, [task]);
 
   return relateds;

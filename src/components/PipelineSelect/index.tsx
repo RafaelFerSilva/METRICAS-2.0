@@ -81,9 +81,7 @@ export default function PipelineSelect({ setPipelineRuns, setRunCondensedData, s
 
             return (runs)
           }
-        }).catch(error => {
-          console.warn(error.response)
-        });
+        })
         setPipelineRuns(runsData);
     }
 

@@ -60,9 +60,7 @@ export function RelatedBugs({ task }: RelatedBugsProps) {
             );
             setRelateItem(formatedTasks);
           }
-        }).catch(error => {
-          console.warn("Related item error: " + error.response.data.message)
-      });
+        })
     }
     
   }, [workRelated]);

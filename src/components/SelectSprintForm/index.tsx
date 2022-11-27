@@ -90,9 +90,7 @@ export default function SprintSelect({
           });
         }
         return itens;
-      }).catch(error => {
-        console.warn(error.response)
-    });
+      })
 
     if(workitens === undefined){
       setTasks([]);

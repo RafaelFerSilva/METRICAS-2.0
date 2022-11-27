@@ -38,9 +38,7 @@ export function TeamsProvider({ children }: TeamsProviderProps) {
             teams = response.data.value
           }
           return teams;
-        }).catch(error => {
-          console.warn(error.response)
-        });
+        })
       setTeams(data)
     }
 
