@@ -65,7 +65,7 @@ const token = tokenService.getToken()
 const project_id = tokenService.getProjectId()
 const organization = tokenService.getOrganization()
 
-const axiosInstance = setupAPIMetrics({organization, project_id ,token} );
+const axiosInstance = setupAPIMetrics({ organization, project_id, token });
 
 export default function SprintSelect({
   teamId,
@@ -78,42 +78,47 @@ export default function SprintSelect({
   const handleChange = async (event: any) => {
     setSeletedSprint(event.target.value);
 
-    let workitens: number[] = await axiosInstance
-      .get(
-        `https://dev.azure.com/${organization}/${project_id}/${teamId}/_apis/work/teamsettings/iterations/${event.target.value}/workitems?api-version=6.0-preview.1`
-      )
-      .then(async (response) => {
-        let itens: any;
-        if(response.status === 200) {
-          itens = response.data.workItemRelations.map((item: any) => {
-            return item.target.id;
-          });
-        }
-        return itens;
-      })
-
-    if(workitens === undefined){
-      setTasks([]);
-    } else if (workitens.length !== 0) {
-      await axiosInstance
-        .get(`wit/workitems?ids=${workitens}&expand=all&api-version=6.0`)
-        .then((response) => {
+    if (event.target.value) {
+      let workitens: number[] = await axiosInstance
+        .get(
+          `https://dev.azure.com/${organization}/${project_id}/${teamId}/_apis/work/teamsettings/iterations/${event.target.value}/workitems?api-version=6.0-preview.1`
+        )
+        .then(async (response) => {
+          let itens: any;
           if (response.status === 200) {
-            const newTasks = new NewTasks();
-            let formatedTasks: Task[] = newTasks.formatJson(
-              response.data.value
-            );
-            setTasks(formatedTasks);
+            itens = response.data.workItemRelations.map((item: any) => {
+              return item.target.id;
+            });
           }
-        });
-    }else {
+          return itens;
+        })
+
+      if (workitens === undefined) {
+        setTasks([]);
+      } else if (workitens.length !== 0) {
+        await axiosInstance
+          .get(`wit/workitems?ids=${workitens}&expand=all&api-version=6.0`)
+          .then((response) => {
+            if (response.status === 200) {
+              const newTasks = new NewTasks();
+              let formatedTasks: Task[] = newTasks.formatJson(
+                response.data.value
+              );
+              setTasks(formatedTasks);
+            }
+          });
+      } else {
+        setTasks([]);
+        toast({
+          title: `Nenhuma sprint foi selecionada ou esta sprint não tem dados para serem exibidos!!!`,
+          status: 'warning',
+          position: 'top-right',
+          isClosable: true,
+        })
+      }
+
+    } else {
       setTasks([]);
-      toast({
-        title: `Nenhuma sprint foi selecionada ou esta sprint não tem dados para serem exibidos!!!`,
-        status: 'warning',
-        position: 'top-right',
-        isClosable: true,
-      })
     }
   };
 
