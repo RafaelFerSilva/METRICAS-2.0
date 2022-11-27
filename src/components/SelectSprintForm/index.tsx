@@ -1,14 +1,9 @@
-import { Box, Button, HStack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import NewTasks from "../../model/tasks";
+import { Select, SimpleGrid, VStack } from "@chakra-ui/react";
+import { useState } from "react";
 import { setupAPIMetrics } from "../../services/api";
-import SprintSelect from "../SprintSelect";
-import { useToast } from '@chakra-ui/react'
 import { tokenService } from "../../services/auth/tokenService";
-
-interface Team {
-  id: string;
-}
+import NewTasks from "../../model/tasks";
+import { useToast } from '@chakra-ui/react'
 
 export interface WorkRelations {
   rel: string;
@@ -18,7 +13,6 @@ export interface WorkRelations {
     url: string;
   };
 }
-
 interface Task {
   ID: string;
   Title: string;
@@ -44,9 +38,27 @@ interface Task {
   Activity: string;
 }
 
+interface Team {
+  id: string;
+}
+
 interface SelectSprintProps {
-  team: Team;
-  setTasks?: (task: Task[]) => any;
+  teamId: Team;
+  sprint: Iterations[];
+  setworkItemRelations?: (itemRelations: WorkRelations[]) => void;
+  setTasks?: (task: Task[]) => void;
+}
+
+export interface Iterations {
+  id: string;
+  name: string;
+  path: string;
+  attributes: {
+    startDate: string;
+    finishDate: string;
+    timeFrame: string;
+  };
+  url: string;
 }
 
 const token = tokenService.getToken()
@@ -55,27 +67,36 @@ const organization = tokenService.getOrganization()
 
 const axiosInstance = setupAPIMetrics({organization, project_id ,token} );
 
-export default function SelectSprintForm({ team, setTasks }: SelectSprintProps) {
-  const [workItemRelations, setworkItemRelations] = useState<WorkRelations[]>(
-    []
-  );
+export default function SprintSelect({
+  teamId,
+  sprint,
+  setTasks,
+}: SelectSprintProps) {
+  const [selectedSprint, setSeletedSprint] = useState("");
   const toast = useToast()
-  let workitens: number[];
 
-  function setTasksList(items: WorkRelations[]) {
-    workitens = items.map((item) => {
-      return item.target.id;
+  const handleChange = async (event: any) => {
+    setSeletedSprint(event.target.value);
+
+    let workitens: number[] = await axiosInstance
+      .get(
+        `https://dev.azure.com/${organization}/${project_id}/${teamId}/_apis/work/teamsettings/iterations/${event.target.value}/workitems?api-version=6.0-preview.1`
+      )
+      .then(async (response) => {
+        let itens: any;
+        if(response.status === 200) {
+          itens = response.data.workItemRelations.map((item: any) => {
+            return item.target.id;
+          });
+        }
+        return itens;
+      }).catch(error => {
+        console.warn(error.response)
     });
-  }
 
-  useEffect(() => {
-    setTasksList(workItemRelations);
-  });
-
-  async function handleCreateNewReport(event: any) {
-    event.preventDefault();
-
-    if (workitens.length !== 0) {
+    if(workitens === undefined){
+      setTasks([]);
+    } else if (workitens.length !== 0) {
       await axiosInstance
         .get(`wit/workitems?ids=${workitens}&expand=all&api-version=6.0`)
         .then((response) => {
@@ -87,28 +108,43 @@ export default function SelectSprintForm({ team, setTasks }: SelectSprintProps) 
             setTasks(formatedTasks);
           }
         });
-    } else {
+    }else {
+      setTasks([]);
       toast({
         title: `Nenhuma sprint foi selecionada ou esta sprint não tem dados para serem exibidos!!!`,
-        status: 'error',
+        status: 'warning',
         position: 'top-right',
         isClosable: true,
       })
     }
-  }
+  };
 
   return (
-    <Box display="flex" gap="4" as="form" onSubmit={handleCreateNewReport}>
-      <SprintSelect
-        teamId={team}
-        setworkItemRelations={setworkItemRelations}
-        setTasks={setTasks}
-      />
-      <HStack spacing="4">
-        <Button type="submit" colorScheme="blue" size="lg">
-        Search
-        </Button>
-      </HStack>
-    </Box>
+    <>
+      <VStack spacing="8">
+        <SimpleGrid
+          minChildWidth="240px"
+          spacing={["6", "8"]}
+          alignSelf="flex-start"
+        >
+          <VStack spacing={3}>
+            <Select
+              placeholder="Sprints"
+              size="lg"
+              onChange={(ev) => handleChange(ev)}
+              value={selectedSprint}
+            >
+              {sprint.map((item: Iterations) => {
+                return (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                );
+              })}
+            </Select>
+          </VStack>
+        </SimpleGrid>
+      </VStack>
+    </>
   );
 }

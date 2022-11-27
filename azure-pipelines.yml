@@ -1,0 +1,39 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.9'
+  displayName: 'Use Python 3.9'
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+  displayName: 'Install dependencies'
+
+- task: PowerShell@2
+  inputs:
+    warningPreference: continue
+    targetType: 'inline'
+    script: |
+     pabot  --processes 5   -x outputxunit.xml  -d reports  --loglevel TRACE  --variable RESOLUCAO_ALTURA:1920 --variable RESOLUCAO_LARGURA:1080 --variable BROWSER:headlesschrome --pythonpath ./resources  --exclude skip  ./tests
+  displayName: EXECUTANDO SMOKES TESTS
+ 
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    mergeTestResults: true
+    testResultsFiles: './reports/outputxunit.xml'
+    displayName: 'Publish Test Results'
+
+- task: JakubRumpca.azure-pipelines-html-report.PublishHtmlReport.PublishHtmlReport@1
+  condition: succeededOrFailed()
+  displayName: 'Publish HTML Report'
+  inputs:
+    htmlType: 'genericHTML'
+    reportDir: './reports/log.html'
