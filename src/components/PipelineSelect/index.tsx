@@ -40,53 +40,61 @@ export default function PipelineSelect({ setPipelineRuns, setRunCondensedData, s
   const [selectedPipeline, setSeletedPepiline] = useState("");
   const pipelines = useContext(PipelineContext);
 
-  const returnSelectPipelineData = (id: string) => {
-    let pipeline = pipelines.filter(function (pipeline: Pipeline) {
-      return (
-        pipeline.id == id
-      );
-    });
-
-    return pipeline
-  }
-
   const handleChange = (event: any) => {
     event.preventDefault();
     setSeletedPepiline(event.target.value);
     setRunCondensedData([])
     setRunTests([])
-    const pipelineData = returnSelectPipelineData(event.target.value)
-
-    let runsData: Run[] | void;
-    const fetchPipelineRunList = async () => {
-      runsData = await axiosInstance
-        .get(
-          `https://dev.azure.com/${organization}/${project_id}/_apis/pipelines/${pipelineData[0].id}/runs?api-version=6.0-preview.1`
-        )
-        .then((response) => {
-          let runs: Run[] = []
-          if (response.status === 200) {
-            response.data.value.map(({ id, name, url, finishedDate, createdDate, result, state }: Run) => {
-              let run: Run = {
-                id,
-                name,
-                url,
-                finishedDate,
-                createdDate,
-                result,
-                state
-              }
-              runs.push(run)
-            });
-
-            return (runs)
-          }
-        })
-        setPipelineRuns(runsData);
-    }
-
-    fetchPipelineRunList()
+    setPipelineRuns([])
   };
+
+  useEffect(() => {
+
+    const returnSelectPipelineData = (id: string) => {
+      let pipeline = pipelines.filter(function (pipeline: Pipeline) {
+        return (
+          pipeline.id == id
+        );
+      });
+  
+      return pipeline
+    }
+    
+    const pipelineData = returnSelectPipelineData(selectedPipeline)
+    let runsData: Run[] | void;
+    if(pipelineData[0] !== undefined) {
+      const fetchPipelineRunList = async () => {
+        runsData = await axiosInstance
+          .get(
+            `https://dev.azure.com/${organization}/${project_id}/_apis/pipelines/${pipelineData[0].id}/runs?api-version=6.0-preview.1`
+          )
+          .then((response) => {
+            let runs: Run[] = []
+            if (response.status === 200) {
+              response.data.value.map(({ id, name, url, finishedDate, createdDate, result, state }: Run) => {
+                let run: Run = {
+                  id,
+                  name,
+                  url,
+                  finishedDate,
+                  createdDate,
+                  result,
+                  state
+                }
+                runs.push(run)
+              });
+  
+              return (runs)
+            }
+          })
+          
+          setPipelineRuns(runsData);
+      }
+      fetchPipelineRunList()
+    } else {
+      setPipelineRuns([])
+    }
+  },[pipelines, selectedPipeline, setPipelineRuns])
 
   
   return (

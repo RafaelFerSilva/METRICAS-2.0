@@ -56,8 +56,7 @@ interface RunsId {
 interface SelectRunsProps {
   runs: Run[];
   setRunsId?: (runs: any) => void;
-  setRunCondensedData: (run: RunsCondensedData) => void;
-  setRunTests: (tests: RunTestItens[]) => void;
+  setRunsCondensedData: (run: RunsCondensedData) => void;
 }
 
 const token = tokenService.getToken()
@@ -66,12 +65,12 @@ const organization = tokenService.getOrganization()
 
 const axiosInstance = setupAPIMetrics({ organization, project_id, token });
 
-export default function RunsSelect({
+export default function RunsSelectData({
   runs,
-  setRunCondensedData,
-  setRunTests
+  setRunsCondensedData
 }: SelectRunsProps) {
   const [selectedRun, setSeletedRun] = useState("");
+  const [dataArray, setDataArray] = useState([]);
   const runsItens = useContext(AllRunsContext);
   const toast = useToast()
 
@@ -83,7 +82,7 @@ export default function RunsSelect({
       );
     });
 
-    if(selectRuns.length !== 0){
+    if (selectRuns.length !== 0) {
       selectedRunId = {
         id: selectRuns[0].id,
       }
@@ -96,6 +95,7 @@ export default function RunsSelect({
     event.preventDefault();
     setSeletedRun(event.target.value);
     const runsData = returnSelectRunsData(event.target.value)
+
     let condensedData: RunsCondensedData;
 
     if (runsData !== undefined) {
@@ -119,40 +119,11 @@ export default function RunsSelect({
               postProcessState: response.data.notApplicableTests,
               url: `https://dev.azure.com/${organization}/Satelital/_build/results?buildId=${response.data.build.id}&view=results`
             }
-            setRunCondensedData(condensedData)
-          }
-        });
-
-      await axiosInstance
-        .get(`https://dev.azure.com/${organization}/${project_id}/_apis/test/Runs/${runsData.id}/results?api-version=6.0`)
-        .then((response) => {
-          if (response.status === 200) {
-            let tests: RunTestItens[] = []
-            response.data.value.map((test: any) => {
-              let testItem: RunTestItens = {
-                id: test.id,
-                automatedTestName: test.automatedTestName,
-                automatedTestStorage: test.automatedTestStorage,
-                build: test.build.id,
-                startedDate: test.startedDate,
-                completedDate: test.completedDate,
-                createdDate: test.createdDate,
-                durationInMs: test.durationInMs,
-                outcome: test.outcome,
-                priority: test.priority,
-                state: test.state,
-                testCaseReferenceId: test.testCaseReferenceId,
-                testRun: test.testRun.id,
-              }
-
-              tests.push(testItem)
-            })
-            setRunTests(tests)
+            setRunsCondensedData(condensedData)
           }
         });
 
     } else {
-      setRunTests([])
       toast({
         title: `Esta pipeline não tem dados para serem exibidos. Provavelmente não foi finalizada ou foi cancelada. `,
         status: 'warning',

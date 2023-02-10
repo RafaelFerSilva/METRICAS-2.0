@@ -1,7 +1,7 @@
 import { withSession } from "../services/auth/session";
 
 import { Header } from "../components/Header";
-import { Box, Grid, GridItem } from "@chakra-ui/react";
+import { Grid, GridItem } from "@chakra-ui/react";
 import HomeMenu from "../components/HomeMenu";
 
 
@@ -21,9 +21,6 @@ export default function Home() {
       <GridItem  mr="1" mt="0.5" bg="white" area={'nav'}>
         <HomeMenu />
       </GridItem>
-      {/* <GridItem pl='2' bg="white" mt="0.5" area={'main'}>
-        Main
-      </GridItem> */}
     </Grid>
   );
 }
