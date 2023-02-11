@@ -87,13 +87,13 @@ class Report {
   }
 
   returnAllTasksByWorkItemTag(tasks: Task[], tag: string) {
-    let tags = tasks.filter((item) => {
+    let azureTags = tasks.filter((item) => {
       return typeof item["Tags"] !== "undefined";
     });
 
-    let splitTag = tags.filter((item) => {
+    let splitTag = azureTags.filter((item) => {
       let element = item["Tags"].split("; ");
-      return element.includes(tag);
+        return element.includes(tag); 
     });
 
     return splitTag;

@@ -298,7 +298,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
               report.returnAllTasksByWorkItemType(tasks, "User Story").length,
               report.returnAllTasksByWorkItemType(tasks, "Bug").length,
               report.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
-              report.returnAllTasksByWorkItemTag(tasks, "não previsto").length
+              report.returnAllTasksByWorkItemTag(tasks, "Não prevista").length
             ]}
             label="Amount of USs"
           />
@@ -310,7 +310,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
               report.returnAllTasksByWorkItemType(tasks, "User Story").length,
               report.returnAllTasksByWorkItemType(tasks, "Bug").length,
               report.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
-              report.returnAllTasksByWorkItemTag(tasks, "não previsto").length
+              report.returnAllTasksByWorkItemTag(tasks, "Não prevista").length
             ]}
           />
         </Box>

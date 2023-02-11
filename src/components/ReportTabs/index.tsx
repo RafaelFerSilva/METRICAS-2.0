@@ -27,15 +27,34 @@ interface Task {
     "Sprint Start Date": string;
     Tags: string;
     Activity: string;
-  }
+}
 
-  interface ReportProps {
-    tasks : Task[]
-  }
+interface ReportProps {
+    tasks: Task[]
+}
 
-export default function ReportTabs(props: {tasks: Task[]}) {
-
+export default function ReportTabs(props: { tasks: Task[] }) {
+    const tagsNotExpected = ["Não prevista", 'Não previsto']
     const report = new Report();
+
+    const returnTagsList = (tags: string[]) => {
+        let itens: any[] = []
+        tags.map((tag) => {
+            let usList = report.returnAllTasksByWorkItemTag(props.tasks, tag).map((item) => {
+                return item
+            })
+            
+            if(usList.length > 0){
+                itens.push(usList)
+            }
+        })
+
+        if(itens[0] !== undefined){
+            return itens[0]
+        }
+
+        return []
+    }
 
     return (
         <Tabs size="md" variant="enclosed" bg="white">
@@ -74,25 +93,19 @@ export default function ReportTabs(props: {tasks: Task[]}) {
                         })
                     }
                 </TabPanel>
-                <TabPanel>
+                < TabPanel>
                     {
-                        report.returnAllTasksByWorkItemTag(props.tasks, "não previsto").map((item, key) => {
+                        returnTagsList(tagsNotExpected).map((item, key) => {
                             return (
                                 <Box key={key} mb="8">
                                     <Text>{item.ID} - {item.Title}</Text>
+                                    <Text></Text>
                                     <Divider />
                                 </Box>
                             )
                         })
                     }
-                </TabPanel>
-                {/* <TabPanel>
-          {report
-            .returnAllTasksByWorkItemType(tasks, "User Story")
-            .map((task, key) => {
-              return <RelatedBugs key={key} task={task} />;
-            })}
-        </TabPanel> */}
+                </ TabPanel>
                 <TabPanel>
                     {report
                         .returnBugs(props.tasks)
