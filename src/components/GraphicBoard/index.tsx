@@ -36,6 +36,7 @@ interface GraphicBoardProps {
 }
 
 export function GraphicBoard({ tasks }: GraphicBoardProps) {
+  const tagsNotExpected = ["Não prevista", 'Não previsto']
   const report = new Report();
   return (
     <>
@@ -310,7 +311,7 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
               report.returnAllTasksByWorkItemType(tasks, "User Story").length,
               report.returnAllTasksByWorkItemType(tasks, "Bug").length,
               report.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
-              report.returnAllTasksByWorkItemTag(tasks, "Não prevista").length
+              report.returnTagsList(tagsNotExpected, tasks).length
             ]}
           />
         </Box>

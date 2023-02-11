@@ -37,25 +37,6 @@ export default function ReportTabs(props: { tasks: Task[] }) {
     const tagsNotExpected = ["Não prevista", 'Não previsto']
     const report = new Report();
 
-    const returnTagsList = (tags: string[]) => {
-        let itens: any[] = []
-        tags.map((tag) => {
-            let usList = report.returnAllTasksByWorkItemTag(props.tasks, tag).map((item) => {
-                return item
-            })
-            
-            if(usList.length > 0){
-                itens.push(usList)
-            }
-        })
-
-        if(itens[0] !== undefined){
-            return itens[0]
-        }
-
-        return []
-    }
-
     return (
         <Tabs size="md" variant="enclosed" bg="white">
             <TabList>
@@ -95,7 +76,7 @@ export default function ReportTabs(props: { tasks: Task[] }) {
                 </TabPanel>
                 < TabPanel>
                     {
-                        returnTagsList(tagsNotExpected).map((item, key) => {
+                        report.returnTagsList(tagsNotExpected, props.tasks).map((item, key) => {
                             return (
                                 <Box key={key} mb="8">
                                     <Text>{item.ID} - {item.Title}</Text>
