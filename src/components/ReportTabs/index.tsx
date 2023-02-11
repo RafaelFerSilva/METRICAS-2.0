@@ -27,14 +27,14 @@ interface Task {
     "Sprint Start Date": string;
     Tags: string;
     Activity: string;
-  }
+}
 
-  interface ReportProps {
-    tasks : Task[]
-  }
+interface ReportProps {
+    tasks: Task[]
+}
 
-export default function ReportTabs(props: {tasks: Task[]}) {
-
+export default function ReportTabs(props: { tasks: Task[] }) {
+    const tagsNotExpected = ["Não prevista", 'Não previsto']
     const report = new Report();
 
     return (
@@ -74,25 +74,19 @@ export default function ReportTabs(props: {tasks: Task[]}) {
                         })
                     }
                 </TabPanel>
-                <TabPanel>
+                < TabPanel>
                     {
-                        report.returnAllTasksByWorkItemTag(props.tasks, "não previsto").map((item, key) => {
+                        report.returnTagsList(tagsNotExpected, props.tasks).map((item, key) => {
                             return (
                                 <Box key={key} mb="8">
                                     <Text>{item.ID} - {item.Title}</Text>
+                                    <Text></Text>
                                     <Divider />
                                 </Box>
                             )
                         })
                     }
-                </TabPanel>
-                {/* <TabPanel>
-          {report
-            .returnAllTasksByWorkItemType(tasks, "User Story")
-            .map((task, key) => {
-              return <RelatedBugs key={key} task={task} />;
-            })}
-        </TabPanel> */}
+                </ TabPanel>
                 <TabPanel>
                     {report
                         .returnBugs(props.tasks)

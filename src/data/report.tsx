@@ -87,17 +87,36 @@ class Report {
   }
 
   returnAllTasksByWorkItemTag(tasks: Task[], tag: string) {
-    let tags = tasks.filter((item) => {
+    let azureTags = tasks.filter((item) => {
       return typeof item["Tags"] !== "undefined";
     });
 
-    let splitTag = tags.filter((item) => {
+    let splitTag = azureTags.filter((item) => {
       let element = item["Tags"].split("; ");
-      return element.includes(tag);
+        return element.includes(tag); 
     });
 
     return splitTag;
   }
+
+  returnTagsList(tags: string[], tasks: Task[]) {
+    let itens: any[] = []
+    tags.map((tag) => {
+        let usList = this.returnAllTasksByWorkItemTag(tasks, tag).map((item) => {
+            return item
+        })
+        
+        if(usList.length > 0){
+            itens.push(usList)
+        }
+    })
+
+    if(itens[0] !== undefined){
+        return itens[0]
+    }
+
+    return []
+}
 
   returnLifeCicle(tasks: Task[], sprint: any) {
     let cicle: ChartData[];
