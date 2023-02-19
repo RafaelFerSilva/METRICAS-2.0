@@ -1,5 +1,6 @@
 import { Box, List, ListIcon, ListItem } from "@chakra-ui/react";
-import { FaHome, FaRocket, FaVial } from "react-icons/fa";
+import { FaHome, FaRocket, FaVial, FaFilter} from "react-icons/fa";
+
 
 interface MenuItem {
     itemName: string;
@@ -10,10 +11,10 @@ interface MenuItem {
 export default function HomeMenu() {
 
     const menuItens: MenuItem[] = [
-        { itemName: 'Home', itemUrl: "/home", icon: FaHome },
+        // { itemName: 'Home', itemUrl: "/home", icon: FaHome },
         { itemName: 'Sprint Report', itemUrl: "/sprintReport", icon: FaRocket },
-        { itemName: 'Tests Report', itemUrl: "/testsReport", icon: FaVial },
-        { itemName: 'Tests Grafhics', itemUrl: "/testsGraphics", icon: FaVial }
+        { itemName: 'Runs Report', itemUrl: "/testsReport", icon: FaVial },
+        { itemName: 'Tests Graphics', itemUrl: "/testsGraphics", icon: FaFilter }
     ]
 
     return (

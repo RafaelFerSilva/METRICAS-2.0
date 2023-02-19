@@ -62,7 +62,7 @@ function createChart(labels: string[] | undefined, values: any, label: string){
   return data;
 }
 
-export function VerticalBar(props: {title: string, labels: string[] | undefined, data: any, label: any}){
+export function VerticalBar(props: {title: string, labels: any[] | undefined, data: any, label: any}){
 
   return (
     <Box>

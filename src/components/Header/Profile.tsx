@@ -29,7 +29,7 @@ export function Profile() {
           leftIcon={<Icon as={RiLogoutCircleLine} fontSize="20" />}
           onClick={signOut}
         >
-          Sair
+          Logout
         </Button>
       </Box>
     </Flex>

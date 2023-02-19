@@ -7,13 +7,15 @@ import TestsGraphic from "../components/TestsGraphic";
 export default function TestsGraphics() {
 
   return (
-    <PipelineProvider>
-      <AllRunsProvider>
-        <Flex direction="column" h="100vh">
-          <TestsGraphic />
-        </Flex>
-      </AllRunsProvider>
-    </PipelineProvider>
+    <>
+      <PipelineProvider>
+        <AllRunsProvider>
+          <Flex direction="column" h="100vh">
+            <TestsGraphic />
+          </Flex>
+        </AllRunsProvider>
+      </PipelineProvider>
+    </>
 
   );
 }
