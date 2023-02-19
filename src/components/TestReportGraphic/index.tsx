@@ -1,6 +1,13 @@
-import { Box, Flex, Select, SimpleGrid, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { VerticalBar } from "../Charts/ChartVerticalBar";
+import { Box, Flex } from "@chakra-ui/react";
+// import { VerticalBar } from "../Charts/ChartVerticalBar";
+import {
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
+} from '@chakra-ui/react'
+import { LineChart } from "../Charts/ChartLine";
 
 interface RunsCondensedData {
     id: string;
@@ -34,7 +41,7 @@ export default function TestReportGraphic({ data, selectedPipeline }: PropsTestR
     const [returnTime, setReturnTime] = useState<string[]>([])
     const [returnTotal, setReturnTotal] = useState<string[]>([])
     const [seletedLastData, setSeletedLastData] = useState<any>()
-    const lastData = [120, 90, 60, 30, 20, 10, 5]
+    // const lastData = [120, 90, 60, 30, 20, 10, 5]
 
     const handleChange = async (event: any) => {
         event.preventDefault();
@@ -49,23 +56,23 @@ export default function TestReportGraphic({ data, selectedPipeline }: PropsTestR
         let time: string[] = []
         let total: string[] = []
 
-        let reverse = data.reverse()
-        let newData = reverse.slice((data.length - seletedLastData))
-        console.log(data)
-        console.log(reverse)
+        // let reverse = data.reverse()
+        // let newData = reverse.slice((data.length - seletedLastData))
+        // console.log(data)
+        // console.log(reverse)
 
-        newData.map((item) => {
+        data.map((item) => {
             time.push(new Date(item.completedDate).toLocaleDateString())
             total.push(item.totalTests)
         })
 
-        setReturnTime(time)
-        setReturnTotal(total)
+        setReturnTime(time.reverse())
+        setReturnTotal(total.reverse())
     }, [data, seletedLastData])
 
     return (
         <>
-            <Flex direction="column" justify="center">
+            {/* <Flex direction="column" justify="center">
                 <Box display="flex" mt="1px" bg="white" p={["6", "8"]} gap="5" >
                     <VStack spacing="8">
                         <SimpleGrid
@@ -92,7 +99,12 @@ export default function TestReportGraphic({ data, selectedPipeline }: PropsTestR
                         </SimpleGrid>
                     </VStack>
                 </Box>
-            </Flex>
+            </Flex> */}
+            <Alert status='info' p={["4", "5"]}>
+                <AlertIcon />
+                <AlertTitle>Dados baseados nos resultados das runs!</AlertTitle>
+                <AlertDescription>Os jobs não salvam todas as runs executadas, as runs são salvas por um período pré determinado de tempo.</AlertDescription>
+            </Alert>
             <Flex justifyContent="center" mt="10px">
                 <Box
                     p={["4", "5"]}
@@ -103,7 +115,7 @@ export default function TestReportGraphic({ data, selectedPipeline }: PropsTestR
                     maxWidth="1020px"
                     minWidth="920px"
                 >
-                    <VerticalBar
+                    <LineChart
                         title={selectedPipeline.name}
                         labels={returnTime}
                         data={returnTotal}
