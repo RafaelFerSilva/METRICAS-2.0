@@ -62,13 +62,20 @@ function createChart(labels: string[] | undefined, values: any, label: string){
   return data;
 }
 
-export function VerticalBar(props: {title: string, labels: string[] | undefined, data: any, label: any}){
+interface PropsChart {
+  title: string, 
+  labels: any[] | undefined, 
+  data: any, 
+  label: any
+}
+
+export function VerticalBar({title, labels, data, label}: PropsChart){
 
   return (
     <Box>
-      <Heading as="h2" size="sm">{props.title}</Heading>
+      <Heading as="h2" size="sm">{title}</Heading>
       <Divider orientation='horizontal' />
-      <Bar itemType="Line" data={createChart(props.labels, props.data, props.label)} />
+      <Bar itemType="Line" data={createChart(labels, data, label)} />
     </Box>
   );
 }

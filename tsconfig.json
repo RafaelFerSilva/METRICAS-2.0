@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "src/components/Loading/loading.js", "src/components/GetRunListData/index.js"  ],
   "exclude": [
     "node_modules"
   ]
