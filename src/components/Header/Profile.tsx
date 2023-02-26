@@ -11,7 +11,7 @@ export function Profile() {
   
   return (
     <Flex>
-      <Box p='2'>
+      <Box p='3'>
         {/* {showProfileData && (
         <Box mr="4" textAlign="right">
           <Text>{user?.roles}</Text>
@@ -24,9 +24,9 @@ export function Profile() {
         {/* <Avatar size="md" name="Rafael Fernandes" /> */}
         <Button
           size="sm"
-          fontSize="xs"
+          fontSize="sm"
           colorScheme="red"
-          leftIcon={<Icon as={RiLogoutCircleLine} fontSize="18" />}
+          leftIcon={<Icon as={RiLogoutCircleLine} fontSize="20" />}
           onClick={signOut}
         >
           Logout

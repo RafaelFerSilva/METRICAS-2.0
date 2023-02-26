@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState, useMemo } from 'react'
-import { Box, Center, Flex, Grid, GridItem, Select, SimpleGrid, VStack, Text } from "@chakra-ui/react";
+import { Box, Center, Flex, Grid, GridItem, Select, SimpleGrid, VStack } from "@chakra-ui/react";
+import { Header } from '../Header';
 import { AllRunsContext } from '../../contexts/AllRunsContext';
 import { tokenService } from '../../services/auth/tokenService';
 import { setupAPIMetrics } from '../../services/api';
@@ -188,10 +189,12 @@ export default function TestGraphic() {
     return (
         <>
             <Grid templateColumns="repeat(5, 1fr)">
+                <GridItem colSpan={5}>
+                    <Header />
+                </GridItem>
                 <GridItem colSpan={5} >
                     <Flex direction="column" justify="center">
-                        <Box display="flex" mt="1px" bg="white" p={3} gap="5" >
-                            <Text mt="1">Tests Graphics</Text>
+                        <Box display="flex" mt="1px" bg="white" p={["6", "8"]} gap="5" >
                             <VStack spacing="8">
                                 <SimpleGrid
                                     minChildWidth="240px"
@@ -201,8 +204,7 @@ export default function TestGraphic() {
                                     <VStack spacing={3}>
                                         <Select
                                             placeholder="Pipelines"
-                                            borderRadius={6}
-                                            size="sm"
+                                            size="lg"
                                             onChange={(ev) => handleChange(ev)}
                                             value={pipeline}
                                         >

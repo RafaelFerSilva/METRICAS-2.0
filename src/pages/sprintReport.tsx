@@ -1,15 +1,16 @@
-// import { withSession } from "../services/auth/session";
+import { withSession } from "../services/auth/session";
 import {
   Box,
   Flex,
 } from "@chakra-ui/react";
 
-import { Grid, GridItem, Text } from "@chakra-ui/react";
+import { Header } from "../components/Header";
+import { Grid, GridItem } from "@chakra-ui/react";
 import { useState } from "react";
-import { TeamsProvider } from "../../contexts/TeamsContext";
-import ReportTabs from "../ReportTabs";
-import SelectSprintForm from "../SelectSprintForm";
-import TeamSelect from "../TeamSelect";
+import { TeamsProvider } from "../contexts/TeamsContext";
+import ReportTabs from "../components/ReportTabs";
+import SelectSprintForm from "../components/SelectSprintForm";
+import TeamSelect from "../components/TeamSelect";
 
 interface Task {
   ID: string;
@@ -67,10 +68,12 @@ export default function SprintReport() {
     <TeamsProvider>
       <Flex direction="column" h="100vh">
         <Grid templateColumns="repeat(5, 1fr)">
+          <GridItem colSpan={5}>
+            <Header />
+          </GridItem>
           <GridItem colSpan={5} >
-            <Flex direction="column" justify="center" >
-              <Box display="flex" mt="1px" bg="white" p={3} gap={5}>
-                <Text mt="1">Sprint Report</Text>
+            <Flex direction="column" justify="center" gap="2">
+              <Box display="flex" mt="1px" bg="white" p={["6", "8"]} gap="5">
                 <TeamSelect setSprint={setSprint} setTask={setTasks} setTeam={setSprintTeam} />
                 {sprintTeam && <SelectSprintForm  teamId={sprintTeam} sprint={sprint} setTasks={setTasks} />}
               </Box>
@@ -84,10 +87,10 @@ export default function SprintReport() {
 }
 
 // Decorator Pattern
-// export const getServerSideProps = withSession((ctx: any) => {
-//   return {
-//     props: {
-//       session: ctx.req.session,
-//     },
-//   };
-// });
+export const getServerSideProps = withSession((ctx: any) => {
+  return {
+    props: {
+      session: ctx.req.session,
+    },
+  };
+});
