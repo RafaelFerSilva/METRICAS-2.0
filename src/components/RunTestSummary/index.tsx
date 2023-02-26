@@ -9,6 +9,7 @@ import {
     TableContainer,
     Box,
     Heading,
+    Divider,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react';
 
@@ -39,15 +40,14 @@ export default function RunTestSymmary({ runTests, state }: RunTestProps) {
     return (
         <>
             {stateCountTests.length > 0 && (
-                <Box w='99%' p={5} borderWidth='1px' borderRadius='lg' m={2}>
-                    {state == 'NotExecuted' && <Heading>Skipped Tests</Heading>}
-                    {state == 'Failed' && <Heading>{state} Tests</Heading>}
-                    {state == 'Passed' && <Heading>{state} Tests</Heading>}
-                    {/* <Heading>{state} Tests</Heading> */}
-                    <TableContainer >
+                <Box w='100%' p={2} borderWidth='1px' borderRadius='lg' m={1} >
+                    {state == 'NotExecuted' && <><Heading fontSize={"sm"}>Skipped Tests</Heading><Divider /></>}
+                    {state == 'Failed' && <><Heading fontSize={"sm"}>{state} Tests</Heading><Divider /></>}
+                    {state == 'Passed' && <><Heading fontSize={"sm"}>{state} Tests</Heading><Divider /></>}
+                    <TableContainer  >
                         <Table size='sm' variant='striped' colorScheme='teal' >
                             <Thead>
-                                <Tr>
+                                <Tr >
                                     <Th>STATUS</Th>
                                     <Th>NAME</Th>
                                     <Th>SUITE</Th>
@@ -58,9 +58,9 @@ export default function RunTestSymmary({ runTests, state }: RunTestProps) {
                                     let suite = test.automatedTestStorage.split(".")
                                     return (
                                         <Tr key={test.id}>
-                                            <Td>{test.outcome}</Td>
-                                            <Td>{test.automatedTestName}</Td>
-                                            <Td>{suite[1]}</Td>
+                                            <Td fontSize="xs">{test.outcome}</Td>
+                                            <Td fontSize="xs">{test.automatedTestName}</Td>
+                                            <Td fontSize="xs">{suite[1]}</Td>
                                         </Tr>
                                     )
                                 })}
