@@ -108,8 +108,7 @@ export default function PipelineSelect({ setPipelineRuns, setRunCondensedData, s
           <VStack spacing={3}>
             <Select
               placeholder="Pipelines"
-              borderRadius={6}
-              size="sm"
+              size="lg"
               onChange={(ev) => handleChange(ev)}
               value={selectedPipeline}
             >

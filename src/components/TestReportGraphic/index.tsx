@@ -83,7 +83,7 @@ export default function TestReportGraphic({ data, selectedPipeline }: PropsTestR
                             <VStack spacing={3}>
                                 <Select
                                     placeholder="Todas"
-                                    size="md"
+                                    size="lg"
                                     onChange={(ev) => handleChange(ev)}
                                     value={seletedLastData}
                                 >
@@ -100,7 +100,7 @@ export default function TestReportGraphic({ data, selectedPipeline }: PropsTestR
                     </VStack>
                 </Box>
             </Flex> */}
-            <Alert status='info' p={["4", "5"]} fontSize="14">
+            <Alert status='info' p={["4", "5"]}>
                 <AlertIcon />
                 <AlertTitle>Dados baseados nos resultados das runs!</AlertTitle>
                 <AlertDescription>Os jobs não salvam todas as runs executadas, as runs são salvas por um período pré determinado de tempo.</AlertDescription>
@@ -112,8 +112,8 @@ export default function TestReportGraphic({ data, selectedPipeline }: PropsTestR
                     borderRadius={8}
                     pb="4"
                     mb="4"
-                    maxWidth="820px"
-                    minWidth="720px"
+                    maxWidth="1020px"
+                    minWidth="920px"
                 >
                     <LineChart
                         title={selectedPipeline.name}

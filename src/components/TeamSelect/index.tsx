@@ -67,9 +67,8 @@ export default function SprintSelect({ setSprint, setTask, setTeam }: SelectTeam
         >
           <VStack spacing={3}>
             <Select
-              borderRadius={6}
-              size="sm"
               placeholder="Teams"
+              size="lg"
               onChange={(ev) => handleChange(ev)}
               value={selectedTeam}
             >

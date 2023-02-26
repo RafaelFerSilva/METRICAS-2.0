@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Box, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
-import { PipelineProvider } from "../../contexts/PipelineContext";
-import { AllRunsProvider } from "../../contexts/AllRunsContext";
+import { Box, Flex, Grid, GridItem } from "@chakra-ui/react";
+import { Header } from "../components/Header";
+import { PipelineProvider } from "../contexts/PipelineContext";
+import { AllRunsProvider } from "../contexts/AllRunsContext";
 
-import PipelineSelect from "../PipelineSelect";
-import RunsSelect from "../RunsSelect";
-import RunSummary from "../RunSummary";
-import RunTestSymmary from "../RunTestSummary";
+import PipelineSelect from "../components/PipelineSelect";
+import RunsSelect from "../components/RunsSelect";
+import RunSummary from "../components/RunSummary";
+import RunTestSymmary from "../components/RunTestSummary";
+import { withSession } from "../services/auth/session";
 
 
 interface RunsCondensedData {
@@ -62,10 +64,12 @@ export default function TestsReport() {
       <AllRunsProvider>
         <Flex direction="column" h="100vh">
           <Grid templateColumns="repeat(5, 1fr)">
+            <GridItem colSpan={5}>
+              <Header />
+            </GridItem>
             <GridItem colSpan={5} >
                 <Flex direction="column"  justify="center">
-                  <Box display="flex" mt="1px" bg="white" p={3} gap="5" >
-                  <Text mt="1">Runs Report</Text>
+                  <Box display="flex" mt="1px" bg="white" p={["6", "8"]} gap="5" >
                     <PipelineSelect setPipelineRuns={setPipelineRuns} setRunCondensedData={setRunCondensedData} setRunTests={setRunTests}/>
                     {selectPipelineRuns && (
                       <Box display="flex" gap="4" as="form">
@@ -94,11 +98,11 @@ export default function TestsReport() {
   );
 }
 
-// // Decorator Pattern
-// export const getServerSideProps = withSession((ctx: any) => {
-//   return {
-//     props: {
-//       session: ctx.req.session,
-//     },
-//   };
-// });
+// Decorator Pattern
+export const getServerSideProps = withSession((ctx: any) => {
+  return {
+    props: {
+      session: ctx.req.session,
+    },
+  };
+});
