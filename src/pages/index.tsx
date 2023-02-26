@@ -22,8 +22,6 @@ export default function LoginScreen() {
 
   return (
     <form onSubmit={(event) => {
-      // Onsubmit -> Controller (pega dados do usuário e passa para o serviço)
-      // authService -> Serviço
       event.preventDefault();
       authService.login({
         organization: organization,

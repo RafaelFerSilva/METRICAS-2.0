@@ -132,8 +132,9 @@ export default function SprintSelect({
         >
           <VStack spacing={3}>
             <Select
+              borderRadius={6}
+              size="sm"
               placeholder="Sprints"
-              size="lg"
               onChange={(ev) => handleChange(ev)}
               value={selectedSprint}
             >

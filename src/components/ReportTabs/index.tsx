@@ -38,7 +38,7 @@ export default function ReportTabs(props: { tasks: Task[] }) {
     const report = new Report();
 
     return (
-        <Tabs size="md" variant="enclosed" bg="white">
+        <Tabs size="sm" variant="enclosed" bg="white">
             <TabList>
                 <Tab>General</Tab>
                 <Tab>State Graph</Tab>

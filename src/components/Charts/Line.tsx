@@ -118,7 +118,7 @@ export default function LineChat({
 }: CharProps): JSX.Element {
   return (
     <>
-      <Text fontSize="lg" mb="4">
+      <Text fontSize="md" mb="4">
         {title}
       </Text>
 
