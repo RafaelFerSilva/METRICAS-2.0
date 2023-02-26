@@ -6,7 +6,7 @@ export const authService = {
 
     const axiosInstance = setupAPIMetrics({ organization, project_id, token })
     return axiosInstance
-      .get(`https://dev.azure.com/${organization}/_apis/projects?api-version=6.0-preview.3`)
+      .get(`https://dev.azure.com/${organization}/_apis/projects/${project_id}/teams?api-version=6.0`)
       .then((response) => {
         if (!response.status === 200) throw new Error("Organization, Project ID ou Token inválidos!!!");
         tokenService.save(organization, project_id, token)
