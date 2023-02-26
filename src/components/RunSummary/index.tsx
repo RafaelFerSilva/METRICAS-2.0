@@ -38,7 +38,7 @@ export default function RunSummary(runCondensedData: ItemProsps) {
       {runCondensedData.runCondensedData && (
         <Center py={2}>
           <Box
-            maxW={'330px'}
+            maxW={'250px'}
             w={'full'}
             bg={'white'}
             boxShadow={'2xl'}
@@ -46,21 +46,20 @@ export default function RunSummary(runCondensedData: ItemProsps) {
             overflow={'hidden'}>
             <Stack
               textAlign={'center'}
-              p={6}
+              p={2}
               color={'gray.800'}
               align={'center'}>
               <Text
-                fontSize={'sm'}
+                fontSize={'xs'}
                 fontWeight={500}
                 bg={'green.50'}
-                p={2}
                 px={3}
                 color={'green.500'}
                 rounded={'full'}>
                 RUN
               </Text>
               <Stack direction={'row'} align={'center'} justify={'center'}>
-                <Text fontSize={'6xl'} fontWeight={800}>
+                <Text fontSize={'lg'} fontWeight={800}>
                   {runCondensedData.runCondensedData.build}
                 </Text>
               </Stack>
@@ -86,6 +85,7 @@ export default function RunSummary(runCondensedData: ItemProsps) {
                 </ListItem>
               </List>
               <Button
+                fontSize={"sm"}
                 target='_blank'
                 href={runCondensedData.runCondensedData.url}
                 as="a"

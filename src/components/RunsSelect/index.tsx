@@ -174,7 +174,8 @@ export default function RunsSelect({
           <VStack spacing={3}>
             <Select
               placeholder="Pepiline Runs"
-              size="lg"
+              borderRadius={6}
+              size="sm"
               onChange={(ev) => handleChange(ev)}
               value={selectedRun}
             >
