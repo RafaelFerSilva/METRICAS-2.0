@@ -44,6 +44,10 @@ interface RunsId {
     id: string;
 }
 
+interface TestType {
+    id: string;
+    name: string
+}
 const token = tokenService.getToken()
 const project_id = tokenService.getProjectId()
 const organization = tokenService.getOrganization()
@@ -52,11 +56,14 @@ const axiosInstance = setupAPIMetrics({ organization, project_id, token });
 
 export default function TestGraphic() {
     const [pipeline, setPepiline] = useState();
-    const [selectedPipeline, setSelectedPipeline] = useState<Pipeline>()
+    const [test_type, setTestType] = useState('Total');
+    const [selectedTestType, setSelectedTestType] = useState<TestType>()
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState<any[]>([])
     const runsItens = useContext(AllRunsContext);
     const pipelines = useContext(PipelineContext);
+
+    const tests_types = ['Total', 'Passed', 'Failed', 'Skipped']
 
     const handleChange = async (event: any) => {
         event.preventDefault();
@@ -66,8 +73,21 @@ export default function TestGraphic() {
             name: "",
             url: ""
         }
-        setSelectedPipeline(emptyPipeline)
         setPepiline(event.target.value)
+        setSelectedTestType({id:'totalTests', name:'Total'});
+        setTestType('Total')
+
+    };
+
+    const handleTestTypeChange = async (event: any) => {
+        event.preventDefault();
+        switch (event.target.value) {
+            case 'Total': setSelectedTestType({id:'totalTests', name:event.target.value}); break;
+            case 'Passed': setSelectedTestType({id:'passedTests', name:event.target.value}); break;
+            case 'Failed': setSelectedTestType({id:'unanalyzedTests', name:event.target.value}); break;
+            case 'Skipped': setSelectedTestType({id:'notApplicableTests', name:event.target.value}); break;
+        }
+        setTestType(event.target.value)
 
     };
 
@@ -161,7 +181,6 @@ export default function TestGraphic() {
 
         if (pipeline !== "") {
             const pipelineData = returnSelectPipelineData(pipeline)
-            setSelectedPipeline(pipelineData)
 
             if (pipelineData !== undefined) {
                 void async function () {
@@ -181,7 +200,7 @@ export default function TestGraphic() {
 
     const renderGraphic = () => {
         if (data.length > 0) {
-            return < TestReportGraphic data={data} selectedPipeline={selectedPipeline} />
+            return < TestReportGraphic data={data} item_name={selectedTestType} />
         }
     }
 
@@ -203,7 +222,7 @@ export default function TestGraphic() {
                                             placeholder="Pipelines"
                                             borderRadius={6}
                                             size="sm"
-                                            onChange={(ev) => handleChange(ev)}
+                                            onChange={(ev: any) => handleChange(ev)}
                                             value={pipeline}
                                         >
                                             {pipelines.map((pipeline: Pipeline) => {
@@ -217,6 +236,32 @@ export default function TestGraphic() {
                                     </VStack>
                                 </SimpleGrid>
                             </VStack>
+                            {data.length > 0 && (
+                                <VStack spacing="8">
+                                    <SimpleGrid
+                                        minChildWidth="240px"
+                                        spacing={["6", "8"]}
+                                        alignSelf="flex-start"
+                                    >
+                                        <VStack spacing={3}>
+                                            <Select
+                                                borderRadius={6}
+                                                size="sm"
+                                                onChange={(ev: any) => handleTestTypeChange(ev)}
+                                                value={test_type}
+                                            >
+                                                {tests_types.map((type: any) => {
+                                                    return (
+                                                        <option key={type} value={type}>
+                                                            {type}
+                                                        </option>
+                                                    );
+                                                })}
+                                            </Select>
+                                        </VStack>
+                                    </SimpleGrid>
+                                </VStack>
+                            )}
                         </Box>
                     </Flex>
                 </GridItem>
