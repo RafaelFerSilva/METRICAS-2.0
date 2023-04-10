@@ -17,6 +17,7 @@ export default function HomeMenu({ setRenderComponent }: PropsHomeMenu) {
     const menuItens: MenuItem[] = [
         // { itemName: 'Home', itemUrl: "/home", icon: FaHome },
         { itemName: 'Sprint Report', itemUrl: "/sprintReport", icon: FaRocket },
+        { itemName: 'Sprints Compare', itemUrl: "/sprintCompare", icon: FaRocket },
         { itemName: 'Runs Report', itemUrl: "/testsReport", icon: FaVial },
         { itemName: 'Tests Graphics', itemUrl: "/testsGraphics", icon: FaFilter }
     ]

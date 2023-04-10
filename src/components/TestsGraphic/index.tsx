@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useMemo } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Box, Center, Flex, Grid, GridItem, Select, SimpleGrid, VStack, Text } from "@chakra-ui/react";
 import { AllRunsContext } from '../../contexts/AllRunsContext';
 import { tokenService } from '../../services/auth/tokenService';
@@ -205,7 +205,6 @@ export default function TestGraphic() {
     }
 
     return (
-        <>
             <Grid templateColumns="repeat(5, 1fr)">
                 <GridItem colSpan={5} >
                     <Flex direction="column" justify="center">
@@ -265,8 +264,7 @@ export default function TestGraphic() {
                         </Box>
                     </Flex>
                 </GridItem>
+                {isLoading ? <Center height="100%" mt="20px">< Loading color='blue' type='spin' /></Center> : renderGraphic()}
             </Grid>
-            {isLoading ? <Center height="100%" mt="20px">< Loading color='blue' type='spin' /></Center> : renderGraphic()}
-        </>
     )
 }

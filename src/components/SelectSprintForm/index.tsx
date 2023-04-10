@@ -47,6 +47,7 @@ interface SelectSprintProps {
   sprint: Iterations[];
   setworkItemRelations?: (itemRelations: WorkRelations[]) => void;
   setTasks?: (task: Task[]) => void;
+  setIsLoading?: (isLoading: boolean) => void;
 }
 
 export interface Iterations {
@@ -67,13 +68,15 @@ const organization = tokenService.getOrganization()
 
 const axiosInstance = setupAPIMetrics({ organization, project_id, token });
 
-export default function SprintSelect({
+export default function SelectSprintForm({
   teamId,
   sprint,
   setTasks,
+  setIsLoading
 }: SelectSprintProps) {
   const [selectedSprint, setSeletedSprint] = useState("");
   const toast = useToast()
+  let countReturnSprints = 25
 
   const handleChange = async (event: any) => {
     setSeletedSprint(event.target.value);
@@ -96,6 +99,7 @@ export default function SprintSelect({
       if (workitens === undefined) {
         setTasks([]);
       } else if (workitens.length !== 0) {
+        setIsLoading(true)
         await axiosInstance
           .get(`wit/workitems?ids=${workitens}&expand=all&api-version=6.0`)
           .then((response) => {
@@ -106,6 +110,7 @@ export default function SprintSelect({
               );
               setTasks(formatedTasks);
             }
+            setIsLoading(false)
           });
       } else {
         setTasks([]);
@@ -123,7 +128,6 @@ export default function SprintSelect({
   };
 
   return (
-    <>
       <VStack spacing="8">
         <SimpleGrid
           minChildWidth="240px"
@@ -138,7 +142,7 @@ export default function SprintSelect({
               onChange={(ev) => handleChange(ev)}
               value={selectedSprint}
             >
-              {sprint.map((item: Iterations) => {
+              {sprint.slice(0, countReturnSprints).map((item: Iterations) => {
                 return (
                   <option key={item.id} value={item.id}>
                     {item.name}
@@ -149,6 +153,5 @@ export default function SprintSelect({
           </VStack>
         </SimpleGrid>
       </VStack>
-    </>
   );
 }
