@@ -8,6 +8,7 @@ import Report from "../../data/report";
 import { GenericTable } from "../GenericTable";
 import { VerticalBar } from "../Charts/ChartVerticalBar";
 import { GenericGraphic } from "../GenericGraphic";
+import { ChartVerticalBarDataSets } from "../Charts/ChartVerticalBarDataSets";
 
 export interface WorkRelations {
     rel: string;
@@ -235,9 +236,31 @@ export default function CompareSprints({
                     <GenericGraphic title="Bugs by Sprint" label="Bugs by Sprint" labels={condensedSprintsData.name} data={condensedSprintsData.bugs} />
                     <GenericGraphic title="Improvements by Sprint" label="Improvements by Sprint" labels={condensedSprintsData.name} data={condensedSprintsData.improvements} />
                     <GenericGraphic title="User Stories not Expected by Sprint" label="User Stories not Expected by Sprint" labels={condensedSprintsData.name} data={condensedSprintsData.notExpected} />
-                    <GenericGraphic title="Points by Sprint" label="Points by Sprint" labels={condensedSprintsData.name} data={condensedSprintsData.points} />
-                    <GenericGraphic title="Points delivered by sprint" label="Points delivered by sprint" labels={condensedSprintsData.name} data={condensedSprintsData.entegues} />
-                    <GenericGraphic title="Points not delivered by sprint" label="Points not delivered by sprint" labels={condensedSprintsData.name} data={condensedSprintsData.naoEntregue} />
+                    <Flex justifyContent="center">
+                        <Box
+                            p={["4", "5"]}
+                            bg="Snow"
+                            borderRadius={8}
+                            pb="4"
+                            mb="4"
+                            mt="4"
+                            maxWidth="1020px"
+                            minWidth="920px"
+                        >
+                            <ChartVerticalBarDataSets
+                                title="Points by Sprint X Points delivered by sprint X Points not delivered by sprint"
+                                labels1={condensedSprintsData.name}
+                                data1={condensedSprintsData.points}
+                                label1="Points by Sprint"
+                                labels2={condensedSprintsData.name}
+                                data2={condensedSprintsData.entegues}
+                                label2="Points delivered by sprint"
+                                labels3={condensedSprintsData.name}
+                                data3={condensedSprintsData.naoEntregue}
+                                label3="Points not delivered by sprint"
+                            />
+                        </Box>
+                    </Flex>
                 </>
             }
         </>

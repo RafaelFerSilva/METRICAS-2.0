@@ -89,7 +89,7 @@ return (
         <GridItem colSpan={5} >
           <Flex direction="column" justify="center" >
             <Box display="flex" mt="1px" bg="white" p={3} gap={5}>
-              <Text mt="1">Sprint Report</Text>
+              <Text mt="1">Comparison of sprints</Text>
               <TeamSelect setSprint={setSprint} setTask={setTasks} setTeam={setSprintTeam} />
             </Box>
            {sprint.length > 0 && <CompareSprints sprint={sprint} sprintTeam={sprintTeam} />}

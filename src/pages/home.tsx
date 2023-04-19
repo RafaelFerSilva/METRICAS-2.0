@@ -26,7 +26,7 @@ export default function Home() {
       </GridItem>
       <GridItem area={'nav main"'}>
         {renderComponent === "Sprint Report" && <SprintReport />}
-        {renderComponent === "Sprints Compare" && <SprintCompare />}
+        {renderComponent === "Comparison of Sprints" && <SprintCompare />}
         {renderComponent === "Runs Report" && <TestsReport />}
         {renderComponent === "Tests Graphics" && <TestsGraphics />}
       </GridItem>
