@@ -17,7 +17,7 @@ interface Team {
 interface SelectTeamProps {
   setSprint: (sprints: Iterations[]) => void;
   setTeam: (team: Team) => void;
-  setTask: (task: any) => void;
+  setTask?: (task: any) => void;
 }
 
 export interface Iterations {
@@ -43,18 +43,20 @@ export default function SprintSelect({ setSprint, setTask, setTeam }: SelectTeam
   const teams = useContext(TeamsContext);
 
   const handleChange = (event: any) => {
+    setSprint([])
+    setTask([])
     setSeletedTeam(event.target.value);
     setTeam(event.target.value);
+    let countReturnSprint = 25
     axiosInstance
       .get(
         `https://dev.azure.com/${organization}/${project_id}/${event.target.value}/_apis/work/teamsettings/iterations?api-version=6.0`
       )
       .then((response) => {
         if(response.status === 200) {
-          setSprint(response.data.value.reverse());
+          setSprint(response.data.value.reverse().slice(0, countReturnSprint));
         } 
       })
-    setTask([])
   };
 
   return (
