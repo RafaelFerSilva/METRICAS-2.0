@@ -61,12 +61,12 @@ export default function TestReportGraphic({ data, item_name }: PropsTestReportGr
 
     return (
         <>
-            <Alert status='info' p={["4", "5"]} fontSize="14">
+            {/* <Alert status='info' p={["4", "5"]} fontSize="14">
                 <AlertIcon />
                 <AlertTitle>Dados baseados nos resultados das runs!</AlertTitle>
                 <AlertDescription>Os jobs não salvam todas as runs executadas, as runs são salvas por um período pré determinado de tempo.</AlertDescription>
-            </Alert>
-            <Flex justifyContent="center" mt="10px">
+            </Alert> */}
+            <Flex justifyContent="center" mt="10px" ml="50px">
                 <Box
                     p={["4", "5"]}
                     bg="Snow"
