@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
 import { Box, Flex } from "@chakra-ui/react";
-// import { VerticalBar } from "../Charts/ChartVerticalBar";
-import {
-    Alert,
-    AlertIcon,
-    AlertTitle,
-    AlertDescription,
-} from '@chakra-ui/react'
 import { LineChart } from "../Charts/ChartLine";
 
 interface RunsCondensedData {
@@ -23,12 +16,6 @@ interface RunsCondensedData {
     unanalyzedTests: string;
     notApplicableTests: string;
     postProcessState: string;
-    url: string;
-}
-
-interface Pipeline {
-    id: string;
-    name: string;
     url: string;
 }
 
@@ -60,12 +47,6 @@ export default function TestReportGraphic({ data, item_name }: PropsTestReportGr
     }, [data, item_name])
 
     return (
-        <>
-            {/* <Alert status='info' p={["4", "5"]} fontSize="14">
-                <AlertIcon />
-                <AlertTitle>Dados baseados nos resultados das runs!</AlertTitle>
-                <AlertDescription>Os jobs não salvam todas as runs executadas, as runs são salvas por um período pré determinado de tempo.</AlertDescription>
-            </Alert> */}
             <Flex justifyContent="center" mt="10px" ml="50px">
                 <Box
                     p={["4", "5"]}
@@ -84,6 +65,5 @@ export default function TestReportGraphic({ data, item_name }: PropsTestReportGr
                     />
                 </Box>
             </Flex>
-        </>
     )
 }

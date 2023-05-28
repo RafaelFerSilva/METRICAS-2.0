@@ -24,47 +24,6 @@ import {
   BarElement,
   );
 
-function createOptions(title: string){
-const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: title,
-      },
-    },
-  };
-
-  return options;
-}
-
-export interface ChartData {
-  labels: string;
-  data: number | undefined;
-}
-
-function createChart2(cicle: ChartData[], label: string){
-  const data = {
-    labels: cicle.map(label => {
-      return `${label}...`;
-    }),
-    datasets: [
-      {
-        label: label,
-        data: cicle.map(data => {
-          return data.data;
-        }),
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      },
-    ],
-  };
-  return data;
-}
-
 function createChart(labels: string[] | undefined, values: any, label: string){
 
   let truncatedLabel = labels?.map(item => {
