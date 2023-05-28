@@ -97,13 +97,6 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
             data={report.returnCicleTimeByWorkItemType(tasks, "User Story")}
             label="Cycle Time"
           />
-          <GenericTable
-            title=""
-            labels={report.returnTaskID(
-              report.returnAllTasksByWorkItemType(tasks, "User Story")
-            )}
-            data={report.returnCicleTimeByWorkItemType(tasks, "User Story")}
-          />
         </Box>
       </Flex>
 
@@ -126,15 +119,6 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
               report.returnAllTasksByWorkItemType(tasks, "User Story")
             )}
             label="Story Points"
-          />
-          <GenericTable
-            title=""
-            labels={report.returnTaskID(
-              report.returnAllTasksByWorkItemType(tasks, "User Story")
-            )}
-            data={report.returnTasksStoryPoint(
-              report.returnAllTasksByWorkItemType(tasks, "User Story")
-            )}
           />
         </Box>
       </Flex>

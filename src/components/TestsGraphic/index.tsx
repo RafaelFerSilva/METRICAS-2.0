@@ -56,38 +56,15 @@ const axiosInstance = setupAPIMetrics({ organization, project_id, token });
 
 export default function TestGraphic() {
     const [pipeline, setPepiline] = useState();
-    const [test_type, setTestType] = useState('Total');
-    const [selectedTestType, setSelectedTestType] = useState<TestType>()
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState<any[]>([])
     const runsItens = useContext(AllRunsContext);
     const pipelines = useContext(PipelineContext);
 
-    const tests_types = ['Total', 'Passed', 'Failed', 'Skipped']
-
     const handleChange = async (event: any) => {
         event.preventDefault();
         setData([])
-        let emptyPipeline: Pipeline = {
-            id: "",
-            name: "",
-            url: ""
-        }
         setPepiline(event.target.value)
-        setSelectedTestType({id:'totalTests', name:'Total'});
-        setTestType('Total')
-
-    };
-
-    const handleTestTypeChange = async (event: any) => {
-        event.preventDefault();
-        switch (event.target.value) {
-            case 'Total': setSelectedTestType({id:'totalTests', name:event.target.value}); break;
-            case 'Passed': setSelectedTestType({id:'passedTests', name:event.target.value}); break;
-            case 'Failed': setSelectedTestType({id:'unanalyzedTests', name:event.target.value}); break;
-            case 'Skipped': setSelectedTestType({id:'notApplicableTests', name:event.target.value}); break;
-        }
-        setTestType(event.target.value)
 
     };
 
@@ -200,7 +177,20 @@ export default function TestGraphic() {
 
     const renderGraphic = () => {
         if (data.length > 0) {
-            return < TestReportGraphic data={data} item_name={selectedTestType} />
+            const totalTests: TestType = {id:'totalTests', name:'Total'}
+            const passedTests: TestType = {id:'passedTests', name:'Passed'}
+            const unanalyzedTests: TestType = {id:'unanalyzedTests', name:'Failed'}
+            const notApplicableTests: TestType = {id:'notApplicableTests', name:'Skipped'}
+
+            const renderItem = (
+                    <Box width="100%">
+                        < TestReportGraphic data={data} item_name={totalTests} />
+                        < TestReportGraphic data={data} item_name={passedTests} />
+                        < TestReportGraphic data={data} item_name={unanalyzedTests} />
+                        < TestReportGraphic data={data} item_name={notApplicableTests} />
+                    </Box>
+            )
+            return renderItem
         }
     }
 
@@ -235,36 +225,10 @@ export default function TestGraphic() {
                                     </VStack>
                                 </SimpleGrid>
                             </VStack>
-                            {data.length > 0 && (
-                                <VStack spacing="8">
-                                    <SimpleGrid
-                                        minChildWidth="240px"
-                                        spacing={["6", "8"]}
-                                        alignSelf="flex-start"
-                                    >
-                                        <VStack spacing={3}>
-                                            <Select
-                                                borderRadius={6}
-                                                size="sm"
-                                                onChange={(ev: any) => handleTestTypeChange(ev)}
-                                                value={test_type}
-                                            >
-                                                {tests_types.map((type: any) => {
-                                                    return (
-                                                        <option key={type} value={type}>
-                                                            {type}
-                                                        </option>
-                                                    );
-                                                })}
-                                            </Select>
-                                        </VStack>
-                                    </SimpleGrid>
-                                </VStack>
-                            )}
                         </Box>
                     </Flex>
                 </GridItem>
-                {isLoading ? <Center height="100%" mt="20px">< Loading color='blue' type='spin' /></Center> : renderGraphic()}
+                {isLoading ? <Center mt="100%" height="100%">< Loading color='blue' type='spin' /></Center> : renderGraphic()}
             </Grid>
     )
 }
