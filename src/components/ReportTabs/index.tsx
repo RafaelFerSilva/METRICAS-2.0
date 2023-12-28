@@ -34,7 +34,7 @@ interface ReportProps {
 }
 
 export default function ReportTabs(props: { tasks: Task[] }) {
-    const tagsNotExpected = ["Não prevista", 'Não previsto']
+    const tagsNotExpected = ["Não prevista", 'Não previsto', 'Adiantada']
     const report = new Report();
 
     return (
