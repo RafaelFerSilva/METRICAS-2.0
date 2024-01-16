@@ -117,7 +117,7 @@ export default function RunsSelectData({
               unanalyzedTests: response.data.unanalyzedTests,
               notApplicableTests: response.data.notApplicableTests,
               postProcessState: response.data.notApplicableTests,
-              url: `https://dev.azure.com/${organization}/Satelital/_build/results?buildId=${response.data.build.id}&view=results`
+              url: `https://dev.azure.com/${organization}/Satelital/_build/results?buildId=${response.data.build.id}&view=results`,
             }
             setRunsCondensedData(condensedData)
           }

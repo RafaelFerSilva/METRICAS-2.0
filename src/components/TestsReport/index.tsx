@@ -40,6 +40,7 @@ interface RunTestItens {
   state: string;
   testCaseReferenceId: string;
   testRun: string;
+  errorMessage: string;
 }
 
 interface Run {
