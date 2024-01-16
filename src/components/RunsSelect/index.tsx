@@ -46,6 +46,7 @@ interface RunTestItens {
   state: string;
   testCaseReferenceId: string;
   testRun: string;
+  errorMessage: string;
 }
 
 
@@ -117,7 +118,7 @@ export default function RunsSelect({
               unanalyzedTests: response.data.unanalyzedTests,
               notApplicableTests: response.data.notApplicableTests,
               postProcessState: response.data.notApplicableTests,
-              url: `https://dev.azure.com/${organization}/Satelital/_build/results?buildId=${response.data.build.id}&view=results`
+              url: `https://dev.azure.com/${organization}/Satelital/_build/results?buildId=${response.data.build.id}&view=results`,
             }
             setRunCondensedData(condensedData)
           }
@@ -143,6 +144,7 @@ export default function RunsSelect({
                 state: test.state,
                 testCaseReferenceId: test.testCaseReferenceId,
                 testRun: test.testRun.id,
+                errorMessage: test.errorMessage,
               }
 
               tests.push(testItem)

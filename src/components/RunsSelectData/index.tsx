@@ -20,6 +20,7 @@ interface RunsCondensedData {
   notApplicableTests: string;
   postProcessState: string;
   url: string;
+  errorMessage: string;
 }
 
 interface Run {
@@ -46,6 +47,7 @@ interface RunTestItens {
   state: string;
   testCaseReferenceId: string;
   testRun: string;
+  errorMessage: string,
 }
 
 
@@ -117,7 +119,8 @@ export default function RunsSelectData({
               unanalyzedTests: response.data.unanalyzedTests,
               notApplicableTests: response.data.notApplicableTests,
               postProcessState: response.data.notApplicableTests,
-              url: `https://dev.azure.com/${organization}/Satelital/_build/results?buildId=${response.data.build.id}&view=results`
+              url: `https://dev.azure.com/${organization}/Satelital/_build/results?buildId=${response.data.build.id}&view=results`,
+              errorMessage: test.errorMessage,
             }
             setRunsCondensedData(condensedData)
           }
