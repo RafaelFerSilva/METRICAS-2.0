@@ -7,6 +7,7 @@ import { useState } from "react";
 import SprintReport from "../components/SprintReport";
 import TestsReport from "../components/TestsReport";
 import TestsGraphics from "../components/TestsGraphics";
+import TestsCases from "../components/TestsCases";
 import SprintCompare from "../components/SprintCompare";
 
 export default function Home() {
@@ -29,6 +30,7 @@ export default function Home() {
         {renderComponent === "Comparison of Sprints" && <SprintCompare />}
         {renderComponent === "Runs Report" && <TestsReport />}
         {renderComponent === "Tests Graphics" && <TestsGraphics />}
+        {renderComponent === "Tests Cases" && <TestsCases />}
       </GridItem>
     </Grid>
   );
