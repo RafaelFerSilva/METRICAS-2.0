@@ -1,9 +1,9 @@
 import { Flex, Box, Center, Text } from "@chakra-ui/react";
-import { TestPlainProvider } from "../../contexts/TestPlainContext";
+import { TestPlainContext, TestPlainProvider } from "../../contexts/TestPlainContext";
 import TestPlanSelect from "../TestPlanSelect";
 import TestSuiteSelect from "../TestSuiteSelect";
 import TestCaseReport from "../TestCaseReport";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Loading from '../Loading';
 
 export default function TestsGraphics() {
@@ -26,7 +26,7 @@ export default function TestsGraphics() {
       <TestPlainProvider>
           <Flex direction="column" h="100vh">
           <Box display="flex" mt="1px" bg="white" p={3} gap={5}>
-            <TestPlanSelect setSuites={setSuites} />
+            <TestPlanSelect setSuites={setSuites} setTestsCases={setTestsCases} />
             {suites && < TestSuiteSelect setTestsCases={setTestsCases} suites={suites} setIsLoading={setIsLoading} />}
           </Box>
           <Box display="grid" mt="1px" bg="white" p={3} gap={5} >
