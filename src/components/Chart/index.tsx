@@ -18,8 +18,8 @@ const Chart: React.FC<ChartProps> = ({ data, title }) => {
       borderRadius={8}
       pb="4"
       mb="4"
-      maxWidth="820px"
-      minWidth="720px"
+      maxWidth="720px"
+      minWidth="620px"
     >
       <Bar
         data={data}
