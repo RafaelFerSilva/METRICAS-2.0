@@ -7,7 +7,6 @@ import { useState } from "react";
 import SprintReport from "../components/SprintReport";
 import TestsReport from "../components/TestsReport";
 import TestsGraphics from "../components/TestsGraphics";
-import TestsCases from "../components/TestsCases";
 import SprintCompare from "../components/SprintCompare";
 import AllTestsGraphics from "../components/AllTestsCases";
 
