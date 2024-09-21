@@ -9,6 +9,7 @@ import TestsReport from "../components/TestsReport";
 import TestsGraphics from "../components/TestsGraphics";
 import TestsCases from "../components/TestsCases";
 import SprintCompare from "../components/SprintCompare";
+import AllTestsGraphics from "../components/AllTestsCases";
 
 export default function Home() {
   const [renderComponent, setRenderComponent] = useState("Sprint Report")
@@ -30,7 +31,7 @@ export default function Home() {
         {renderComponent === "Comparison of Sprints" && <SprintCompare />}
         {renderComponent === "Runs Report" && <TestsReport />}
         {renderComponent === "Tests Graphics" && <TestsGraphics />}
-        {renderComponent === "Tests Cases" && <TestsCases />}
+        {renderComponent === "Tests Cases" && <AllTestsGraphics />}
       </GridItem>
     </Grid>
   );

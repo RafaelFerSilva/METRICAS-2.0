@@ -3,7 +3,7 @@ import { TestPlainContext, TestPlainProvider } from "../../contexts/TestPlainCon
 import TestPlanSelect from "../TestPlanSelect";
 import TestSuiteSelect from "../TestSuiteSelect";
 import TestCaseReport from "../TestCaseReport";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Loading from '../Loading';
 
 export default function TestsGraphics() {

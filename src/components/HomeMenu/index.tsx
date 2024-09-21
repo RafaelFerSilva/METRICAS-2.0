@@ -20,7 +20,7 @@ export default function HomeMenu({ setRenderComponent }: PropsHomeMenu) {
         { itemName: 'Comparison of Sprints', itemUrl: "/sprintCompare", icon: FaRocket },
         { itemName: 'Runs Report', itemUrl: "/testsReport", icon: FaVial },
         { itemName: 'Tests Graphics', itemUrl: "/testsGraphics", icon: FaFilter },
-        { itemName: 'Tests Cases', itemUrl: "/testsCases", icon: FaFilter }
+        { itemName: 'Tests Cases', itemUrl: "/alltestsCases", icon: FaFilter }
     ]
 
     const handleMenuItem = (event: any) => {
