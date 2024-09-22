@@ -24,6 +24,7 @@
     "axios": "^0.25.0",
     "azure-devops-node-api": "^11.1.1",
     "chart.js": "^3.7.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "dotenv": "^16.0.0",
     "framer-motion": "^6.2.3",
     "fs": "^0.0.1-security",

@@ -95,11 +95,3 @@ export default function SprintReport() {
   );
 }
 
-// Decorator Pattern
-// export const getServerSideProps = withSession((ctx: any) => {
-//   return {
-//     props: {
-//       session: ctx.req.session,
-//     },
-//   };
-// });

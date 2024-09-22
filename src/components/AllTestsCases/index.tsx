@@ -2,14 +2,7 @@
 import { Center } from '@chakra-ui/react';
 import Loading from 'react-loading';
 import { TestCasesProvider, useTestCases } from '../../contexts/AllTestPlainContext'; // Ajuste o caminho conforme necessário
-import { setupAPIMetrics } from "../../services/api";
-import { tokenService } from '../../services/auth/tokenService';
-import TestCaseReport2 from '../TestCaseReport2';
-
-const token = tokenService.getToken();
-const project_id = tokenService.getProjectId();
-const organization = tokenService.getOrganization();
-const axiosInstance = setupAPIMetrics({ organization, project_id, token });
+import TestCaseReport from '../TestCaseReport';
 
 const TestCasesList = () => {
   const { testCases, loading, error } = useTestCases();
@@ -28,10 +21,10 @@ const TestCasesList = () => {
     return <Center height="100vh"><p>{error}</p></Center>;
   }
 
-  // Renderiza o componente TestCaseReport2 quando os dados estão disponíveis
+  // Renderiza o componente TestCaseReport quando os dados estão disponíveis
   return (
     <div>
-      <TestCaseReport2 testsCases={testCases} />
+      <TestCaseReport testsCases={testCases} />
     </div>
   );
 };

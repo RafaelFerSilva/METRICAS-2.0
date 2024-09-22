@@ -7,10 +7,8 @@ interface TableComponentProps {
 
 // Função para acessar e formatar valores
 const getValue = (row: Record<string, any>, header: string) => {
-  // Acessa a propriedade dentro do objeto usando o header completo
   const value = row[header];
 
-  // Verifica se o valor é um objeto e não renderiza diretamente
   if (value && typeof value === "object") {
     return JSON.stringify(value); // Serializa o objeto para string
   }
@@ -20,7 +18,6 @@ const getValue = (row: Record<string, any>, header: string) => {
 
 // Função para pegar o último item após o ponto no header
 const getHeaderDisplayName = (header: string) => {
-  // Verifica se o header é um dos customizados e retorna o nome correto
   if (header === "Custom.ec38de40-257b-4c45-9db9-284080382c3e") {
     return "AutomationStatus";
   }
@@ -28,19 +25,19 @@ const getHeaderDisplayName = (header: string) => {
     return "Origin";
   }
   
-  // Caso contrário, retorna o último item após o ponto
   const parts = header.split(".");
-  return parts[parts.length - 1]; // Retorna o último item do array, ou seja, o nome simples
+  return parts[parts.length - 1];
 };
+
 const TableTestCase: React.FC<TableComponentProps> = ({ data, headers }) => {
   return (
-    <Box mt="8">
-      <Table colorScheme="twitter" size="sm">
+    <Box mt="8" overflowX="auto"> {/* Permite scroll horizontal em dispositivos pequenos */}
+      <Table variant="striped" colorScheme="twitter" size="sm">
         <Thead>
           <Tr>
             {headers.map((header, index) => (
-              <Th key={index} textAlign="center">
-                {getHeaderDisplayName(header)} {/* Exibe apenas o último item do header */}
+              <Th key={index} textAlign="center" fontSize="xs" fontWeight="bold"> {/* Fonte pequena */}
+                {getHeaderDisplayName(header)}
               </Th>
             ))}
           </Tr>
@@ -49,8 +46,14 @@ const TableTestCase: React.FC<TableComponentProps> = ({ data, headers }) => {
           {data.map((row, rowIndex) => (
             <Tr key={rowIndex}>
               {headers.map((header, headerIndex) => (
-                <Td key={headerIndex} textAlign="center">
-                  {getValue(row, header)} {/* Acessa o valor utilizando o header completo */}
+                <Td key={headerIndex} textAlign="center" fontSize="xs"> {/* Fonte pequena */}
+                  {header === "AREAPATH" || header === "TITLE" ? (
+                    <Box whiteSpace="normal" wordBreak="break-word">
+                      {getValue(row, header)}
+                    </Box>
+                  ) : (
+                    getValue(row, header)
+                  )}
                 </Td>
               ))}
             </Tr>
