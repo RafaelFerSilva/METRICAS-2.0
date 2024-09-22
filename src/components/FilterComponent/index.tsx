@@ -1,5 +1,4 @@
-// src/components/FilterComponent/index.tsx
-import { Select, Button, VStack, HStack, Box, Stack, Text } from "@chakra-ui/react";
+import { Select, Button, VStack, HStack, Box, Stack, Text, Divider, Heading } from "@chakra-ui/react";
 import { useState } from "react";
 
 interface FilterComponentProps {
@@ -8,6 +7,18 @@ interface FilterComponentProps {
   processedData: any[];
   labels: string[];
 }
+
+// Função para pegar o último item após o ponto no header
+const getHeaderDisplayName = (header: string) => {
+  if (header === "Custom.ec38de40-257b-4c45-9db9-284080382c3e") {
+    return "AutomationStatus";
+  }
+  if (header === "Custom.e0ac16d1-5c7a-42f5-8111-be8b335c9e8e") {
+    return "Origin";
+  }
+  const parts = header.split(".");
+  return parts[parts.length - 1];
+};
 
 export default function FilterComponent({
   filters,
@@ -51,17 +62,17 @@ export default function FilterComponent({
 
   return (
     <VStack spacing={4} mb={4} align="stretch">
-      <HStack spacing={4} justifyContent="flex-start">
+      <HStack spacing={2} wrap="wrap" justifyContent="flex-start">
         <Select
           placeholder="Select Field"
           value={newFilter.field}
           onChange={(e) => setNewFilter({ ...newFilter, field: e.target.value })}
           size="sm"
-          width="300px"
+          width="250px"
         >
           {availableFields.map((label) => (
             <option key={label} value={label}>
-              {label}
+              {getHeaderDisplayName(label)}
             </option>
           ))}
         </Select>
@@ -71,7 +82,7 @@ export default function FilterComponent({
           onChange={(e) => setNewFilter({ ...newFilter, value: e.target.value })}
           isDisabled={!newFilter.field}
           size="sm"
-          width="450px"
+          width="350px"
         >
           {newFilter.field
             ? availableValues(newFilter.field).map((value) => (
@@ -81,7 +92,7 @@ export default function FilterComponent({
               ))
             : null}
         </Select>
-        <Button onClick={handleAddFilter} colorScheme="blue"  size="sm">
+        <Button onClick={handleAddFilter} colorScheme="blue" size="sm">
           Add Filter
         </Button>
         <Button onClick={handleClearFilters} colorScheme="red" size="sm">
@@ -89,18 +100,27 @@ export default function FilterComponent({
         </Button>
       </HStack>
 
-      <Stack spacing={2}>
-        {filters.map((filter, index) => (
-          <HStack key={index} spacing={2}>
-            <Box>
-              {filter.field}: {filter.value}
-            </Box>
-            <Button onClick={() => handleRemoveFilter(index)} colorScheme="teal" size="sm">
-              Remove
-            </Button>
-          </HStack>
-        ))}
-      </Stack>
+      {/* Seção de Filtros Selecionados, só aparece se houver filtros */}
+      {filters.length > 0 && (
+        <Box p={4} borderWidth={1} borderColor="gray.200" borderRadius="md" bg="gray.50">
+          <Heading size="sm" mb={2}>
+            Selected Filters
+          </Heading>
+          <Divider mb={2} />
+          <Stack spacing={2}>
+            {filters.map((filter, index) => (
+              <HStack key={index} spacing={2}>
+                <Box>
+                  {getHeaderDisplayName(filter.field)}: {filter.value}
+                </Box>
+                <Button onClick={() => handleRemoveFilter(index)} colorScheme="teal" size="sm">
+                  Remove
+                </Button>
+              </HStack>
+            ))}
+          </Stack>
+        </Box>
+      )}
     </VStack>
   );
 }
