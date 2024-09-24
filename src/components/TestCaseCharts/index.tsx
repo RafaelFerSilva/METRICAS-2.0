@@ -13,6 +13,8 @@ interface Props {
     origemChartData: any;
     isSmokePercentChartData: any;
     isSmokeChartData: any;
+    statePercentCharData: any;
+    stateCharData: any
   };
 }
 
@@ -28,6 +30,8 @@ export default function TestCaseCharts({ chartData }: Props) {
     origemChartData,
     isSmokePercentChartData,
     isSmokeChartData,
+    statePercentCharData,
+    stateCharData
   } = chartData;
 
   return (
@@ -141,6 +145,28 @@ export default function TestCaseCharts({ chartData }: Props) {
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
         <Chart data={isSmokeChartData} title="Smoke Test" />
+      </Box>
+      <Box
+        p="6"
+        bg="white"
+        borderRadius="md"
+        boxShadow="md"
+        width="100%"
+        transition="transform 0.2s, box-shadow 0.2s"
+        _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
+      >
+        <Chart data={statePercentCharData} title="State %" />
+      </Box>
+      <Box
+        p="6"
+        bg="white"
+        borderRadius="md"
+        boxShadow="md"
+        width="100%"
+        transition="transform 0.2s, box-shadow 0.2s"
+        _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
+      >
+        <Chart data={stateCharData} title="State" />
       </Box>
     </SimpleGrid>
   );

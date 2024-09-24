@@ -41,6 +41,8 @@ const chartData = {
   origemChartData: prepareRawChartData(countDistinctValues.origem),
   isSmokePercentChartData: preparePercentChartData(countDistinctValues.isSmoke),
   isSmokeChartData: prepareRawChartData(countDistinctValues.isSmoke),
+  statePercentCharData: preparePercentChartData(countDistinctValues.state),
+  stateCharData: prepareRawChartData(countDistinctValues.state)
 };
 
   const labels = [
@@ -52,6 +54,7 @@ const chartData = {
     "Custom.SmokeTest",
     "Custom.Plataforma",
     "Custom.e0ac16d1-5c7a-42f5-8111-be8b335c9e8e",
+    "System.State",
   ];
 
   return (
