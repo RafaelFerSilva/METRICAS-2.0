@@ -81,9 +81,6 @@ export const fetchTestSuites = async (planId: number) => {
                [System.State] 
         FROM WorkItems 
         WHERE [System.WorkItemType] = 'Test Case' 
-          AND [System.Title] != 'teste' 
-          AND [System.Title] != 'test' 
-          AND [System.State] != 'Closed' 
           AND [Custom.ec38de40-257b-4c45-9db9-284080382c3e] != 'Não passível de automação'
       `
     };
