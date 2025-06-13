@@ -2,6 +2,7 @@ import React from "react";
 import { Box, List, ListIcon, IconButton, Text, Flex, Avatar } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { MdAssessment, MdCompareArrows, MdReport, MdDashboard, MdSettings } from "react-icons/md";
+import { RiLogoutCircleLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 import { ActiveLink } from "../ActiveLink";
 import { useSidebarDrawer } from "../../contexts/SidebarDraweContext";
@@ -27,6 +28,10 @@ export default function HomeMenu() {
 
   const isActiveRoute = (url: string) => {
     return router.asPath === url;
+  };
+
+  const handleLogout = () => {
+    router.push('/logout');
   };
 
   return (
@@ -81,7 +86,7 @@ export default function HomeMenu() {
         flexDirection="column"
         height="100vh"
       >
-        {/* Header */}
+        {/* Header com Logo Azure Metrics */}
         <Flex
           align="center"
           justify="center"
@@ -90,9 +95,8 @@ export default function HomeMenu() {
           bg="blue.600"
           color="white"
         >
-          <Box as={MdDashboard} boxSize="8" />
-          <Text ml="2" fontSize="xl" fontWeight="bold">
-            Dashboard
+          <Text fontSize="xl" fontWeight="bold" letterSpacing="tight">
+            Azure Metrics
           </Text>
         </Flex>
 
@@ -152,6 +156,7 @@ export default function HomeMenu() {
 
         {/* Footer */}
         <Box p="4" borderTop="1px" borderColor="gray.200">
+          {/* Configurações */}
           <Flex
             align="center"
             px="2"
@@ -165,9 +170,30 @@ export default function HomeMenu() {
             }}
             fontSize="sm"
             fontWeight="medium"
+            mb="2"
           >
             <Box as={MdSettings} boxSize="5" mr="3" />
             <Text>Configurações</Text>
+          </Flex>
+
+          {/* Logout */}
+          <Flex
+            align="center"
+            px="2"
+            py="2"
+            borderRadius="md"
+            color="red.600"
+            _hover={{ 
+              bg: "red.50",
+              color: "red.700",
+              cursor: "pointer"
+            }}
+            fontSize="sm"
+            fontWeight="medium"
+            onClick={handleLogout}
+          >
+            <Box as={RiLogoutCircleLine} boxSize="5" mr="3" />
+            <Text>Logout</Text>
           </Flex>
         </Box>
       </Box>
