@@ -21,8 +21,8 @@ export default function HomeMenu() {
     { itemName: 'Dashboard', itemUrl: "/dashboard", icon: MdDashboard },
     { itemName: 'Sprint Report', itemUrl: "/sprintReport", icon: MdReport },
     { itemName: 'Comparison of Sprints', itemUrl: "/sprintCompare", icon: MdCompareArrows },
-    { itemName: 'Runs Report', itemUrl: "/testsReport", icon: MdAssessment },
-    { itemName: 'Tests Graphics', itemUrl: "/testsGraphics", icon: MdAssessment },
+    // { itemName: 'Runs Report', itemUrl: "/testsReport", icon: MdAssessment },
+    // { itemName: 'Tests Graphics', itemUrl: "/testsGraphics", icon: MdAssessment },
     { itemName: 'Tests Cases', itemUrl: "/alltestsCases", icon: MdAssessment }
   ];
 
@@ -39,7 +39,7 @@ export default function HomeMenu() {
       {/* Mobile menu button */}
       <Box 
         display={{ base: "block", lg: "none" }} 
-        position="fixed" 
+        position="static" 
         top="4" 
         left="4" 
         zIndex="50"

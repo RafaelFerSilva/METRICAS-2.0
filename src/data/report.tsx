@@ -58,10 +58,10 @@ class Report {
     let task_name = tasks.map((item) => {
       let title = `${item.ID} - ${item.Title}`
 
-      if(title.length < 40){
+      if (title.length < 40) {
         return title
       }
-        return `${title.slice(0, 40)}...`
+      return `${title.slice(0, 40)}...`
     });
 
     return task_name;
@@ -79,7 +79,7 @@ class Report {
   returnAllTasksByWorkItemType(tasks: Task[], workItemType: string) {
     let task = tasks.filter(function (item) {
       return (
-        item["Work Item Type"] === workItemType 
+        item["Work Item Type"] === workItemType
       );
     });
 
@@ -93,7 +93,7 @@ class Report {
 
     let splitTag = azureTags.filter((item) => {
       let element = item["Tags"].split("; ");
-        return element.includes(tag); 
+      return element.includes(tag);
     });
 
     return splitTag;
@@ -102,21 +102,21 @@ class Report {
   returnTagsList(tags: string[], tasks: Task[]) {
     let itens: any[] = []
     tags.map((tag) => {
-        let usList = this.returnAllTasksByWorkItemTag(tasks, tag).map((item) => {
-            return item
-        })
-        
-        if(usList.length > 0){
-            itens.push(usList)
-        }
+      let usList = this.returnAllTasksByWorkItemTag(tasks, tag).map((item) => {
+        return item
+      })
+
+      if (usList.length > 0) {
+        itens.push(usList)
+      }
     })
 
-    if(itens[0] !== undefined){
-        return itens[0]
+    if (itens[0] !== undefined) {
+      return itens[0]
     }
 
     return []
-}
+  }
 
   returnLifeCicle(tasks: Task[], sprint: any) {
     let cicle: ChartData[];
@@ -138,6 +138,16 @@ class Report {
 
     const novoArray = Array.from(new Set(state));
     return novoArray;
+  }
+
+  returnStateDate(item: Task[], stateItem: string, color_one: string = "blue", color_two: string = "gray") {
+    const userStoryStatesData = this.returnStates(item).map((state, index) => ({
+      label: state,
+      value: this.returnArraySprintTasksStateCount(item)[index] || 0,
+      color: state === stateItem ? "green" : state === "Active" ? color_one : color_two
+    }));
+
+    return userStoryStatesData;
   }
 
   returnArraySprintTasksStateCount(tasks: Task[]) {
@@ -250,6 +260,111 @@ class Report {
     let bugs = this.returnAllTasksByWorkItemType(tasks, "Bug")
 
     return bugs;
+  }
+
+  returnUsersStories(tasks: Task[]) {
+    return this.returnAllTasksByWorkItemType(tasks, "User Story");
+  }
+
+  returnTaskItens(tasks: Task[]) {
+    return this.returnAllTasksByWorkItemType(tasks, "Task");
+  }
+
+  returnDefects(tasks: Task[]) {
+    return this.returnAllTasksByWorkItemType(tasks, "Defect");
+  }
+
+  returnCompletedUsersStoriesLenght(tasks: Task[]) {
+    const userStories = this.returnUsersStories(tasks)
+    return userStories.filter(us => us.State === "Closed").length;
+  }
+
+  returnCompletedDefectsLenght(tasks: Task[]) {
+    const defects = this.returnDefects(tasks)
+    return defects.filter(def => def.State === "Closed").length;
+  }
+
+  returnCompletedBugs(tasks: Task[]) {
+    const bugs = this.returnBugs(tasks);
+    return bugs.filter(bug => bug.State === "Closed").length;
+  }
+
+  returncompletedTasksItems(tasks: Task[]) {
+    const taskItems = this.returnTaskItens(tasks);
+    return taskItems.filter(task =>
+      task.State === 'Closed'
+    ).length;
+  }
+
+  returntotalStoryPoints(tasks: Task[]) {
+    const userStories = this.returnUsersStories(tasks)
+    return userStories.reduce((sum, story) => {
+      const points = typeof story["Story Points"] === 'number' ? story["Story Points"] : 0;
+      return sum + points;
+    }, 0);
+  }
+
+  returncompletedStoryPoints(tasks: Task[]) {
+    const userStories = this.returnUsersStories(tasks)
+    return userStories
+      .filter(story => story.State === "Closed")
+      .reduce((sum, story) => {
+        const points = typeof story["Story Points"] === 'number' ? story["Story Points"] : 0;
+        return sum + points;
+      }, 0);
+  }
+
+  returnSprintData(tasks: Task[]) {
+    const userStories = this.returnUsersStories(tasks);
+    const bugs = this.returnBugs(tasks);
+    const taskItems = this.returnTaskItens(tasks);
+    const defects = this.returnDefects(tasks);
+    const completedTasks = this.returnTasksCompleted(tasks);
+
+    const userStoryStatesData = this.returnStateDate(userStories, "Closed")
+    const bugStatesData = this.returnStateDate(bugs, "Closed", "red", "gray")
+    const defectStatesData = this.returnStateDate(defects, "Closed", "red", "gray")
+    const taskStatesData = this.returnStateDate(taskItems, "Closed", "purple", "gray")
+
+    const completedUserStories = this.returnCompletedUsersStoriesLenght(tasks)
+    const completedDefects = this.returnCompletedDefectsLenght(tasks);
+    const completedBugs = this.returnCompletedBugs(tasks);
+    const completedTasksItems = this.returncompletedTasksItems(tasks);
+    const completedStoryPoints = this.returncompletedStoryPoints(tasks)
+    const totalStoryPoints = this.returntotalStoryPoints(tasks);
+
+    const userStoriesRate = userStories.length > 0 ? (userStories.filter(us => us.State === "Closed").length / userStories.length) * 100 : 0;
+    const completionRate = tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
+    const storyPointsRate = totalStoryPoints > 0 ? (completedStoryPoints / totalStoryPoints) * 100 : 0;
+    const usRate = userStories.length > 0 ? (userStories.filter(us => us.State === "Closed").length / userStories.length) * 100 : 0;
+    const defectsRate = defects.length > 0 ? (defects.filter(defect => defect.State === "Closed").length / defects.length) * 100 : 0;
+    const bugsRate = bugs.length > 0 ? (bugs.filter(bug => bug.State === "Closed").length / bugs.length) * 100 : 0;
+    const tasksItensRate = taskItems.length > 0 ? (taskItems.filter(task => task.State === "Closed").length / taskItems.length) * 100 : 0;
+
+    return {
+      userStories: userStories,
+      bugs: bugs,
+      taskItems: taskItems,
+      defects: defects,
+      completedTasks: completedTasks,
+      userStoryStatesData: userStoryStatesData,
+      bugStatesData: bugStatesData,
+      defectStatesData: defectStatesData,
+      taskStatesData: taskStatesData,
+      completedUserStories: completedUserStories,
+      completedDefects: completedDefects,
+      completedBugs: completedBugs,
+      completedTasksItems: completedTasksItems,
+      completedStoryPoints: completedStoryPoints,
+      totalStoryPoints: totalStoryPoints,
+      userStoriesRate: userStoriesRate,
+      completionRate: completionRate,
+      storyPointsRate: storyPointsRate,
+      usRate: usRate,
+      defectsRate: defectsRate,
+      bugsRate: bugsRate,
+      tasksItensRate: tasksItensRate
+    };
   }
 }
 

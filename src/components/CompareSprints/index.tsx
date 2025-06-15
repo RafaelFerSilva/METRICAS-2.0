@@ -1,12 +1,9 @@
-import { Box, Center, Divider, useToast, Stack, Flex } from "@chakra-ui/react";
+import { Box, useToast, Flex } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { setupAPIMetrics } from "../../services/api";
 import { tokenService } from "../../services/auth/tokenService";
-import Loading from '../Loading';
 import NewTasks from "../../model/tasks";
 import Report from "../../data/report";
-import { GenericTable } from "../GenericTable";
-import { VerticalBar } from "../Charts/ChartVerticalBar";
 import { GenericGraphic } from "../GenericGraphic";
 import { ChartVerticalBarDataSets } from "../Charts/ChartVerticalBarDataSets";
 
@@ -99,17 +96,17 @@ const project_id = tokenService.getProjectId()
 const organization = tokenService.getOrganization()
 
 const axiosInstance = setupAPIMetrics({ organization, project_id, token });
+const tagsNotExpected = ["Não prevista", 'Não previsto']
+const report = new Report();
 
 export default function CompareSprints({
     sprint,
     sprintTeam
 }: CompareSprintsProps) {
-    const tagsNotExpected = ["Não prevista", 'Não previsto']
     const [summarySprint, setSummarySprint] = useState<SummarySprint[]>([])
     const [condensedSprintsData, setCondensedSprintsData] = useState<CondensedSprintsData>()
     const [isLoading, setIsLoading] = useState(false);
     const toast = useToast()
-    const report = new Report();
 
     const returnSprintsData = (sprints: SummarySprint[], arg: string) => {
         let value = sprints.map((item) => {
