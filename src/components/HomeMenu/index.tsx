@@ -23,7 +23,8 @@ export default function HomeMenu() {
     { itemName: 'Comparison of Sprints', itemUrl: "/sprintCompare", icon: MdCompareArrows },
     // { itemName: 'Runs Report', itemUrl: "/testsReport", icon: MdAssessment },
     // { itemName: 'Tests Graphics', itemUrl: "/testsGraphics", icon: MdAssessment },
-    { itemName: 'Tests Cases', itemUrl: "/alltestsCases", icon: MdAssessment }
+    { itemName: 'Tests Cases', itemUrl: "/alltestsCases", icon: MdAssessment },
+    { itemName: 'Configuration', itemUrl: "/configuration", icon: MdSettings }
   ];
 
   const isActiveRoute = (url: string) => {
@@ -106,11 +107,11 @@ export default function HomeMenu() {
             <Avatar size="sm" bg="blue.100" color="blue.600" name="User" />
             <Box ml="3">
               <Text fontSize="sm" fontWeight="medium" color="gray.900">
-                Usuário
+                Quality Assurance
               </Text>
-              <Text fontSize="xs" color="gray.500">
+              {/* <Text fontSize="xs" color="gray.500">
                 user@example.com
-              </Text>
+              </Text> */}
             </Box>
           </Flex>
         </Box>
@@ -156,25 +157,6 @@ export default function HomeMenu() {
 
         {/* Footer */}
         <Box p="4" borderTop="1px" borderColor="gray.200">
-          {/* Configurações */}
-          <Flex
-            align="center"
-            px="2"
-            py="2"
-            borderRadius="md"
-            color="gray.600"
-            _hover={{ 
-              bg: "gray.50",
-              color: "gray.900",
-              cursor: "pointer"
-            }}
-            fontSize="sm"
-            fontWeight="medium"
-            mb="2"
-          >
-            <Box as={MdSettings} boxSize="5" mr="3" />
-            <Text>Configurações</Text>
-          </Flex>
 
           {/* Logout */}
           <Flex

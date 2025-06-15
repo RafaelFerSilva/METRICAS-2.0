@@ -31,7 +31,7 @@ import {
 } from "react-icons/md";
 import { MetricCard, ChartCard } from "../ModernCard";
 
-interface Task {
+interface TaskItem {
   id: string;
   title: string;
   state: string;
@@ -42,7 +42,7 @@ interface Task {
 }
 
 interface SprintDashboardProps {
-  tasks: Task[];
+  tasks: TaskItem[];
   isLoading?: boolean;
   sprintName?: string;
   teamName?: string;

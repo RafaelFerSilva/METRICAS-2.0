@@ -1,4 +1,5 @@
 import moment from "moment";
+import { Task } from "../types/Task";
 
 export function returnDateDiff(
   past: string | undefined,
@@ -12,31 +13,6 @@ export function returnDateDiff(
   let time_two = moment(now);
   let duration = moment.duration(time_two.diff(time_one));
   return parseInt(duration.asDays().toFixed());
-}
-
-interface Task {
-  ID: string;
-  Title: string;
-  "Work Item Type": string;
-  State: string;
-  "State Change Date": string;
-  Area: string;
-  "Iteration Path": string;
-  "Activated By": string;
-  "Activated Date": string;
-  "Assigned To": string | undefined;
-  "Changed By": string;
-  "Changed Date": string;
-  "Completed Work": string | undefined;
-  "Created By": string;
-  "Created Date": string;
-  Description: string | undefined;
-  Reason: string;
-  "Story Points": number | undefined | string;
-  "Cycle Time": number | undefined;
-  "Sprint Start Date": string;
-  Tags: string;
-  Activity: string;
 }
 
 class NewTasks {

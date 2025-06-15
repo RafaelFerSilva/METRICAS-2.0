@@ -2,34 +2,19 @@ import { SimpleGrid } from "@chakra-ui/react";
 import { MdCheckCircle, MdBugReport, MdTrendingUp, MdAssignment } from "react-icons/md";
 import Report from "../../data/report";
 import { MetricCard } from "../ModernCard/SimpleCard";
+import { Task } from "../../types/Task";
 
 
-interface Task {
-    ID: string;
-    Title: string;
-    "Work Item Type": string;
-    State: string;
-    "State Change Date": string;
-    Area: string;
-    "Iteration Path": string;
-    "Activated By": string;
-    "Activated Date": string;
-    "Assigned To": string | undefined;
-    "Changed By": string;
-    "Changed Date": string;
-    "Completed Work": string | undefined;
-    "Created By": string;
-    "Created Date": string;
-    Description: string | undefined;
-    Reason: string;
-    "Story Points": number | undefined | string;
-    "Cycle Time": number | undefined;
-    "Sprint Start Date": string;
-    Tags: string;
-    Activity: string;
+interface SprintReportCardsProps {
+    userStories: Task[];
+    bugs: Task[];
+    defects: Task[];
+    totalStoryPoints: number;
+    completedStoryPoints: number;
+    tasks: Task[];
 }
 
-export default function SprintReportCards({ userStories, bugs, defects, totalStoryPoints, completedStoryPoints, tasks }: { userStories: Task[], bugs: Task[], defects: Task[], totalStoryPoints: number, completedStoryPoints: number,  tasks: Task[] }) {
+export default function SprintReportCards({ userStories, bugs, defects, totalStoryPoints, completedStoryPoints, tasks }: SprintReportCardsProps) {
     return (
             <SimpleGrid
                 columns={{ base: 1, sm: 2, md: 4 }}
