@@ -9,17 +9,19 @@ interface DetailedStatisticsProps {
     userStories: Task[];
     bugs: Task[];
     defects: Task[];
+    problems: Task[];
     taskItems: Task[];
     totalStoryPoints: number;
 }
 
-export function DetailedStatistics({ userStories, bugs, defects, taskItems, totalStoryPoints }: DetailedStatisticsProps) {
+export function DetailedStatistics({ userStories, bugs, defects, problems, taskItems, totalStoryPoints }: DetailedStatisticsProps) {
     
     const workItemTypesData = [
-        { label: "User Story", value: userStories.length, color: "blue" },
+        { label: "User Story", value: userStories.length, color: "pink" },
         { label: "Bug", value: bugs.length, color: "red" },
         { label: "Defect", value: defects.length, color: "orange" },
-        { label: "Story Points", value: totalStoryPoints, color: "yellow" },
+        { label: "Problem", value: problems.length, color: "yellow" },
+        { label: "Story Points", value: totalStoryPoints, color: "gray" },
         { label: "Task", value: taskItems.length, color: "purple" },
       ];
 
@@ -38,7 +40,6 @@ export function DetailedStatistics({ userStories, bugs, defects, taskItems, tota
             <ModernBarChart
               data={workItemTypesData}
               title="Work Item Types"
-              colorScheme="blue"
             />
           </ChartCard>
         </SimpleGrid>

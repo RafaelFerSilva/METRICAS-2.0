@@ -5,7 +5,7 @@ export function AccordionSection({ title, children }: any) {
     <AccordionItem>
       <h2>
         <AccordionButton>
-          <Box flex="1" textAlign="left">
+          <Box flex="1" textAlign="left" fontWeight="bold">
             {title}
           </Box>
           <AccordionIcon />

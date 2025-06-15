@@ -5,7 +5,6 @@ import { EmptyChart } from "../EmptyChart";
 export function ModernBarChart({
     data,
     title,
-    colorScheme = "blue",
     isLoading = false
   }: {
     data: Array<{ label: string; value: number; color?: string }>;
@@ -26,6 +25,7 @@ export function ModernBarChart({
     return (
       <VStack spacing={4} align="stretch">
         <Text fontSize="sm" fontWeight="semibold" color="gray.600" textAlign="center">
+
           {title}
         </Text>
         <VStack spacing={3} align="stretch">
@@ -36,7 +36,7 @@ export function ModernBarChart({
                   {item.label}
                 </Text>
                 <Badge
-                  colorScheme={item.color || colorScheme}
+                  colorScheme={item.color}
                   variant="solid"
                   borderRadius="full"
                   px={3}
@@ -46,7 +46,7 @@ export function ModernBarChart({
               </HStack>
               <Progress
                 value={maxValue > 0 ? (item.value / maxValue) * 100 : 0}
-                colorScheme={item.color || colorScheme}
+                colorScheme={item.color}
                 size="md"
                 borderRadius="md"
                 bg="gray.100"

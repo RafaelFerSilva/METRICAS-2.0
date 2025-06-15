@@ -9,7 +9,6 @@ import {
   Tbody,
   Td,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
 
 interface GenericTableProps {
   title: string;

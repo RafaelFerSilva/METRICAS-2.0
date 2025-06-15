@@ -114,7 +114,7 @@ export default function CompareSprints({
 
                 return workitens
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
         }
 
@@ -150,7 +150,7 @@ export default function CompareSprints({
 
                 return Promise.all(returnItem)
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
         }
 
@@ -197,13 +197,12 @@ export default function CompareSprints({
                 setSummarySprint([])
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }, [sprint, sprintTeam, toast])
 
     return (
         <>
-            {/* {console.log(condensedSprintsData.id)} */}
             {condensedSprintsData &&
                 <>
                     <GenericGraphic title="User Stories by Sprint" label="User Stories by Sprint" labels={condensedSprintsData.name} data={condensedSprintsData.userStories} />

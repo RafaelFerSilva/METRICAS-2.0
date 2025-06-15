@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react';
 
 export default function LoginScreen() {
-  // Router é um hook do react para redirecionamento de páginas
   const router = useRouter();
   const toast = useToast()
   const [organization, setOrganization] = useState('');

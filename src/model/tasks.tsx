@@ -1,5 +1,9 @@
 import moment from "moment";
+import { setupAPIMetrics } from "../services/api";
+import { tokenService } from "../services/auth/tokenService";
 import { Task } from "../types/Task";
+
+const organization = tokenService.getOrganization()
 
 export function returnDateDiff(
   past: string | undefined,
@@ -85,7 +89,9 @@ class NewTasks {
         "Cycle Time": cycleTime,
         "Sprint Start Date": sprint,
         Tags: campos["System.Tags"],
-        Activity: campos["Microsoft.VSTS.Common.Activity"]
+        Activity: campos["Microsoft.VSTS.Common.Activity"],
+        url: `https://dev.azure.com/${organization}/${campos["System.TeamProject"]}/_workitems/edit/${value["id"]}`,
+        // url: `https://dev.azure.com/${organization}/Engineering/_workitems/edit/26641`,
       };
 
       return task;

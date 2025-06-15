@@ -2,7 +2,27 @@ import { SimpleGrid, Stat, StatLabel, StatNumber, StatHelpText, StatArrow, Box, 
 import { Task } from "../../types/Task";
 
 
-export default function PercentSprintReportCard({userStories, userStoriesRate, bugs, defects , totalStoryPoints, media}: {userStories: Task[], userStoriesRate: number, bugs: Task[], defects: Task[] , totalStoryPoints: number, media: number}) {
+interface PercentReportCardProps {
+    userStories: Task[];
+    userStoriesRate: number;
+    bugs: Task[];
+    defects: Task[];
+    problems: Task[];
+    totalStoryPoints: number;
+    media: number;
+}
+
+
+export default function PercentSprintReportCard(
+  {
+    userStories, 
+    userStoriesRate, 
+    bugs, 
+    defects, 
+    problems, 
+    totalStoryPoints, 
+    media
+  }: PercentReportCardProps) {
 
     const cardBg = useColorModeValue('white', 'gray.800');
 
@@ -87,6 +107,26 @@ export default function PercentSprintReportCard({userStories, userStoriesRate, b
               <StatHelpText>
                 <StatArrow type={defects.length <= userStories.length * 0.15 ? 'decrease' : 'increase'} />
                 {defects.length <= userStories.length * 0.1 ? 'Baixa' : 'Alta'}
+              </StatHelpText>
+            </Stat>
+          </Box>
+
+          <Box
+            bg={cardBg}
+            p={{ base: 4, md: 6 }}
+            borderRadius="xl"
+            boxShadow="sm"
+            border="1px solid"
+            borderColor="gray.200"
+          >
+            <Stat>
+              <StatLabel color="gray.600">Densidade de Problemas</StatLabel>
+              <StatNumber color="red.500" fontSize="2xl">
+                {userStories.length > 0 ? ((problems.length / userStories.length) * 100).toFixed(1) : '0'}%
+              </StatNumber>
+              <StatHelpText>
+                <StatArrow type={problems.length <= userStories.length * 0.15 ? 'decrease' : 'increase'} />
+                {problems.length <= userStories.length * 0.1 ? 'Baixa' : 'Alta'}
               </StatHelpText>
             </Stat>
           </Box>

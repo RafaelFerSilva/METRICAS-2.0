@@ -14,32 +14,36 @@ interface SprintStateItensProps {
     userStories: Task[];
     bugs: Task[];
     defects: Task[];
+    problems: Task[];
     taskItems: Task[];
     userStoryStatesData: StateItem[];
     bugStatesData: StateItem[];
     defectStatesData: StateItem[];
+    problemsStateData: StateItem[];
     taskStatesData: StateItem[];
 }
 
-export default function SprintStateItens({ userStories, bugs, defects, taskItems, userStoryStatesData, bugStatesData, defectStatesData, taskStatesData }: SprintStateItensProps) {
+export default function SprintStateItens({ userStories, bugs, defects, problems, taskItems, userStoryStatesData, bugStatesData, defectStatesData, problemsStateData, taskStatesData }: SprintStateItensProps) {
     return (
         <SimpleGrid
             columns={{ base: 1, lg: 2 }}
             spacing={{ base: 4, md: 8 }}
             w="100%"
         >
-            <ChartCard
-                title="User Stories por Estado"
-                subtitle={`${userStories.length} user stories no total`}
-                icon={MdShowChart}
-                colorScheme="green"
-            >
-                <ModernBarChart
-                    data={userStoryStatesData}
-                    title="Estados das User Stories"
+            {userStories.length > 0 && (
+                <ChartCard
+                    title="User Stories por Estado"
+                    subtitle={`${userStories.length} user stories no total`}
+                    icon={MdShowChart}
                     colorScheme="green"
-                />
-            </ChartCard>
+                >
+                    <ModernBarChart
+                        data={userStoryStatesData}
+                        title="Estados das User Stories"
+                    />
+                </ChartCard>
+            )}
+
 
             {bugs.length > 0 && (
                 <ChartCard
@@ -51,7 +55,6 @@ export default function SprintStateItens({ userStories, bugs, defects, taskItems
                     <ModernBarChart
                         data={bugStatesData}
                         title="Estados dos Bugs"
-                        colorScheme="red"
                     />
                 </ChartCard>
             )}
@@ -66,7 +69,20 @@ export default function SprintStateItens({ userStories, bugs, defects, taskItems
                     <ModernBarChart
                         data={defectStatesData}
                         title="Estados dos Defects"
-                        colorScheme="red"
+                    />
+                </ChartCard>
+            )}
+
+            {problems.length > 0 && (
+                <ChartCard
+                    title="Problemas por Estado"
+                    subtitle={`${problems.length} defects identificados`}
+                    icon={MdBugReport}
+                    colorScheme="red"
+                >
+                    <ModernBarChart
+                        data={defectStatesData}
+                        title="Estados dos Defects"
                     />
                 </ChartCard>
             )}

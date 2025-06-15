@@ -10,7 +10,7 @@ interface SprintProgressItemProps {
 
 export default function SprintProgressItem({title, itemPorcentage, completed_itens, total, color="gray"}: SprintProgressItemProps) {
     const cardBg = useColorModeValue('white', 'gray.800');
-    return (
+    return total > 0 ? (
         <Box
             bg={cardBg}
             p={{ base: 4, md: 6 }}
@@ -42,5 +42,5 @@ export default function SprintProgressItem({title, itemPorcentage, completed_ite
               </HStack>
             </VStack>
           </Box>
-    )
+    ): null
 }

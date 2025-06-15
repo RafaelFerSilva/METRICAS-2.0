@@ -9,12 +9,13 @@ interface SprintReportCardsProps {
     userStories: Task[];
     bugs: Task[];
     defects: Task[];
+    problems: Task[];
     totalStoryPoints: number;
     completedStoryPoints: number;
     tasks: Task[];
 }
 
-export default function SprintReportCards({ userStories, bugs, defects, totalStoryPoints, completedStoryPoints, tasks }: SprintReportCardsProps) {
+export default function SprintReportCards({ userStories, bugs, defects, problems, totalStoryPoints, completedStoryPoints, tasks }: SprintReportCardsProps) {
     return (
             <SimpleGrid
                 columns={{ base: 1, sm: 2, md: 4 }}
@@ -44,6 +45,14 @@ export default function SprintReportCards({ userStories, bugs, defects, totalSto
                     changeType="decrease"
                     icon={MdBugReport}
                     colorScheme="orange"
+                />
+                <MetricCard
+                    title="Problemas"
+                    value={problems.length}
+                    change={`${problems.filter(problem => problem.State !== "Closed").length} em aberto`}
+                    changeType="decrease"
+                    icon={MdBugReport}
+                    colorScheme="yellow"
                 />
                 <MetricCard
                     title="Story Points"

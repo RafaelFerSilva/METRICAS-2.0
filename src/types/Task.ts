@@ -21,4 +21,5 @@ export interface Task {
     "Sprint Start Date": string;
     Tags: string;
     Activity: string;
+    url?: string;
 }

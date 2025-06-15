@@ -12,9 +12,13 @@ import {
   Icon,
   Badge,
   Divider,
+  Accordion,
+  Stack,
+  AccordionIcon,
 } from "@chakra-ui/react";
 import {
   MdDashboard,
+  MdList
 } from "react-icons/md";
 
 import { TeamsProvider } from "../../contexts/TeamsContext";
@@ -31,6 +35,10 @@ import SprintStateItens from "./SprintStateItens";
 import SprintProgressItem from "./SprintProgressItem";
 import ReportTabs from "../ReportTabs";
 import { Task } from "../../types/Task";
+import TableComponent from "../TableComponent";
+import { AccordionSection } from "../AccordionSection";
+import TableTestCase from "../TableTestCase";
+import TestCaseCharts from "../TestCaseCharts";
 
 interface Team {
   description: string;
@@ -65,6 +73,14 @@ export default function CompleteDashboard() {
 
   const report = new Report();
   const sprintData = report.returnSprintData(tasks);
+
+  const userStoryTableHeaders = [
+    "ID",
+    "Title",
+    "State",
+    "Assigned To",
+    "Reason",
+  ];
 
   const renderContent = () => {
     if (isLoading) {
@@ -108,11 +124,13 @@ export default function CompleteDashboard() {
 
     return (
       <VStack spacing={8} align="stretch" w="100%">
-        <SprintAlert bugs={sprintData.bugs} defects={sprintData.defects} totalStoryPoints={sprintData.totalStoryPoints} completedStoryPoints={sprintData.completedStoryPoints} />
-        <SprintReportCards userStories={sprintData.userStories} bugs={sprintData.bugs} defects={sprintData.defects} totalStoryPoints={sprintData.totalStoryPoints} completedStoryPoints={sprintData.completedStoryPoints} tasks={tasks} />
-        <DetailedStatistics userStories={sprintData.userStories} bugs={sprintData.bugs} defects={sprintData.defects} taskItems={sprintData.taskItems} totalStoryPoints={sprintData.totalStoryPoints} />
-        <PercentSprintReportCard userStories={sprintData.userStories} userStoriesRate={sprintData.userStoriesRate} bugs={sprintData.bugs} defects={sprintData.defects} totalStoryPoints={sprintData.totalStoryPoints} media={media} />
-        <SprintStateItens userStories={sprintData.userStories} bugs={sprintData.bugs} defects={sprintData.defects} taskItems={sprintData.taskItems} userStoryStatesData={sprintData.userStoryStatesData} bugStatesData={sprintData.bugStatesData} defectStatesData={sprintData.defectStatesData} taskStatesData={sprintData.taskStatesData} /> 
+        <SprintAlert bugs={sprintData.bugs} defects={sprintData.defects} problems={sprintData.problems} totalStoryPoints={sprintData.totalStoryPoints} completedStoryPoints={sprintData.completedStoryPoints} />
+        <SprintReportCards userStories={sprintData.userStories} bugs={sprintData.bugs} defects={sprintData.defects} problems={sprintData.problems} totalStoryPoints={sprintData.totalStoryPoints} completedStoryPoints={sprintData.completedStoryPoints} tasks={tasks} />
+        <DetailedStatistics userStories={sprintData.userStories} bugs={sprintData.bugs} defects={sprintData.defects} problems={sprintData.problems} taskItems={sprintData.taskItems} totalStoryPoints={sprintData.totalStoryPoints} />
+        <PercentSprintReportCard userStories={sprintData.userStories} userStoriesRate={sprintData.userStoriesRate} bugs={sprintData.bugs} defects={sprintData.defects} problems={sprintData.problems} totalStoryPoints={sprintData.totalStoryPoints} media={media} />
+        <SprintStateItens userStories={sprintData.userStories} bugs={sprintData.bugs} defects={sprintData.defects} problems={sprintData.problems} taskItems={sprintData.taskItems} userStoryStatesData={sprintData.userStoryStatesData} bugStatesData={sprintData.bugStatesData} defectStatesData={sprintData.defectStatesData} problemsStateData={sprintData.problemsStateData} taskStatesData={sprintData.taskStatesData} />
+
+        <Divider />
 
         <SimpleGrid
           columns={{ base: 1, lg: 2 }}
@@ -122,17 +140,63 @@ export default function CompleteDashboard() {
           <SprintProgressItem title="Progresso por User Story" itemPorcentage={sprintData.usRate} completed_itens={sprintData.completedUserStories} total={sprintData.userStories.length} color="blue" />
           <SprintProgressItem title="Progresso por Story Points" itemPorcentage={sprintData.storyPointsRate} completed_itens={sprintData.completedStoryPoints} total={sprintData.totalStoryPoints} color="purple" />
           <SprintProgressItem title="Progresso por Defects" itemPorcentage={sprintData.defectsRate} completed_itens={sprintData.completedDefects} total={sprintData.defects.length} color="orange" />
-          <SprintProgressItem title="Progresso por Bugs" itemPorcentage={sprintData.bugsRate} completed_itens={sprintData.completedBugs} total={sprintData.bugs.length} color="red" /> 
-          {/* <SprintProgressItem title="Progresso por Tasks" itemPorcentage={sprintData.tasksItensRate} completed_itens={sprintData.completedTasksItems} total={sprintData.taskItems.length} color="green" /> */}
-          {/* <SprintProgressItem title="Progresso por Itens" itemPorcentage={sprintData.completionRate} completed_itens={sprintData.completedTasks.length} total={tasks.length} color="gray" /> */}
+          <SprintProgressItem title="Progresso por Bugs" itemPorcentage={sprintData.bugsRate} completed_itens={sprintData.completedBugs} total={sprintData.bugs.length} color="red" />
+          <SprintProgressItem title="Progresso por Problems" itemPorcentage={sprintData.problemsRate} completed_itens={sprintData.completedProblems} total={sprintData.problems.length} color="red" />
+          <SprintProgressItem title="Progresso por Tasks" itemPorcentage={sprintData.tasksItensRate} completed_itens={sprintData.completedTasksItems} total={sprintData.taskItems.length} color="green" />
+          <SprintProgressItem title="Progresso por Itens" itemPorcentage={sprintData.completionRate} completed_itens={sprintData.completedTasks.length} total={tasks.length} color="gray" />
         </SimpleGrid>
 
         <Divider />
 
+
+        <HStack>
+          <Icon as={MdList} color="blue.500" boxSize={10} />
+          <Text fontSize="x-large" fontWeight="semibold" color="gray.700">
+            Listagem de itens da sprint
+          </Text>
+        </HStack>
+
+        {report.returnUsersStories(tasks).length > 0 && (
+          <Accordion allowToggle >
+            <AccordionSection title="User Stories" >
+              <TableComponent data={report.returnUsersStories(tasks)} headers={userStoryTableHeaders} />
+            </AccordionSection>
+          </Accordion>
+        )}
+
+        {report.returnDefects(tasks).length > 0 && (
+          <Accordion allowToggle >
+            <AccordionSection title="Defects">
+              <TableComponent data={report.returnDefects(tasks)} headers={userStoryTableHeaders} />
+            </AccordionSection>
+          </Accordion>
+        )}
+
+        {report.returnProblems(tasks).length > 0 && (
+          <Accordion allowToggle >
+            <AccordionSection title="Problems">
+              <TableComponent data={report.returnProblems(tasks)} headers={userStoryTableHeaders} />
+            </AccordionSection>
+          </Accordion>
+        )}
+
+        {report.returnBugs(tasks).length > 0 && (
+          <Accordion allowToggle >
+            <AccordionSection title="Bugs">
+              <TableComponent data={report.returnBugs(tasks)} headers={userStoryTableHeaders} />
+            </AccordionSection>
+          </Accordion>
+        )}
+
+        {report.returnTaskItens(tasks).length > 0 && (
+          <Accordion allowToggle >
+            <AccordionSection title="Tasks">
+              <TableComponent data={report.returnTaskItens(tasks)} headers={userStoryTableHeaders} />
+            </AccordionSection>
+          </Accordion>
+        )}
+
         <Box>
-          <Heading size="md" mb={6} color="gray.700">
-            {/* Relatórios Detalhados */}
-          </Heading>
           {/* <ReportTabs tasks={tasks} /> */}
         </Box>
       </VStack>

@@ -4,11 +4,12 @@ import { Task } from "../../types/Task";
 interface SprintAlertProps {
     bugs: Task[];
     defects: Task[];
+    problems: Task[];
     totalStoryPoints: number;
     completedStoryPoints: number;
 }
 
-export default function SprintAlert({bugs, defects, totalStoryPoints, completedStoryPoints}: SprintAlertProps) {
+export default function SprintAlert({bugs, defects, problems, totalStoryPoints, completedStoryPoints}: SprintAlertProps) {
     return (
         <VStack spacing={4} align="stretch">
           {bugs.filter(bug => bug.State !== "Closed").length > 0 && (
@@ -24,12 +25,24 @@ export default function SprintAlert({bugs, defects, totalStoryPoints, completedS
           )}
 
           {defects.filter(defect => defect.State !== "Closed").length > 0 && (
-            <Alert status="warning" borderRadius="lg">
+            <Alert status="error" borderRadius="lg">
               <AlertIcon />
               <Box>
                 <AlertTitle>Atenção aos Defeitos!</AlertTitle>
                 <AlertDescription>
-                  Existem {defects.filter(defect => defect.State !== "Closed").length} defects em aberto que precisam de atenção.
+                  Existem {defects.filter(defect => defect.State !== "Closed").length} defeitos em aberto que precisam de atenção.
+                </AlertDescription>
+              </Box>
+            </Alert>
+          )}
+
+          {problems.filter(problem => problem.State !== "Closed").length > 0 && (
+            <Alert status="warning" borderRadius="lg">
+              <AlertIcon />
+              <Box>
+                <AlertTitle>Atenção aos Problemas!</AlertTitle>
+                <AlertDescription>
+                  Existem {problems.filter(problem => problem.State !== "Closed").length} problemas em aberto que precisam de atenção.
                 </AlertDescription>
               </Box>
             </Alert>
