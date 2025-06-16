@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import {
   Box,
   Container,
-  Heading,
   Text,
   SimpleGrid,
   useColorModeValue,
@@ -13,8 +12,6 @@ import {
   Badge,
   Divider,
   Accordion,
-  Stack,
-  AccordionIcon,
 } from "@chakra-ui/react";
 import {
   MdDashboard,

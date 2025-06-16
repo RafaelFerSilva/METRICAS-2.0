@@ -24,6 +24,7 @@ export default function HomeMenu() {
     // { itemName: 'Runs Report', itemUrl: "/testsReport", icon: MdAssessment },
     // { itemName: 'Tests Graphics', itemUrl: "/testsGraphics", icon: MdAssessment },
     { itemName: 'Tests Cases', itemUrl: "/alltestsCases", icon: MdAssessment },
+    { itemName: 'Projects', itemUrl: "/projects", icon: MdAssessment },
     { itemName: 'Configuration', itemUrl: "/configuration", icon: MdSettings }
   ];
 
@@ -116,7 +117,6 @@ export default function HomeMenu() {
           </Flex>
         </Box>
 
-        {/* Navigation */}
         <Box flex="1" px="2" py="4" overflowY="auto">
           <List spacing={1}>
             {menuItems.map((item: MenuItem) => {

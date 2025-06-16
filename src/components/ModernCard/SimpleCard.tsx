@@ -14,13 +14,24 @@ import {
   VStack,
   HStack,
 } from "@chakra-ui/react";
+import { IconType } from "react-icons";
 
 interface SimpleCardProps {
   title: string;
   subtitle?: string;
-  children: React.ReactNode;
-  icon?: React.ElementType;
+  children?: React.ReactNode;
+  icon?: IconType;
   colorScheme?: string;
+  onClick?: () => void;
+}
+
+interface SimpleCardProps {
+  title: string;
+  subtitle?: string;
+  children?: React.ReactNode;
+  icon?: IconType;
+  colorScheme?: string;
+  onClick?: () => void;
 }
 
 export default function SimpleCard({ 
@@ -28,10 +39,28 @@ export default function SimpleCard({
   subtitle, 
   children, 
   icon, 
-  colorScheme = "blue" 
+  colorScheme = "blue",
+  onClick,
 }: SimpleCardProps) {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const hoverBgColor = useColorModeValue(`${colorScheme}.50`, `${colorScheme}.700`); // Chame aqui
+
+  const clickableProps = onClick ? {
+    cursor: 'pointer',
+    role: 'button',
+    tabIndex: 0,
+    onClick,
+    onKeyDown: (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onClick();
+      }
+    },
+    _hover: {
+      bg: hoverBgColor, // Use a variável aqui
+    }
+  } : {};
 
   return (
     <Box 
@@ -41,6 +70,7 @@ export default function SimpleCard({
       borderRadius="lg"
       border="1px solid"
       p={6}
+      {...clickableProps}
     >
       <VStack spacing={4} align="stretch">
         <Flex align="center" gap={3}>

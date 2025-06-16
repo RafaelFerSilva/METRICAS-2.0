@@ -20,18 +20,17 @@ export default function LoginScreen() {
   const [token, setToken] = useState('');
 
   return (
-    <form onSubmit={(event) => {
+    <form onSubmit={async (event) => {
       event.preventDefault();
       authService.login({
         organization: organization,
-        project_id: projectId,
         token: token
       }).then(() => {
-        router.push('/home');
+        router.push('/projects');
       })
         .catch((err) => {
           toast({
-            title: `Organization, Project ID ou Token inválidos!!!`,
+            title: 'Organization ou Token inválidos!!!',
             status: 'error',
             position: 'top-right',
             isClosable: true,
@@ -55,15 +54,6 @@ export default function LoginScreen() {
               variant="filled"
               mb={3}
               onChange={event => setOrganization(event.currentTarget.value)}
-            />
-            <FormLabel>Project ID</FormLabel>
-            <Input
-              id="project_id"
-              placeholder="Project ID"
-              type="password"
-              variant="filled"
-              mb={6}
-              onChange={event => setProjectId(event.currentTarget.value)}
             />
             <FormLabel>Personal Token</FormLabel>
             <Input

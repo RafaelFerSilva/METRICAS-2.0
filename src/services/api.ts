@@ -1,11 +1,11 @@
 import axios, { AxiosRequestHeaders } from "axios";
 
-const returnProjects = async (organization: string, headers: AxiosRequestHeaders) => {
+export const returnProjects = async (organization: string, headers: AxiosRequestHeaders) => {
   const projectId = await axios.get(`https://dev.azure.com/${organization}/_apis/projects`, { headers });
   return projectId.data.value
 }
 
-const returnHeaders = (token: string) => {
+export const returnHeaders = (token: string) => {
   return {
     Authorization: `Basic ${Buffer.from(`PAT:${token}`).toString("base64")}`,
     "X-TFS-FedAuthRedirect": "Suppress",
