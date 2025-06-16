@@ -28,7 +28,7 @@ export default function TestPlanSelect({ setSuites, setTestsCases }: SelectPlain
         if (id && String(id).trim() !== "") {
             try {
                 const response = await axiosInstance.get(
-                    `https://dev.azure.com/${organization}/${project_id}/_apis/testplan/Plans/${id}/suites?api-version=7.1-preview.1`
+                    `/testplan/Plans/${id}/suites?api-version=7.1-preview.1`
                 );
                 if (response.status === 200) {
                     setSuites(response.data.value);

@@ -30,7 +30,7 @@ export function TeamsProvider({ children }: TeamsProviderProps) {
       let data: any;
       data = await axiosInstance
         .get(
-          `https://dev.azure.com/${organization}/_apis/projects/${project_id}/teams?api-version=6.0`
+          `https://dev.azure.com/${organization}/_apis/projects/${project_id}/teams?api-version=7.1`
         )
         .then((response) => {
           let teams: any;

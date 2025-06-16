@@ -22,7 +22,7 @@ export function TestPlainProvider({ children }: TestPlainProviderProps) {
       let data: any;
       data = await axiosInstance
         .get(
-          `https://dev.azure.com/${organization}/${project_id}/_apis/testplan/plans?api-version=7.0`
+          `/testplan/plans?api-version=7.1`
         )
         .then((response) => {
           let testPlanItens: any[] = []

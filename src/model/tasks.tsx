@@ -91,7 +91,8 @@ class NewTasks {
         Tags: campos["System.Tags"],
         Activity: campos["Microsoft.VSTS.Common.Activity"],
         url: `https://dev.azure.com/${organization}/${campos["System.TeamProject"]}/_workitems/edit/${value["id"]}`,
-        // url: `https://dev.azure.com/${organization}/Engineering/_workitems/edit/26641`,
+        Priority: campos["Microsoft.VSTS.Common.Priority"],
+        Severity: campos["Microsoft.VSTS.Common.Severity"]
       };
 
       return task;

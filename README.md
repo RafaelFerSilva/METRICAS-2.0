@@ -21,7 +21,7 @@ https://docs.microsoft.com/pt-br/azure/devops/organizations/accounts/use-persona
     NEXT_PUBLIC_ORGANIZATION=""
 
     # id do projeto e pode ser achado via api
-    # https://dev.azure.com/{organization}/_apis/projects?api-version=6.0-preview.3
+    # https://dev.azure.com/{organization}/_apis/projects?api-version=7.1-preview.3
     NEXT_PUBLIC_PROJECT=""
 
 

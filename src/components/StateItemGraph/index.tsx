@@ -73,7 +73,7 @@ export function StateItemGraph({ task }: StateItemGraphProps) {
     }
 
     axiosInstance
-      .get(`wit/workItems/${task.ID}/updates?api-version=6.0`)
+      .get(`wit/workItems/${task.ID}/updates?api-version=7.1`)
       .then((response) => {
         if (response.status === 200) {
           response.data.value.map((element: any) => {

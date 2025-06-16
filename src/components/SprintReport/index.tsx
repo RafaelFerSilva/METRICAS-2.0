@@ -33,12 +33,10 @@ import SprintAlert from "./SprintAlert";
 import PercentSprintReportCard from "./PecentSprintReportCard";
 import SprintStateItens from "./SprintStateItens";
 import SprintProgressItem from "./SprintProgressItem";
-import ReportTabs from "../ReportTabs";
 import { Task } from "../../types/Task";
 import TableComponent from "../TableComponent";
 import { AccordionSection } from "../AccordionSection";
-import TableTestCase from "../TableTestCase";
-import TestCaseCharts from "../TestCaseCharts";
+import ReportTabs from "../ReportTabs";
 
 interface Team {
   description: string;
@@ -80,6 +78,18 @@ export default function CompleteDashboard() {
     "State",
     "Assigned To",
     "Reason",
+    "Priority"
+  ];
+
+
+  const bugTableHeaders = [
+    "ID",
+    "Title",
+    "State",
+    "Assigned To",
+    "Reason",
+    "Priority",
+    "Severity"
   ];
 
   const renderContent = () => {
@@ -167,7 +177,7 @@ export default function CompleteDashboard() {
         {report.returnDefects(tasks).length > 0 && (
           <Accordion allowToggle >
             <AccordionSection title="Defects">
-              <TableComponent data={report.returnDefects(tasks)} headers={userStoryTableHeaders} />
+              <TableComponent data={report.returnDefects(tasks)} headers={bugTableHeaders} />
             </AccordionSection>
           </Accordion>
         )}
@@ -175,7 +185,7 @@ export default function CompleteDashboard() {
         {report.returnProblems(tasks).length > 0 && (
           <Accordion allowToggle >
             <AccordionSection title="Problems">
-              <TableComponent data={report.returnProblems(tasks)} headers={userStoryTableHeaders} />
+              <TableComponent data={report.returnProblems(tasks)} headers={bugTableHeaders} />
             </AccordionSection>
           </Accordion>
         )}
@@ -183,7 +193,7 @@ export default function CompleteDashboard() {
         {report.returnBugs(tasks).length > 0 && (
           <Accordion allowToggle >
             <AccordionSection title="Bugs">
-              <TableComponent data={report.returnBugs(tasks)} headers={userStoryTableHeaders} />
+              <TableComponent data={report.returnBugs(tasks)} headers={bugTableHeaders} />
             </AccordionSection>
           </Accordion>
         )}
@@ -271,7 +281,7 @@ export default function CompleteDashboard() {
                         <Text fontSize="sm" color="blue.600" fontWeight="medium">
                           Time Selecionado
                         </Text>
-                        <Text fontSize="lg" fontWeight="bold" color="blue.800">
+                        <Text fontSize="md" fontWeight="bold" color="blue.800">
                           {sprintTeam.name}
                         </Text>
                       </VStack>
@@ -280,7 +290,7 @@ export default function CompleteDashboard() {
                           <Text fontSize="sm" color="blue.600" fontWeight="medium">
                             Sprints Disponíveis
                           </Text>
-                          <Badge colorScheme="blue" fontSize="md" px={3} py={1}>
+                          <Badge colorScheme="blue" fontSize="sm" px={3} py={1}>
                             {sprint.length} sprints
                           </Badge>
                         </VStack>

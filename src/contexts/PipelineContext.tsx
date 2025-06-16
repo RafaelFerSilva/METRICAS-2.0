@@ -28,7 +28,7 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
       let data: any;
       data = await axiosInstance
         .get(
-          `https://dev.azure.com/${organization}/${project_id}/_apis/pipelines?api-version=6.0-preview.1`
+          `/pipelines?api-version=7.1-preview.1`
         )
         .then((response) => {
           let pipelineItens: Pipeline[] = []

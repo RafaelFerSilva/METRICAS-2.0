@@ -125,7 +125,7 @@ export default function RunsSelect({
         });
 
       await axiosInstance
-        .get(`https://dev.azure.com/${organization}/${project_id}/_apis/test/Runs/${runsData.id}/results?api-version=6.0`)
+        .get(`/test/Runs/${runsData.id}/results?api-version=7.1`)
         .then((response) => {
           if (response.status === 200) {
             let tests: RunTestItens[] = []

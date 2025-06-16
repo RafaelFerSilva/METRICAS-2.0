@@ -125,7 +125,7 @@ export default function TestGraphic() {
         const fetchPipeline = async (pipelineData: Pipeline) => {
             let runsData: Run[] = await axiosInstance
                 .get(
-                    `https://dev.azure.com/${organization}/${project_id}/_apis/pipelines/${pipelineData.id}/runs?api-version=6.0-preview.1`
+                    `/pipelines/${pipelineData.id}/runs?api-version=7.1-preview.1`
                 )
                 .then((response) => {
                     let runs: Run[] = []

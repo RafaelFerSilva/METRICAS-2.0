@@ -62,7 +62,7 @@ export default function SelectSprintForm({
     if (event.target.value) {
       let workitens: number[] = await axiosInstance
         .get(
-          `https://dev.azure.com/${organization}/${project_id}/${teamId}/_apis/work/teamsettings/iterations/${event.target.value}/workitems?api-version=6.0-preview.1`
+          `https://dev.azure.com/${organization}/${project_id}/${teamId}/_apis/work/teamsettings/iterations/${event.target.value}/workitems?api-version=7.1-preview.1`
         )
         .then(async (response) => {
           let itens: any;
@@ -79,7 +79,7 @@ export default function SelectSprintForm({
       } else if (workitens.length !== 0) {
         setIsLoading(true)
         await axiosInstance
-          .get(`wit/workitems?ids=${workitens}&expand=all&api-version=6.0`)
+          .get(`wit/workitems?ids=${workitens}&expand=all&api-version=7.1`)
           .then((response) => {
             if (response.status === 200) {
               const newTasks = new NewTasks();

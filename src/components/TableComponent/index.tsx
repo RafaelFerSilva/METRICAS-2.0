@@ -48,7 +48,7 @@ export default function TableComponent({
           <Thead>
             <Tr>
               {headers.map((header, index) => (
-                <Th key={index} textAlign="left" fontSize={headerFontSize} fontWeight={headerFontWeight}>
+                <Th key={index} textAlign="center" fontSize={headerFontSize} fontWeight={headerFontWeight}>
                   {header}
                 </Th>
               ))}
@@ -61,7 +61,7 @@ export default function TableComponent({
             {data.map((row, rowIndex) => (
               <Tr key={rowIndex}>
                 {headers.map((header, headerIndex) => (
-                  <Td key={headerIndex} textAlign="left" fontSize={tableItemFontSize}>
+                  <Td key={headerIndex} textAlign="center" fontSize={tableItemFontSize}>
                     {getValue(row,header)}
                   </Td>
                 ))}

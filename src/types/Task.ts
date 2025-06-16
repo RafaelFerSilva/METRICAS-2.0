@@ -22,4 +22,6 @@ export interface Task {
     Tags: string;
     Activity: string;
     url?: string;
+    Priority?: string;
+    Severity?: string;
 }

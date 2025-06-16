@@ -50,7 +50,7 @@ export default function SprintSelect({ setSprint, setTask, setTeam }: SelectTeam
     let countReturnSprint = 25
     axiosInstance
       .get(
-        `https://dev.azure.com/${organization}/${project_id}/${event.target.value}/_apis/work/teamsettings/iterations?api-version=6.0`
+        `https://dev.azure.com/${organization}/${project_id}/${event.target.value}/_apis/work/teamsettings/iterations?api-version=7.1`
       )
       .then((response) => {
         if(response.status === 200) {

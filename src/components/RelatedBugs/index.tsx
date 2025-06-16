@@ -26,7 +26,7 @@ export function RelatedBugs({ task }: RelatedBugsProps) {
     if (workRelated.length !== 0) {
       axiosInstance
         .get(
-          `wit/workitems?ids=${workRelated.toString()}&expand=all&api-version=6.0`
+          `wit/workitems?ids=${workRelated.toString()}&expand=all&api-version=7.1`
         )
         .then((response) => {
           if (response.status === 200) {

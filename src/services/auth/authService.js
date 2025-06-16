@@ -6,7 +6,7 @@ export const authService = {
 
     const axiosInstance = setupAPIMetrics({ organization, project_id, token })
     return axiosInstance
-      .get(`https://dev.azure.com/${organization}/_apis/projects/${project_id}/teams?api-version=6.0`)
+      .get(`https://dev.azure.com/${organization}/_apis/projects/${project_id}/teams?api-version=7.1`)
       .then((response) => {
         if (!response.status === 200) throw new Error("Organization, Project ID ou Token inválidos!!!");
         tokenService.save(organization, project_id, token)
@@ -20,7 +20,7 @@ export const authService = {
     const axiosInstance = setupAPIMetrics({organization, project_id, token});
 
     return axiosInstance
-      .get(`https://dev.azure.com/${organization}/_apis/projects?api-version=6.0-preview.3`)
+      .get(`https://dev.azure.com/${organization}/_apis/projects?api-version=7.1-preview.3`)
       .then((response) => {
         if (!response.status === 200) throw new Error("Não Autorizado!!!");
         return response.data.value[0];

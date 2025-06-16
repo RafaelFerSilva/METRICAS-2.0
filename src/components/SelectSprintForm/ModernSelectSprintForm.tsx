@@ -86,7 +86,7 @@ export default function ModernSelectSprintForm({
     try {
       // Buscar work items da sprint
       const workItemsResponse = await axiosInstance.get(
-        `https://dev.azure.com/${organization}/${project_id}/${teamId.id}/_apis/work/teamsettings/iterations/${sprintId}/workitems?api-version=6.0-preview.1`
+        `https://dev.azure.com/${organization}/${project_id}/${teamId.id}/_apis/work/teamsettings/iterations/${sprintId}/workitems?api-version=7.1-preview.1`
       );
 
       let workItems: number[] = [];
@@ -109,7 +109,7 @@ export default function ModernSelectSprintForm({
 
       // Buscar detalhes dos work items
       const workItemDetailsResponse = await axiosInstance.get(
-        `wit/workitems?ids=${workItems.join(',')}&expand=all&api-version=6.0`
+        `wit/workitems?ids=${workItems.join(',')}&expand=all&api-version=7.1`
       );
 
       if (workItemDetailsResponse.status === 200) {
@@ -158,7 +158,7 @@ export default function ModernSelectSprintForm({
         value={selectedSprint}
         onChange={handleChange}
         isDisabled={isLoadingData || sprint.length === 0}
-        size="md"
+        size="sm"
       />
       
       {sprint.length === 0 && (

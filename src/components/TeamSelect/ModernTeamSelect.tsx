@@ -68,7 +68,7 @@ export default function ModernTeamSelect({ setSprint, setTask, setTeam }: Select
     try {
       const countReturnSprint = 25;
       const response = await axiosInstance.get(
-        `https://dev.azure.com/${organization}/${project_id}/${teamId}/_apis/work/teamsettings/iterations?api-version=6.0`
+        `https://dev.azure.com/${organization}/${project_id}/${teamId}/_apis/work/teamsettings/iterations?api-version=7.1`
       );
 
       if (response.status === 200) {
@@ -105,7 +105,7 @@ export default function ModernTeamSelect({ setSprint, setTask, setTeam }: Select
         value={selectedTeam}
         onChange={handleChange}
         isDisabled={isLoading || teams.length === 0}
-        size="md"
+        size="sm"
       />
       {teams.length === 0 && (
         <Text fontSize="sm" color="gray.500" mt={2}>

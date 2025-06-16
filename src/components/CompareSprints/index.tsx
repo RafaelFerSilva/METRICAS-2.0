@@ -98,7 +98,7 @@ export default function CompareSprints({
             try {
                 let workitens: number[] = await axiosInstance
                     .get(
-                        `https://dev.azure.com/${organization}/${project_id}/${sprintTeam}/_apis/work/teamsettings/iterations/${sprintId}/workitems?api-version=6.0-preview.1`
+                        `https://dev.azure.com/${organization}/${project_id}/${sprintTeam}/_apis/work/teamsettings/iterations/${sprintId}/workitems?api-version=7.1-preview.1`
                     )
                     .then(async (response) => {
                         let itens: any;
@@ -127,7 +127,7 @@ export default function CompareSprints({
                         if (workitens !== undefined) {
                             if (workitens.length !== 0) {
                                 let sprintItem: SprintTasks = await axiosInstance
-                                    .get(`wit/workitems?ids=${workitens}&expand=all&api-version=6.0`)
+                                    .get(`wit/workitems?ids=${workitens}&expand=all&api-version=7.1`)
                                     .then((response) => {
                                         if (response.status === 200) {
                                             const newTasks = new NewTasks();

@@ -7,7 +7,7 @@ const organization = tokenService.getOrganization()
 const axiosInstance = setupAPIMetrics({ organization, project_id, token });
 
 export const fetchTestPlans = async () => {
-  const url = `https://dev.azure.com/${organization}/${project_id}/_apis/testplan/plans?api-version=7.0`;
+  const url = `/testplan/plans?api-version=7.1`;
 
   try {
     const response = await axiosInstance.get(url);
@@ -19,7 +19,7 @@ export const fetchTestPlans = async () => {
 };
 
 export const fetchTestSuites = async (planId: number) => {
-    const url = `https://dev.azure.com/${organization}/${project_id}/_apis/testplan/Plans/${planId}/suites?api-version=7.1-preview.1`;
+    const url = `/testplan/Plans/${planId}/suites?api-version=7.1-preview.1`;
   
     try {
       const response = await axiosInstance.get(url);
@@ -109,7 +109,7 @@ export const fetchTestSuites = async (planId: number) => {
         // Fazer requisição para cada grupo e juntar os resultados
         for (const chunk of workItemChunks) {
           const ids = chunk.join(',');
-          const detailsUrl = `https://dev.azure.com/${organization}/${project_id}/_apis/wit/workitems?ids=${ids}&api-version=7.1-preview.3`;
+          const detailsUrl = `/wit/workitems?ids=${ids}&api-version=7.1-preview.3`;
   
           const detailsResponse = await axiosInstance.get(detailsUrl);
           allTestCases.push(...detailsResponse.data.value);

@@ -34,7 +34,7 @@ export function AllRunsProvider({ children }: AllRunsProviderProps) {
       let data: any;
       data = await axiosInstance
         .get(
-          `https://dev.azure.com/${organization}/${project_id}/_apis/test/runs?automated=true&includeRunDetails=true&api-version=6.0`
+          `/test/runs?automated=true&includeRunDetails=true&api-version=7.1`
         )
         .then((response) => {
           let runsItens: Run[] = []

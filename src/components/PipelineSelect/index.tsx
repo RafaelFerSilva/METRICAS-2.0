@@ -66,7 +66,7 @@ export default function PipelineSelect({ setPipelineRuns, setRunCondensedData, s
       const fetchPipelineRunList = async () => {
         runsData = await axiosInstance
           .get(
-            `https://dev.azure.com/${organization}/${project_id}/_apis/pipelines/${pipelineData[0].id}/runs?api-version=6.0-preview.1`
+            `/pipelines/${pipelineData[0].id}/runs?api-version=7.1-preview.1`
           )
           .then((response) => {
             let runs: Run[] = []
