@@ -13,7 +13,6 @@ export function withSession(funcao) {
           },
         },
       };
-      console.log(modifiedCtx)
       return funcao(modifiedCtx);
     } catch (error) {
       return {

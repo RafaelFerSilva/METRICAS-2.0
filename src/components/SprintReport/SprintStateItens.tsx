@@ -76,12 +76,12 @@ export default function SprintStateItens({ userStories, bugs, defects, problems,
             {problems.length > 0 && (
                 <ChartCard
                     title="Problemas por Estado"
-                    subtitle={`${problems.length} defects identificados`}
+                    subtitle={`${problems.length} problemas identificados`}
                     icon={MdBugReport}
                     colorScheme="red"
                 >
                     <ModernBarChart
-                        data={defectStatesData}
+                        data={problemsStateData}
                         title="Estados dos Defects"
                     />
                 </ChartCard>
