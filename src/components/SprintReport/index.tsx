@@ -225,12 +225,6 @@ export default function CompleteDashboard() {
               overflow="visible"
               zIndex={1}
             >
-              <HStack spacing={4} mb={4}>
-                <Icon as={MdDashboard} color="blue.500" boxSize={6} />
-                <Text fontSize="lg" fontWeight="semibold" color="gray.700">
-                  Configuração do Sprint
-                </Text>
-              </HStack>
 
               <VStack spacing={6} align="stretch">
                 <SimpleGrid

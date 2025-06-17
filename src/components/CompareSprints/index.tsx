@@ -98,7 +98,7 @@ export default function CompareSprints({
             try {
                 let workitens: number[] = await axiosInstance
                     .get(
-                        `https://dev.azure.com/${organization}/${project_id}/${sprintTeam}/_apis/work/teamsettings/iterations/${sprintId}/workitems?api-version=7.1-preview.1`
+                        `https://dev.azure.com/${organization}/${project_id}/${sprintTeam.id}/_apis/work/teamsettings/iterations/${sprintId}/workitems?api-version=7.1-preview.1`
                     )
                     .then(async (response) => {
                         let itens: any;

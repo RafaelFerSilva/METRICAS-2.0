@@ -11,7 +11,7 @@ export default function TestCaseReport({ testsCases }: any) {
   const [filters, setFilters] = useState<{ field: string; value: string }[]>([]);
   const { processedData, filteredData, countDistinctValues, preparePercentChartData, prepareRawChartData } = useTestCaseData(testsCases, filters);
 
-// Função para ordenar os dados de "risk"
+
 const sortRiskData = (data: { [key: string]: number }) => {
   const order = ["1 - High", "2 - Medium", "3 - Low", "Blank"];
   const sortedData = Object.keys(data)
@@ -21,15 +21,14 @@ const sortRiskData = (data: { [key: string]: number }) => {
       return acc;
     }, {} as { [key: string]: number });
 
-  // Verifica se existem dados em branco e adiciona à lista
+
   if (!data["Blank"]) {
-    sortedData["Blank"] = 0; // ou o valor que você desejar para representar a contagem em branco
+    sortedData["Blank"] = 0;
   }
 
   return sortedData;
 };
 
-// Ajuste no hook, aplicando a ordenação antes de gerar os dados
 const chartData = {
   automationPercentStatusChartData: preparePercentChartData(countDistinctValues.automationStatus),
   automationStatusChartData: prepareRawChartData(countDistinctValues.automationStatus),
