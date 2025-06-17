@@ -12,7 +12,7 @@ const ONE_YEAR = ONE_DAY * 365;
 export const tokenService = {
   saveProjectId(project_id, ctx = null) {
     nookies.set(ctx, ACCESS_PROJECT_KEY, project_id, {
-      maxAge: ONE_YEAR,
+      maxAge: ONE_DAY,
       path: '/'
     });
   },
@@ -20,12 +20,12 @@ export const tokenService = {
 
   save(organization, access_token, ctx = null) {
     nookies.set(ctx, ACCESS_TOKEN_KEY, access_token, {
-      maxAge: ONE_YEAR,
+      maxAge: ONE_DAY,
       path: '/'
     });
 
     nookies.set(ctx, ACCESS_ORGANIZATION_KEY, organization, {
-      maxAge: ONE_YEAR,
+      maxAge: ONE_DAY,
       path: '/'
     });
   },

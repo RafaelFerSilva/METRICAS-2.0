@@ -49,7 +49,7 @@ export default function ProjectsPage() {
       </GridItem>
       <VStack >
         <SimpleGrid
-          columns={{ base: 2, lg: 2 }}
+          columns={{ base: 1, sm: 2, md: 3 }}
           spacing={{ base: 4, md: 6 }}
           w="90%">
           {projects.map((project) => (

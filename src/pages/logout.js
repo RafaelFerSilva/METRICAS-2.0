@@ -11,7 +11,7 @@ export default function LogoutPage() {
   useEffect(() => {
     async function logout() {
       try {
-        await tokenService.delete(); // caso seja async
+        await tokenService.delete();
         setLoading(false);
         router.push('/');
       } catch (error) {

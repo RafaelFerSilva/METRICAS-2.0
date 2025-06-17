@@ -24,7 +24,6 @@ export default function HomeMenu() {
     // { itemName: 'Runs Report', itemUrl: "/testsReport", icon: MdAssessment },
     // { itemName: 'Tests Graphics', itemUrl: "/testsGraphics", icon: MdAssessment },
     { itemName: 'Tests Cases', itemUrl: "/alltestsCases", icon: MdAssessment },
-    { itemName: 'Projects', itemUrl: "/projects", icon: MdAssessment },
     { itemName: 'Configuration', itemUrl: "/configuration", icon: MdSettings }
   ];
 
