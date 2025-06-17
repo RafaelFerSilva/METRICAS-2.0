@@ -71,7 +71,7 @@ export default function SprintCompare() {
   const [sprintTeam, setSprintTeam] = useState<Team>();
   const [sprint, setSprint] = useState<Iterations[]>([]);
   const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const [isLoading, setIsLoading] = useState(false);
+  
 
   const renderContent = () => {
     if (!sprintTeam) {
@@ -97,7 +97,7 @@ export default function SprintCompare() {
 
   return (
     <TeamsProvider>
-      <Box bg={bgColor} minH="100vh" overflowX="hidden">
+      <Box bg={bgColor} minH="100vh" >
         <Container maxW="7xl" px={{ base: 4, md: 6, lg: 8 }}>
           <VStack spacing={8} align="stretch" py={6}>
             <Box

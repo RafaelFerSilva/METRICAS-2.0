@@ -45,7 +45,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={automationPercentStatusChartData} title="Automation Status %" />
+        <Chart data={automationPercentStatusChartData} title="Automation Status %" type="bar-vertical" />
       </Box>
       <Box
         p="6"
@@ -56,7 +56,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={automationStatusChartData} title="Automation Status" />
+        <Chart data={automationStatusChartData} title="Automation Status" type="bar-vertical" />
       </Box>
       <Box
         p="6"
@@ -67,7 +67,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={riskPercentChartData} title="Risk %" />
+        <Chart data={riskPercentChartData} title="Risk %"  type="bar-vertical"/>
       </Box>
       <Box
         p="6"
@@ -78,7 +78,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={riskChartData} title="Risk" />
+        <Chart data={riskChartData} title="Risk" type="bar-vertical" />
       </Box>
       <Box
         p="6"
@@ -89,7 +89,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={platformPercentChartData} title="Platform %" />
+        <Chart data={platformPercentChartData} title="Platform %" type="bar-vertical" />
       </Box>
       <Box
         p="6"
@@ -100,7 +100,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={platformChartData} title="Platform" />
+        <Chart data={platformChartData} title="Platform" type="bar-vertical" />
       </Box>
       <Box
         p="6"
@@ -111,7 +111,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={origemPercentChartData} title="Origem %" />
+        <Chart data={origemPercentChartData} title="Origem %" type="bar-vertical" />
       </Box>
       <Box
         p="6"
@@ -122,7 +122,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={origemChartData} title="Origem" />
+        <Chart data={origemChartData} title="Origem" type="bar-vertical" />
       </Box>
       <Box
         p="6"
@@ -133,7 +133,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={isSmokePercentChartData} title="Smoke Test %" />
+        <Chart data={isSmokePercentChartData} title="Smoke Test %" type="bar-vertical" />
       </Box>
       <Box
         p="6"
@@ -144,7 +144,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={isSmokeChartData} title="Smoke Test" />
+        <Chart data={isSmokeChartData} title="Smoke Test" type="bar-vertical" />
       </Box>
       <Box
         p="6"
@@ -155,7 +155,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={statePercentCharData} title="State %" />
+        <Chart data={statePercentCharData} title="State %" type="bar-vertical" />
       </Box>
       <Box
         p="6"
@@ -166,7 +166,7 @@ export default function TestCaseCharts({ chartData }: Props) {
         transition="transform 0.2s, box-shadow 0.2s"
         _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
       >
-        <Chart data={stateCharData} title="State" />
+        <Chart data={stateCharData} title="State" type="bar-vertical" />
       </Box>
     </SimpleGrid>
   );

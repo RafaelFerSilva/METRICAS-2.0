@@ -32,8 +32,8 @@ const sortRiskData = (data: { [key: string]: number }) => {
 const chartData = {
   automationPercentStatusChartData: preparePercentChartData(countDistinctValues.automationStatus),
   automationStatusChartData: prepareRawChartData(countDistinctValues.automationStatus),
-  riskPercentChartData: preparePercentChartData(sortRiskData(countDistinctValues.risk)), // Aplicando a ordenação aqui
-  riskChartData: prepareRawChartData(sortRiskData(countDistinctValues.risk)),            // Aplicando a ordenação aqui
+  riskPercentChartData: preparePercentChartData(sortRiskData(countDistinctValues.risk)), 
+  riskChartData: prepareRawChartData(sortRiskData(countDistinctValues.risk)),         
   platformPercentChartData: preparePercentChartData(countDistinctValues.platform),
   platformChartData: prepareRawChartData(countDistinctValues.platform),
   origemPercentChartData: preparePercentChartData(countDistinctValues.origem),

@@ -7,7 +7,7 @@ export function SummaryTestsCases({
 }: any) {
   return (
     <SimpleGrid
-      columns={{ base: 1, sm: 2, md: 3, lg: 5 }} // Ajuste de colunas para diferentes tamanhos de tela
+      columns={{ base: 1, sm: 2, md: 3, lg: 5 }} 
       spacing="20px"
       mb="3"
     >
