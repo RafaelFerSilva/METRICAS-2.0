@@ -26,8 +26,8 @@ export default function SprintReportPage() {
           <HomeMenu />
         </GridItem>
 
-        <GridItem area={'main'} bg="white" p={4}>
-          <Box borderRadius="md" boxShadow="md">
+        <GridItem area={'main'} bg="white" p={4} overflow="auto">
+          <Box borderRadius="md" boxShadow="md" minH="100%">
             <SprintReport />
           </Box>
         </GridItem>

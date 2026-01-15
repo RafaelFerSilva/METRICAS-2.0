@@ -25,8 +25,8 @@ export default function Dashboard() {
           <HomeMenu />
         </GridItem>
 
-        <GridItem area={'main'} bg="white" p={4}>
-          <Box borderRadius="md" boxShadow="md" p={6}>
+        <GridItem area={'main'} bg="white" p={4} overflow="auto">
+          <Box borderRadius="md" boxShadow="md" p={6} minH="100%">
             <Heading size="lg" mb={4} color="blue.600">
               Dashboard
             </Heading>

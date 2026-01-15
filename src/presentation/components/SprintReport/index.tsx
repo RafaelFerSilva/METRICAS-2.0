@@ -259,8 +259,8 @@ export default function CompleteDashboard() {
 
   return (
     <TeamsProvider>
-      <Box bg={bgColor} minH="100vh" overflowX="hidden">
-        <Container maxW="7xl" px={{ base: 4, md: 6, lg: 8 }}>
+      <Box w="100%" minH="100%">
+        <Box w="100%" px={{ base: 4, md: 6, lg: 8 }}>
           <VStack spacing={8} align="stretch" py={6}>
             <Box p={{ base: 4, md: 6 }} borderRadius="xl" boxShadow="sm" border="1px solid" borderColor="gray.200" position="relative" overflow="visible" zIndex={1}>
               <VStack spacing={6} align="stretch">
@@ -319,7 +319,7 @@ export default function CompleteDashboard() {
             </Box>
             {renderContent()}
           </VStack>
-        </Container>
+        </Box>
       </Box>
     </TeamsProvider>
   );
