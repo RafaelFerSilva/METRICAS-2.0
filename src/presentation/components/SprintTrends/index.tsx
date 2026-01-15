@@ -8,29 +8,34 @@ import {
     Input,
     Button,
     HStack,
-    VStack,
     Heading,
     Divider,
     Alert,
-    AlertIcon
+    AlertIcon,
+    Container
 } from "@chakra-ui/react";
+import { tokenService } from "../../../services/auth/tokenService";
 import { useEffect, useState, useCallback } from "react";
 import Chart from "../Chart";
 import SearchableSelect from "../SearchableSelect";
 import { useSprintComparison } from "../../hooks/useSprintComparison";
 import { SprintComparisonDTO } from "../../../core/application/dtos/sprint-comparison.dto";
 import { Sprint } from "../../../core/domain/entities/sprint.entity";
+import { useAuth } from "../../hooks/useAuth";
 import { KpiCard } from "./KpiCard";
+import ModernTeamSelect from "../TeamSelect/ModernTeamSelect";
+import { AzureDevOpsSprintGateway } from "../../../infrastructure/gateways/azure-devops-sprint.gateway";
+import { TeamsProvider } from "../../contexts/TeamsContext"; // Ensure this import exists
 
-interface Team {
-    id: string;
-    name: string;
-}
+// Helper to get array from data
+const extractSprintData = (data: SprintComparisonDTO[], key: keyof SprintComparisonDTO) => {
+    return data.map((item) => item ? Number(item[key]) || 0 : 0);
+};
 
-interface CompareSprintsProps {
-    sprintTeam: Team;
-    sprint: Sprint[]; // Usage of Domain Entity
-}
+const truncateLabel = (label: string, maxLength = 20) => {
+    if (label.length <= maxLength) return label;
+    return `${label.substring(0, maxLength)}...`;
+};
 
 // Data accumulator structure
 interface CondensedSprintsData {
@@ -48,42 +53,72 @@ interface CondensedSprintsData {
     bugs: number[];
     defects: number[];
 
-    // Calculated Averages for KPIs
     avgVelocity: number;
     avgCycle: number;
     avgLead: number;
     avgDeliveryRate: number;
 }
 
-const truncateLabel = (label: string, maxLength = 20) => {
-    if (label.length <= maxLength) return label;
-    return `${label.substring(0, maxLength)}...`;
-};
+interface Team {
+    id: string;
+    name: string;
+}
 
-export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsProps) {
+const sprintGateway = new AzureDevOpsSprintGateway();
+
+export default function SprintTrends() {
+    return (
+        <TeamsProvider>
+            <SprintTrendsContent />
+        </TeamsProvider>
+    );
+}
+
+function SprintTrendsContent() {
+    const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+    const [sprints, setSprints] = useState<Sprint[]>([]);
+    const [isLoadingSprints, setIsLoadingSprints] = useState(false);
+
     const [condensedSprintsData, setCondensedSprintsData] = useState<CondensedSprintsData>();
-    const [maxItems, setMaxItems] = useState("6"); // Default increased to 6 to show trends better
+    const [maxItems, setMaxItems] = useState("6");
     const [tagsFilterInput, setTagsFilterInput] = useState("");
     const [tagsFilter, setTagsFilter] = useState<string[]>([]);
     const toast = useToast();
 
-    const { fetchComparison, isLoading } = useSprintComparison();
+    const { fetchComparison, isLoading: isLoadingComparison } = useSprintComparison();
+
+    const handleTeamSelect = useCallback(async (team: any) => {
+        setSelectedTeam({ id: team.id, name: team.name });
+        setIsLoadingSprints(true);
+        try {
+            const projectId = tokenService.getProjectId();
+            if (!projectId) {
+                toast({ title: "Projeto não selecionado", status: "error" });
+                return;
+            }
+            const fetchedSprints = await sprintGateway.getSprints(team.id, projectId);
+            // Sort sprints by date? Usually they come sorted but good to ensure
+            // const sorted = fetchedSprints.sort(...) // Assume gateway returns reasonable order
+            setSprints(fetchedSprints);
+        } catch (err) {
+            toast({ title: "Erro ao carregar sprints", status: "error" });
+        } finally {
+            setIsLoadingSprints(false);
+        }
+    }, [toast]);
 
     const loadSprintData = useCallback(async () => {
-        if (!sprint || sprint.length === 0) return;
+        if (!selectedTeam || sprints.length === 0) return;
 
         try {
             const filters = tagsFilter.length > 0 ? { tags: tagsFilter } : undefined;
-            const summaryData = await fetchComparison({ teamId: sprintTeam.id, sprints: sprint, filters });
-
-            // Helper to get array from data
-            const extractSprintData = (data: SprintComparisonDTO[], key: keyof SprintComparisonDTO) => {
-                return data.map((item) => item ? Number(item[key]) || 0 : 0);
-            };
+            // Use all fetched sprints for trends? Or limit? 
+            // We slice inside the logic anyway, so passing "all" sprints is fine.
+            const summaryData = await fetchComparison({ teamId: selectedTeam.id, sprints: sprints, filters });
 
             const slicedData = summaryData.slice(-Number(maxItems));
 
-            // Calculate Averages based on SLICED (visible) data
+            // ... (Rest of calculation logic same as before)
             const totalPointsPlanned = extractSprintData(slicedData, "points").reduce((a, b) => a + b, 0);
             const totalPointsDelivered = extractSprintData(slicedData, "pointsDelivery").reduce((a, b) => a + b, 0);
             const avgVelocity = Number((totalPointsDelivered / slicedData.length).toFixed(1));
@@ -121,6 +156,7 @@ export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsPro
 
             setCondensedSprintsData(condensed);
         } catch (error) {
+            console.error(error);
             toast({
                 title: "Erro ao carregar dados.",
                 description: "Não foi possível carregar o comparativo de sprints.",
@@ -129,14 +165,25 @@ export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsPro
                 isClosable: true,
             });
         }
-    }, [sprint, sprintTeam.id, toast, maxItems, fetchComparison, tagsFilter]);
+    }, [selectedTeam, sprints, toast, maxItems, fetchComparison, tagsFilter]);
 
     useEffect(() => {
         void loadSprintData();
     }, [loadSprintData]);
 
 
-    if (isLoading) {
+    if (!selectedTeam) {
+        return (
+            <Container maxW="container.xl" py={8}>
+                <Box bg="white" p={6} borderRadius="lg" shadow="md">
+                    <Heading size="md" mb={6}>Selecione um Time para Ver Tendências</Heading>
+                    <ModernTeamSelect onTeamSelected={handleTeamSelect} />
+                </Box>
+            </Container>
+        );
+    }
+
+    if (isLoadingSprints || isLoadingComparison) {
         return (
             <Center h="200px">
                 <Spinner size="xl" color="blue.500" />
@@ -146,32 +193,38 @@ export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsPro
 
     if (!condensedSprintsData) {
         return (
-            <Alert status="info" borderRadius="md">
-                <AlertIcon />
-                Selecione sprints para visualizar o comparativo.
-            </Alert>
+            <Container maxW="container.xl" py={8}>
+                <Alert status="info" borderRadius="md">
+                    <AlertIcon />
+                    Sem dados para exibir.
+                </Alert>
+            </Container>
         );
     }
 
-    // Benchmark Calculations for Charts
     const cycleBenchmarkData = Array(condensedSprintsData.cycleTime.length).fill(condensedSprintsData.avgCycle);
     const leadBenchmarkData = Array(condensedSprintsData.leadTime.length).fill(condensedSprintsData.avgLead);
 
     return (
         <Box w="100%" p={2}>
-            {/* Header & Filters */}
+            {/* Header with Team Switch option */}
+            <Box mb={4} display="flex" justifyContent="flex-end">
+                <Button size="sm" variant="outline" onClick={() => { setSelectedTeam(null); setCondensedSprintsData(undefined); }}>
+                    Trocar Time
+                </Button>
+            </Box>
             <Box bg="white" p={4} borderRadius="lg" shadow="sm" mb={6}>
                 <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} alignItems="end">
                     <Box>
-                        <Heading size="md" mb={1}>Sprint Analytics</Heading>
-                        <Text color="gray.500" fontSize="sm">Comparativo e tendências de performance</Text>
+                        <Heading size="md" mb={1}>Sprint Trends</Heading>
+                        <Text color="gray.500" fontSize="sm">Análise histórica e tendências de performance</Text>
                     </Box>
                     <Box>
                         <Text fontSize="xs" fontWeight="bold" mb={1} color="gray.500" textTransform="uppercase">
                             Período (Sprints)
                         </Text>
                         <SearchableSelect
-                            options={[{ value: "4", label: "Últimas 4" }, { value: "6", label: "Últimas 6" }, { value: "8", label: "Últimas 8" }, { value: "12", label: "Últimas 12" }]}
+                            options={[{ value: "4", label: "Últimas 4" }, { value: "6", label: "Últimas 6 (Padrão)" }, { value: "8", label: "Últimas 8" }, { value: "12", label: "Últimas 12 (Longo Prazo)" }]}
                             value={maxItems}
                             onChange={(selectedOption: string) => setMaxItems(selectedOption)}
                             placeholder="Selecione"
@@ -260,7 +313,7 @@ export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsPro
                             ],
                             labels: condensedSprintsData.name.map(label => truncateLabel(label))
                         }}
-                        title="Cycle Time: Trend"
+                        title="Cycle Time Trends"
                         tip="Cycle Time é o tempo de trabalho ativo. A linha laranja (P95) mostra que 95% dos itens são entregues neste prazo. Pontos acima da linha vermelha (UCL) são anomalias que desviaram do padrão do processo."
                         type="line"
                         multiColor={false}
@@ -275,7 +328,7 @@ export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsPro
                             ],
                             labels: condensedSprintsData.name.map(label => truncateLabel(label))
                         }}
-                        title="Lead Time: Trend"
+                        title="Lead Time Trends"
                         tip="Lead Time é o tempo total desde a criação até a entrega. Inclui filas de espera. Se o Lead Time sobe enquanto o Cycle Time mantém-se estável, indica gargalos no backlog ou aprovações."
                         type="line"
                         multiColor={false}
@@ -297,7 +350,7 @@ export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsPro
                             ],
                             labels: condensedSprintsData.name.map(label => truncateLabel(label))
                         }}
-                        title="Velocity Trend (Pontos)"
+                        title="Velocity History"
                         tip="Comparativo entre o que foi planejado vs entregue. Barras vermelhas altas indicam problemas constantes de planejamento ou bloqueios externos."
                         type="bar-vertical"
                         stacked={true}
@@ -313,7 +366,7 @@ export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsPro
                             ],
                             labels: condensedSprintsData.name.map(label => truncateLabel(label))
                         }}
-                        title="Throughput Profile"
+                        title="Throughput Composition"
                         tip="Distribuição dos tipos de trabalho entregues. Uma proporção saudável depende do contexto, mas excesso de Bugs pode indicar problemas de qualidade ou dívida técnica."
                         type="bar-vertical"
                         stacked={true}

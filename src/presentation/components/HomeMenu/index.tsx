@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, List, ListIcon, IconButton, Text, Flex, Avatar } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
-import { MdAssessment, MdCompareArrows, MdReport, MdDashboard, MdSettings } from "react-icons/md";
+import { MdAssessment, MdReport, MdDashboard, MdSettings, MdTrendingUp } from "react-icons/md";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 import { ActiveLink } from "../ActiveLink";
@@ -22,11 +22,8 @@ export default function HomeMenu() {
   const menuItems: MenuItem[] = [
     { itemName: 'Dashboard', itemUrl: "/dashboard", icon: MdDashboard },
     { itemName: 'Sprint Report', itemUrl: "/sprintReport", icon: MdReport },
-    { itemName: 'Comparison of Sprints', itemUrl: "/sprintCompare", icon: MdCompareArrows },
+    { itemName: 'Sprint Trends', itemUrl: "/sprintTrends", icon: MdTrendingUp },
     { itemName: 'Tests Cases', itemUrl: "/alltestsCases", icon: MdAssessment },
-    // { itemName: 'Runs Report', itemUrl: "/testsReport", icon: MdAssessment },
-    // { itemName: 'Tests Graphics', itemUrl: "/testsGraphics", icon: MdAssessment },
-    // { itemName: 'Configuration', itemUrl: "/configuration", icon: MdSettings }
   ];
 
   const isActiveRoute = (url: string) => {
