@@ -3,14 +3,18 @@ import { SprintMetrics } from "../value-objects/sprint-metrics.value-object";
 
 export class SprintMetricsService {
     public calculateMetrics(tasks: Task[]): SprintMetrics {
-        const userStories = this.returnUsersStories(tasks);
+        //  NEW: Separate direct vs related User Stories
+        const allUserStories = this.returnUsersStories(tasks);
+        const directUserStories = allUserStories.filter(us => !us.IsExternal);
+        const relatedUserStories = allUserStories.filter(us => us.IsExternal);
+
         const bugs = this.returnBugs(tasks);
         const taskItems = this.returnTaskItens(tasks);
         const defects = this.returnDefects(tasks);
         const problems = this.returnProblems(tasks);
         const completedTasks = this.returnTasksCompleted(tasks);
 
-        const userStoryStatesData = this.returnStateDate(userStories);
+        const userStoryStatesData = this.returnStateDate(allUserStories);
         const bugStatesData = this.returnStateDate(bugs);
         const defectStatesData = this.returnStateDate(defects);
         const problemsStateData = this.returnStateDate(problems);
@@ -21,20 +25,29 @@ export class SprintMetricsService {
         const completedBugs = this.returnCompletedBugs(tasks);
         const completedProblems = this.returnCompletedProblemsLenght(tasks);
         const completedTasksItems = this.returncompletedTasksItems(tasks);
-        const completedStoryPoints = this.returncompletedStoryPoints(tasks);
-        const totalStoryPoints = this.returntotalStoryPoints(tasks);
 
-        const userStoriesRate = userStories.length > 0 ? (userStories.filter((us: any) => us.State === "Closed").length / userStories.length) * 100 : 0;
+        // NEW: Calculate story points separately
+        const completedStoryPoints = this.returncompletedStoryPoints(directUserStories);
+        const totalStoryPoints = this.returntotalStoryPoints(directUserStories);
+        const relatedCompletedStoryPoints = this.returncompletedStoryPoints(relatedUserStories);
+        const relatedTotalStoryPoints = this.returntotalStoryPoints(relatedUserStories);
+
+        const userStoriesRate = allUserStories.length > 0 ? (allUserStories.filter((us: any) => us.State === "Closed").length / allUserStories.length) * 100 : 0;
         const completionRate = tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
         const storyPointsRate = totalStoryPoints > 0 ? (completedStoryPoints / totalStoryPoints) * 100 : 0;
-        const usRate = userStories.length > 0 ? (userStories.filter((us: any) => us.State === "Closed").length / userStories.length) * 100 : 0;
+        const usRate = allUserStories.length > 0 ? (allUserStories.filter((us: any) => us.State === "Closed").length / allUserStories.length) * 100 : 0;
         const defectsRate = defects.length > 0 ? (defects.filter((defect: any) => defect.State === "Closed").length / defects.length) * 100 : 0;
         const bugsRate = bugs.length > 0 ? (bugs.filter((bug: any) => bug.State === "Closed").length / bugs.length) * 100 : 0;
         const problemsRate = problems.length > 0 ? (problems.filter((problem: any) => problem.State === "Closed").length / problems.length) * 100 : 0;
         const tasksItensRate = taskItems.length > 0 ? (taskItems.filter((task: any) => task.State === "Closed").length / taskItems.length) * 100 : 0;
 
         return {
-            userStories,
+            // ✅ NEW: Separated User Stories
+            directUserStories,
+            relatedUserStories,
+
+            // All USs combined (backward compatibility)
+            userStories: allUserStories,
             bugs,
             taskItems,
             defects,
@@ -50,8 +63,13 @@ export class SprintMetricsService {
             completedBugs,
             completedProblems,
             completedTasksItems,
+
+            // ✅ NEW: Separated story points
             completedStoryPoints,
             totalStoryPoints,
+            relatedCompletedStoryPoints,
+            relatedTotalStoryPoints,
+
             userStoriesRate,
             completionRate,
             storyPointsRate,
@@ -62,6 +80,7 @@ export class SprintMetricsService {
             tasksItensRate
         };
     }
+
 
 
     // --- Helper Methods (Migrated from report.ts) ---
@@ -162,16 +181,14 @@ export class SprintMetricsService {
         return taskItems.filter((task: any) => task.State === 'Closed').length;
     }
 
-    public returntotalStoryPoints(tasks: Task[]) {
-        const userStories = this.returnUsersStories(tasks);
+    public returntotalStoryPoints(userStories: Task[]) {
         return userStories.reduce((sum: number, story: any) => {
             const points = typeof story["Story Points"] === 'number' ? story["Story Points"] : 0;
             return sum + points;
         }, 0);
     }
 
-    public returncompletedStoryPoints(tasks: Task[]) {
-        const userStories = this.returnUsersStories(tasks);
+    public returncompletedStoryPoints(userStories: Task[]) {
         return userStories
             .filter((story: any) => story.State === "Closed")
             .reduce((sum: number, story: any) => {

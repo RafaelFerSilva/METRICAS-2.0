@@ -1,3 +1,13 @@
+// Work Item Relation interface for hierarchical relationships
+export interface WorkItemRelation {
+    rel: string;
+    url: string;
+    attributes?: {
+        name?: string;
+        [key: string]: any;
+    };
+}
+
 export interface Task {
     ID: string;
     Title: string;
@@ -24,4 +34,9 @@ export interface Task {
     url?: string;
     Priority?: string;
     Severity?: string;
+
+    // ✅ NEW: Hierarchical relationship fields
+    Parent?: string;
+    Relations?: WorkItemRelation[];
+    IsExternal?: boolean;
 }

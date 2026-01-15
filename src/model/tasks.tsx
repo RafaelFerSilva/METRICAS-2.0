@@ -68,6 +68,23 @@ class NewTasks {
           ? campos["System.AssignedTo"]["displayName"]
           : "New";
 
+      // ✅ NEW: Extract Parent ID from relations
+      let parentId: string | undefined;
+      let relations: any[] = value["relations"] || [];
+
+      // Find parent relation (System.LinkTypes.Hierarchy-Reverse)
+      const parentRelation = relations.find((rel: any) =>
+        rel.rel === "System.LinkTypes.Hierarchy-Reverse"
+      );
+
+      if (parentRelation) {
+        // Extract ID from URL: https://dev.azure.com/{org}/_apis/wit/workItems/{id}
+        const match = parentRelation.url.match(/workItems\/(\d+)/);
+        if (match) {
+          parentId = match[1];
+        }
+      }
+
       let task: Task = {
         ID: value.id.toString(),
         Title: campos["System.Title"],
@@ -93,7 +110,11 @@ class NewTasks {
         Activity: campos["Microsoft.VSTS.Common.Activity"],
         url: `https://dev.azure.com/${organization}/${campos["System.TeamProject"]}/_workitems/edit/${value["id"]}`,
         Priority: campos["Microsoft.VSTS.Common.Priority"],
-        Severity: campos["Microsoft.VSTS.Common.Severity"]
+        Severity: campos["Microsoft.VSTS.Common.Severity"],
+
+        // ✅ NEW: Add Parent and Relations
+        Parent: parentId,
+        Relations: relations
       };
 
       return task;

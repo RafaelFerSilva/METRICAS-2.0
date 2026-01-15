@@ -57,6 +57,35 @@ export class AzureDevOpsSprintGateway implements ISprintRepository {
         }
     }
 
+    async getUserStoriesByIds(ids: string[]): Promise<Task[]> {
+        if (ids.length === 0) {
+            return [];
+        }
+
+        try {
+            // Batch get work items by IDs
+            const workItemDetailsResponse = await getAxiosClient().get(
+                `wit/workitems?ids=${ids.join(',')}&expand=all&api-version=7.1`
+            );
+
+            if (workItemDetailsResponse.status === 200 && workItemDetailsResponse.data?.value) {
+                const newTasks = new NewTasks();
+                const tasks = newTasks.formatJson(workItemDetailsResponse.data.value);
+
+                // Mark as external (from other sprint)
+                return tasks.map(task => ({
+                    ...task,
+                    IsExternal: true
+                }));
+            }
+            return [];
+
+        } catch (error) {
+            console.error("Error fetching user stories by IDs:", error);
+            throw error;
+        }
+    }
+
     private mapToSprint(raw: any): Sprint {
         return {
             id: raw.id,

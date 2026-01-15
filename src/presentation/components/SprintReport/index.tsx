@@ -12,6 +12,9 @@ import {
   Badge,
   Divider,
   Accordion,
+  Switch,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
 import { MdList } from "react-icons/md";
 
@@ -21,7 +24,9 @@ import ModernTeamSelect from "../TeamSelect/ModernTeamSelect";
 import ModernEmptyState from "../EmptyState/ModernEmptyState";
 import { SpinnerContent } from "../Spinner";
 import SprintReportCards from "./SprintReportCards";
-import { DetailedStatistics } from "./DetailedStatistics";
+import { QualityMetrics } from "./QualityMetrics";
+import { UserStoryDistribution } from "./UserStoryDistribution";
+import { InconsistencyAlert } from "./InconsistencyAlert";
 import SprintAlert from "./SprintAlert";
 import PercentSprintReportCard from "./PecentSprintReportCard";
 import SprintStateItens from "./SprintStateItens";
@@ -51,6 +56,7 @@ export default function CompleteDashboard() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [sprintTeam, setSprintTeam] = useState<Team>();
   const [sprint, setSprint] = useState<Sprint[]>([]);
+  const [showRelatedUSs, setShowRelatedUSs] = useState<boolean>(true);
 
   // Clean Architecture Hook
   const { fetchSprints, fetchReport, isLoadingReport } = useSprintReport();
@@ -125,35 +131,91 @@ export default function CompleteDashboard() {
       <VStack spacing={8} align="stretch" w="100%">
         <SprintAlert bugs={m.bugs} defects={m.defects} problems={m.problems} totalStoryPoints={m.totalStoryPoints} completedStoryPoints={m.completedStoryPoints} />
         <SprintReportCards userStories={m.userStories} bugs={m.bugs} defects={m.defects} problems={m.problems} totalStoryPoints={m.totalStoryPoints} completedStoryPoints={m.completedStoryPoints} tasks={tasks} />
-        <DetailedStatistics userStories={m.userStories} bugs={m.bugs} defects={m.defects} problems={m.problems} taskItems={m.taskItems} totalStoryPoints={m.totalStoryPoints} />
+
+        {/* Inconsistency Alert */}
+        <InconsistencyAlert
+          storyPointsRate={m.storyPointsRate}
+          usCompletionRate={m.usRate}
+        />
+
+        {/* Quality Metrics */}
+        <QualityMetrics
+          bugs={m.bugs}
+          defects={m.defects}
+          problems={m.problems}
+          userStories={m.directUserStories}
+          totalItems={tasks.length}
+        />
+
+        {/* User Story Distribution */}
+        {m.relatedUserStories.length > 0 && (
+          <UserStoryDistribution
+            directUserStories={m.directUserStories}
+            relatedUserStories={m.relatedUserStories}
+            directStoryPoints={m.totalStoryPoints}
+            relatedStoryPoints={m.relatedTotalStoryPoints}
+          />
+        )}
         <PercentSprintReportCard userStories={m.userStories} userStoriesRate={m.userStoriesRate} bugs={m.bugs} defects={m.defects} problems={m.problems} totalStoryPoints={m.totalStoryPoints} media={media} />
         <SprintStateItens userStories={m.userStories} bugs={m.bugs} defects={m.defects} problems={m.problems} taskItems={m.taskItems} userStoryStatesData={m.userStoryStatesData} bugStatesData={m.bugStatesData} defectStatesData={m.defectStatesData} problemsStateData={m.problemsStateData} taskStatesData={m.taskStatesData} />
 
         <Divider />
 
-        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 4, md: 6 }} w="100%">
-          <SprintProgressItem title="Progresso por User Story" itemPorcentage={m.usRate} completed_itens={m.completedUserStories} total={m.userStories.length} color="blue" />
+        {/* Top 3 Progress Bars */}
+        <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={{ base: 4, md: 6 }} w="100%">
           <SprintProgressItem title="Progresso por Story Points" itemPorcentage={m.storyPointsRate} completed_itens={m.completedStoryPoints} total={m.totalStoryPoints} color="purple" />
-          <SprintProgressItem title="Progresso por Defects" itemPorcentage={m.defectsRate} completed_itens={m.completedDefects} total={m.defects.length} color="orange" />
-          <SprintProgressItem title="Progresso por Bugs" itemPorcentage={m.bugsRate} completed_itens={m.completedBugs} total={m.bugs.length} color="red" />
-          <SprintProgressItem title="Progresso por Problems" itemPorcentage={m.problemsRate} completed_itens={m.completedProblems} total={m.problems.length} color="red" />
-          <SprintProgressItem title="Progresso por Tasks" itemPorcentage={m.tasksItensRate} completed_itens={m.completedTasksItems} total={m.taskItems.length} color="green" />
-          <SprintProgressItem title="Progresso por Itens" itemPorcentage={m.completionRate} completed_itens={m.completedTasks.length} total={tasks.length} color="gray" />
+          <SprintProgressItem title="Progresso por User Story" itemPorcentage={m.usRate} completed_itens={m.completedUserStories} total={m.userStories.length} color="blue" />
+          <SprintProgressItem title="Progresso Geral" itemPorcentage={m.completionRate} completed_itens={m.completedTasks.length} total={tasks.length} color="green" />
         </SimpleGrid>
 
         <Divider />
 
-        <HStack>
-          <Icon as={MdList} color="blue.500" boxSize={10} />
-          <Text fontSize="x-large" fontWeight="semibold" color="gray.700">
-            Listagem de itens da sprint
-          </Text>
+        <HStack justify="space-between" align="center">
+          <HStack>
+            <Icon as={MdList} color="blue.500" boxSize={10} />
+            <Text fontSize="x-large" fontWeight="semibold" color="gray.700">
+              Listagem de itens da sprint
+            </Text>
+          </HStack>
+
+          {/* Toggle for Related User Stories */}
+          {m.relatedUserStories.length > 0 && (
+            <FormControl display="flex" alignItems="center" w="auto">
+              <FormLabel htmlFor="show-related" mb="0" fontSize="sm">
+                Mostrar USs Relacionadas
+              </FormLabel>
+              <Switch
+                id="show-related"
+                isChecked={showRelatedUSs}
+                onChange={(e) => setShowRelatedUSs(e.target.checked)}
+                colorScheme="blue"
+              />
+            </FormControl>
+          )}
         </HStack>
 
-        {m.userStories.length > 0 && (
+        {/*  NEW: User Stories da Sprint (Direct) */}
+        {m.directUserStories.length > 0 && (
           <Accordion allowToggle >
-            <AccordionSection title="User Stories" >
-              <TableComponent data={m.userStories} headers={userStoryTableHeaders} />
+            <AccordionSection title={`User Stories da Sprint (${m.directUserStories.length})`} >
+              <TableComponent data={m.directUserStories} headers={userStoryTableHeaders} />
+            </AccordionSection>
+          </Accordion>
+        )}
+
+        {/* NEW: User Stories Relacionadas (de outras sprints) */}
+        {showRelatedUSs && m.relatedUserStories.length > 0 && (
+          <Accordion allowToggle >
+            <AccordionSection
+              title={`User Stories Relacionadas - Outras Sprints (${m.relatedUserStories.length})`}
+            >
+              <Box mb={4} p={3} bg="orange.50" borderRadius="md" border="1px solid" borderColor="orange.200">
+                <Text fontSize="sm" color="orange.800">
+                  <Icon as={MdList} display="inline" mr={2} />
+                  Estas User Stories não fazem parte desta sprint, mas possuem tasks que estão nela.
+                </Text>
+              </Box>
+              <TableComponent data={m.relatedUserStories} headers={userStoryTableHeaders} />
             </AccordionSection>
           </Accordion>
         )}

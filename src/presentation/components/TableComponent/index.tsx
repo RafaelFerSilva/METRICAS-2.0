@@ -1,6 +1,7 @@
 
-import { Table, Thead, Tr, Th, Tbody, Td, Heading, Box, IconButton, Icon } from "@chakra-ui/react";
+import { Table, Thead, Tr, Th, Tbody, Td, Heading, Box, IconButton, Icon, Badge, Tooltip, useColorModeValue } from "@chakra-ui/react";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { MdLink } from "react-icons/md";
 
 interface TableComponentProps {
   data: Record<string, any>[];
@@ -39,6 +40,7 @@ export default function TableComponent({
   tableItemFontSize = "x-small",
   url = "link",
 }: TableComponentProps) {
+  const hoverBg = useColorModeValue('gray.50', 'gray.700');
 
   const renderContent = () => {
     return data.length > 0 ? (
@@ -59,17 +61,41 @@ export default function TableComponent({
           </Thead>
           <Tbody>
             {data.map((row, rowIndex) => (
-              <Tr key={rowIndex}>
+              <Tr
+                key={rowIndex}
+                _hover={{ bg: hoverBg }}
+                transition="background-color 0.2s"
+              >
                 {headers.map((header, headerIndex) => (
                   <Td key={headerIndex} textAlign="center" fontSize={tableItemFontSize}>
-                    {getValue(row,header)}
+                    {/* ✅ Render value */}
+                    {getValue(row, header)}
+
+                    {/* ✅ Show Parent badge for Tasks */}
+                    {header === "ID" && row["Work Item Type"] === "Task" && row.Parent && (
+                      <Tooltip label={`Filho da User Story #${row.Parent}`} placement="top">
+                        <Badge ml={2} colorScheme="blue" fontSize="xx-small">
+                          <Icon as={MdLink} mr={1} />
+                          {row.Parent}
+                        </Badge>
+                      </Tooltip>
+                    )}
+
+                    {/* ✅ Show External indicator for USs from other sprints */}
+                    {header === "ID" && row.IsExternal && (
+                      <Tooltip label="Esta US está em outra sprint" placement="top">
+                        <Badge ml={2} colorScheme="orange" fontSize="xx-small">
+                          Externa
+                        </Badge>
+                      </Tooltip>
+                    )}
                   </Td>
                 ))}
                 <Td textAlign="left" fontSize={tableItemFontSize}>
                   <IconButton
                     aria-label="Open Link"
                     icon={<Icon as={FaExternalLinkAlt} />}
-                    onClick={() => window.open(getValue(row,'url'), "_blank")}
+                    onClick={() => window.open(getValue(row, 'url'), "_blank")}
                     size="sm"
                     variant="ghost"
                   />

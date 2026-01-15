@@ -13,8 +13,10 @@ import {
   StatArrow,
   VStack,
   HStack,
+  Tooltip,
 } from "@chakra-ui/react";
 import { IconType } from "react-icons";
+import { MdInfoOutline } from "react-icons/md";
 
 interface SimpleCardProps {
   title: string;
@@ -34,11 +36,11 @@ interface SimpleCardProps {
   onClick?: () => void;
 }
 
-export default function SimpleCard({ 
-  title, 
-  subtitle, 
-  children, 
-  icon, 
+export default function SimpleCard({
+  title,
+  subtitle,
+  children,
+  icon,
   colorScheme = "blue",
   onClick,
 }: SimpleCardProps) {
@@ -63,10 +65,10 @@ export default function SimpleCard({
   } : {};
 
   return (
-    <Box 
-      bg={bgColor} 
-      borderColor={borderColor} 
-      boxShadow="lg" 
+    <Box
+      bg={bgColor}
+      borderColor={borderColor}
+      boxShadow="lg"
       borderRadius="lg"
       border="1px solid"
       p={6}
@@ -110,24 +112,26 @@ interface MetricCardProps {
   changeType?: "increase" | "decrease";
   icon?: React.ElementType;
   colorScheme?: string;
+  tooltipText?: string;
 }
 
-export function MetricCard({ 
-  title, 
-  value, 
-  change, 
-  changeType, 
-  icon, 
-  colorScheme = "blue" 
+export function MetricCard({
+  title,
+  value,
+  change,
+  changeType,
+  icon,
+  colorScheme = "blue",
+  tooltipText
 }: MetricCardProps) {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
   return (
-    <Box 
-      bg={bgColor} 
-      borderColor={borderColor} 
-      boxShadow="md" 
+    <Box
+      bg={bgColor}
+      borderColor={borderColor}
+      boxShadow="md"
       borderRadius="lg"
       border="1px solid"
       p={6}
@@ -135,9 +139,18 @@ export function MetricCard({
       <Flex align="center" justify="space-between">
         <Box>
           <Stat>
-            <StatLabel fontSize="sm" color="gray.600">
-              {title}
-            </StatLabel>
+            <HStack spacing={2} mb={1}>
+              <StatLabel fontSize="sm" color="gray.600">
+                {title}
+              </StatLabel>
+              {tooltipText && (
+                <Tooltip label={tooltipText} placement="top" hasArrow>
+                  <span>
+                    <Icon as={MdInfoOutline} color="gray.400" boxSize={3.5} cursor="help" />
+                  </span>
+                </Tooltip>
+              )}
+            </HStack>
             <StatNumber fontSize="2xl" color={`${colorScheme}.500`}>
               {value}
             </StatNumber>
@@ -174,21 +187,21 @@ interface ChartCardProps {
   colorScheme?: string;
 }
 
-export function ChartCard({ 
-  title, 
-  subtitle, 
-  children, 
-  icon, 
-  colorScheme = "blue" 
+export function ChartCard({
+  title,
+  subtitle,
+  children,
+  icon,
+  colorScheme = "blue"
 }: ChartCardProps) {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
   return (
-    <Box 
-      bg={bgColor} 
-      borderColor={borderColor} 
-      boxShadow="lg" 
+    <Box
+      bg={bgColor}
+      borderColor={borderColor}
+      boxShadow="lg"
       borderRadius="lg"
       border="1px solid"
       p={6}
