@@ -1,7 +1,7 @@
 import { Task } from "../entities/sprint.entity";
 
 export interface SprintMetrics {
-    // ✅ NEW: Separated User Stories (direct vs related)
+    // Separated User Stories (direct vs related)
     directUserStories: Task[];      // User Stories directly in the sprint
     relatedUserStories: Task[];     // User Stories related via tasks (from other sprints)
 
@@ -22,7 +22,7 @@ export interface SprintMetrics {
     completedProblems: number;
     completedTasksItems: number;
 
-    // ✅ NEW: Separated story points
+    // Separated story points
     completedStoryPoints: number;        // Story points from direct USs
     totalStoryPoints: number;            // Total story points from direct USs
     relatedCompletedStoryPoints: number; // Story points from related USs
@@ -36,4 +36,8 @@ export interface SprintMetrics {
     bugsRate: number;
     problemsRate: number;
     tasksItensRate: number;
+
+    // Cycle Time and Lead Time metrics (in days)
+    averageCycleTime: number;
+    averageLeadTime: number;
 }

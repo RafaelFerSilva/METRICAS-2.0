@@ -8,6 +8,13 @@ export interface WorkItemRelation {
     };
 }
 
+// State change history for Cycle Time / Lead Time calculations
+export interface StateHistory {
+    fromState: string | null;
+    toState: string;
+    changedDate: string;
+}
+
 export interface Task {
     ID: string;
     Title: string;
@@ -35,8 +42,11 @@ export interface Task {
     Priority?: string;
     Severity?: string;
 
-    // ✅ NEW: Hierarchical relationship fields
+    // ✅ Hierarchical relationship fields
     Parent?: string;
     Relations?: WorkItemRelation[];
     IsExternal?: boolean;
+
+    // ✅ NEW: State history for precise Cycle/Lead Time
+    StateHistory?: StateHistory[];
 }

@@ -1,5 +1,5 @@
 import { SimpleGrid, Box, Text, Stat, StatLabel, StatNumber, StatHelpText, Icon, useColorModeValue, Tooltip, HStack } from "@chakra-ui/react";
-import { MdCheckCircle, MdBugReport, MdWarning, MdInfoOutline } from "react-icons/md";
+import { MdCheckCircle, MdBugReport, MdWarning, MdInfoOutline, MdTimer, MdCalendarToday } from "react-icons/md";
 import { Task } from "../../../core/shared/types/Task";
 
 interface QualityMetricsProps {
@@ -8,9 +8,11 @@ interface QualityMetricsProps {
     problems: Task[];
     userStories: Task[];
     totalItems: number;
+    averageCycleTime: number;
+    averageLeadTime: number;
 }
 
-export function QualityMetrics({ bugs, defects, problems, userStories, totalItems }: QualityMetricsProps) {
+export function QualityMetrics({ bugs, defects, problems, userStories, totalItems, averageCycleTime, averageLeadTime }: QualityMetricsProps) {
     const bgColor = useColorModeValue('white', 'gray.800');
     const borderColor = useColorModeValue('gray.200', 'gray.700');
 
@@ -26,6 +28,8 @@ export function QualityMetrics({ bugs, defects, problems, userStories, totalItem
     const issueRate = totalItems > 0 ? (totalQualityIssues / totalItems) * 100 : 0;
     const sprintQuality = 100 - issueRate; // Invert: more issues = lower quality
 
+    const closedCount = userStories.filter(us => us.State === "Closed").length;
+
     // Color coding based on thresholds
     const getBugRateColor = () => {
         if (bugRate < 50) return "green";     // < 0.5 issues per US
@@ -37,6 +41,22 @@ export function QualityMetrics({ bugs, defects, problems, userStories, totalItem
         if (totalQualityIssues === 0) return "green";      // Perfect: zero issues
         if (issueRate < 10) return "yellow";               // Good: < 10% issues
         return "red";                                      // Poor: >= 10% issues
+    };
+
+    // ✅ NEW: Cycle Time thresholds
+    const getCycleTimeColor = () => {
+        if (averageCycleTime === 0) return "gray";
+        if (averageCycleTime < 5) return "green";   // Excellent
+        if (averageCycleTime < 10) return "yellow"; // Acceptable
+        return "red";                               // Needs improvement
+    };
+
+    // ✅ NEW: Lead Time thresholds
+    const getLeadTimeColor = () => {
+        if (averageLeadTime === 0) return "gray";
+        if (averageLeadTime < 10) return "green";   // Excellent
+        if (averageLeadTime < 20) return "yellow";  // Acceptable
+        return "red";                               // Needs improvement
     };
 
     return (
@@ -51,7 +71,7 @@ export function QualityMetrics({ bugs, defects, problems, userStories, totalItem
             <Text fontSize="lg" fontWeight="bold" mb={4}>
                 📊 Métricas de Qualidade
             </Text>
-            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+            <SimpleGrid columns={{ base: 1, md: 3, lg: 5 }} spacing={6}>
                 <Stat>
                     <HStack spacing={2} mb={2}>
                         <StatLabel fontSize="sm" color="gray.600">Issues por User Story</StatLabel>
@@ -89,6 +109,46 @@ export function QualityMetrics({ bugs, defects, problems, userStories, totalItem
                     <StatHelpText>
                         <Icon as={MdWarning} mr={1} />
                         defects por User Story
+                    </StatHelpText>
+                </Stat>
+
+                <Stat>
+                    <HStack spacing={2} mb={2}>
+                        <StatLabel fontSize="sm" color="gray.600">Cycle Time</StatLabel>
+                        <Tooltip
+                            label="Tempo médio entre início (In Progress) e conclusão das User Stories. Mede eficiência de execução. Verde < 5 dias, Amarelo < 10 dias, Vermelho ≥ 10 dias."
+                            placement="top"
+                            hasArrow
+                        >
+                            <span><Icon as={MdInfoOutline} color="gray.400" boxSize={4} cursor="help" /></span>
+                        </Tooltip>
+                    </HStack>
+                    <StatNumber fontSize="2xl" color={`${getCycleTimeColor()}.500`}>
+                        {averageCycleTime > 0 ? `${averageCycleTime.toFixed(1)}d` : "N/A"}
+                    </StatNumber>
+                    <StatHelpText>
+                        <Icon as={MdTimer} mr={1} />
+                        {closedCount > 0 ? `Média de ${closedCount} USs` : "Sem USs fechadas"}
+                    </StatHelpText>
+                </Stat>
+
+                <Stat>
+                    <HStack spacing={2} mb={2}>
+                        <StatLabel fontSize="sm" color="gray.600">Lead Time</StatLabel>
+                        <Tooltip
+                            label="Tempo médio desde criação até conclusão das User Stories. Mede tempo total de entrega. Verde < 10 dias, Amarelo < 20 dias, Vermelho ≥ 20 dias."
+                            placement="top"
+                            hasArrow
+                        >
+                            <span><Icon as={MdInfoOutline} color="gray.400" boxSize={4} cursor="help" /></span>
+                        </Tooltip>
+                    </HStack>
+                    <StatNumber fontSize="2xl" color={`${getLeadTimeColor()}.500`}>
+                        {averageLeadTime > 0 ? `${averageLeadTime.toFixed(1)}d` : "N/A"}
+                    </StatNumber>
+                    <StatHelpText>
+                        <Icon as={MdCalendarToday} mr={1} />
+                        Criação → Fechamento
                     </StatHelpText>
                 </Stat>
 

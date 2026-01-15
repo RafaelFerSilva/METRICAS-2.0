@@ -145,6 +145,8 @@ export default function CompleteDashboard() {
           problems={m.problems}
           userStories={m.directUserStories}
           totalItems={tasks.length}
+          averageCycleTime={m.averageCycleTime}
+          averageLeadTime={m.averageLeadTime}
         />
 
         {/* User Story Distribution */}

@@ -47,13 +47,52 @@ export class AzureDevOpsSprintGateway implements ISprintRepository {
 
             if (workItemDetailsResponse.status === 200) {
                 const newTasks = new NewTasks();
-                return newTasks.formatJson(workItemDetailsResponse.data.value);
+                const tasks = newTasks.formatJson(workItemDetailsResponse.data.value);
+
+                // 3. Fetch state history for all work items
+                const tasksWithHistory = await Promise.all(
+                    tasks.map(async (task) => {
+                        const stateHistory = await this.getWorkItemHistory(task.ID);
+                        return {
+                            ...task,
+                            StateHistory: stateHistory
+                        };
+                    })
+                );
+
+                return tasksWithHistory;
             }
             return [];
 
         } catch (error) {
             console.error("Error fetching sprint tasks:", error);
             throw error;
+        }
+    }
+
+    // ✅ NEW: Get state change history for a work item
+    private async getWorkItemHistory(workItemId: string): Promise<any[]> {
+        try {
+            const response = await getAxiosClient().get(
+                `wit/workitems/${workItemId}/updates?api-version=7.1`
+            );
+
+            if (response.status === 200 && response.data?.value) {
+                // Filter updates that have state changes
+                const stateChanges = response.data.value
+                    .filter((update: any) => update.fields && update.fields['System.State'])
+                    .map((update: any) => ({
+                        fromState: update.fields['System.State']?.oldValue || null,
+                        toState: update.fields['System.State']?.newValue,
+                        changedDate: update.fields['System.ChangedDate']?.newValue || update.revisedDate
+                    }));
+
+                return stateChanges;
+            }
+            return [];
+        } catch (error) {
+            console.error(`Error fetching history for work item ${workItemId}:`, error);
+            return [];
         }
     }
 
@@ -72,11 +111,19 @@ export class AzureDevOpsSprintGateway implements ISprintRepository {
                 const newTasks = new NewTasks();
                 const tasks = newTasks.formatJson(workItemDetailsResponse.data.value);
 
-                // Mark as external (from other sprint)
-                return tasks.map(task => ({
-                    ...task,
-                    IsExternal: true
-                }));
+                // Fetch state history for related USs and mark as external
+                const tasksWithHistory = await Promise.all(
+                    tasks.map(async (task) => {
+                        const stateHistory = await this.getWorkItemHistory(task.ID);
+                        return {
+                            ...task,
+                            IsExternal: true,
+                            StateHistory: stateHistory
+                        };
+                    })
+                );
+
+                return tasksWithHistory;
             }
             return [];
 

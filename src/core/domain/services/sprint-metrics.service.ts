@@ -41,6 +41,10 @@ export class SprintMetricsService {
         const problemsRate = problems.length > 0 ? (problems.filter((problem: any) => problem.State === "Closed").length / problems.length) * 100 : 0;
         const tasksItensRate = taskItems.length > 0 ? (taskItems.filter((task: any) => task.State === "Closed").length / taskItems.length) * 100 : 0;
 
+        // ✅ NEW: Calculate Cycle Time and Lead Time
+        const averageCycleTime = this.calculateCycleTime(allUserStories);
+        const averageLeadTime = this.calculateLeadTime(allUserStories);
+
         return {
             // ✅ NEW: Separated User Stories
             directUserStories,
@@ -77,8 +81,75 @@ export class SprintMetricsService {
             defectsRate,
             bugsRate,
             problemsRate,
-            tasksItensRate
+            tasksItensRate,
+
+            // ✅ NEW: Cycle/Lead Time
+            averageCycleTime,
+            averageLeadTime
         };
+    }
+
+    // ✅ NEW: Calculate Cycle Time (In Progress → Closed)
+    private calculateCycleTime(userStories: Task[]): number {
+        const closedUSs = userStories.filter(us => us.State === "Closed" && us.StateHistory);
+
+        if (closedUSs.length === 0) return 0;
+
+        const cycleTimes: number[] = [];
+
+        closedUSs.forEach(us => {
+            const history = us.StateHistory || [];
+
+            // Find first "Active" or "In Progress" state
+            const startState = history.find(h =>
+                h.toState === "Active" || h.toState === "In Progress" || h.toState === "Committed"
+            );
+
+            // Find "Closed" state
+            const endState = history.find(h => h.toState === "Closed");
+
+            if (startState && endState) {
+                const start = new Date(startState.changedDate);
+                const end = new Date(endState.changedDate);
+                const diffMs = end.getTime() - start.getTime();
+                const diffDays = diffMs / (1000 * 60 * 60 * 24);
+                cycleTimes.push(diffDays);
+            }
+        });
+
+        if (cycleTimes.length === 0) return 0;
+
+        const sum = cycleTimes.reduce((a, b) => a + b, 0);
+        return sum / cycleTimes.length;
+    }
+
+    // ✅ NEW: Calculate Lead Time (Created → Closed)
+    private calculateLeadTime(userStories: Task[]): number {
+        const closedUSs = userStories.filter(us => us.State === "Closed");
+
+        if (closedUSs.length === 0) return 0;
+
+        const leadTimes: number[] = [];
+
+        closedUSs.forEach(us => {
+            const createdDate = new Date(us["Created Date"]);
+
+            // Find "Closed" state in history
+            const history = us.StateHistory || [];
+            const closedState = history.find(h => h.toState === "Closed");
+
+            if (closedState) {
+                const closedDate = new Date(closedState.changedDate);
+                const diffMs = closedDate.getTime() - createdDate.getTime();
+                const diffDays = diffMs / (1000 * 60 * 60 * 24);
+                leadTimes.push(diffDays);
+            }
+        });
+
+        if (leadTimes.length === 0) return 0;
+
+        const sum = leadTimes.reduce((a, b) => a + b, 0);
+        return sum / leadTimes.length;
     }
 
 

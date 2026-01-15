@@ -1,3 +1,5 @@
+import { StateHistory as StateHistoryType } from "../../shared/types/Task";
+
 export interface Sprint {
     id: string;
     name: string;
@@ -49,8 +51,11 @@ export interface Task {
     Priority?: string;
     Severity?: string;
 
-    // ✅ NEW: Hierarchical relationship fields
+    // Hierarchical relationship fields
     Parent?: string;              // ID of parent work item (e.g., User Story ID for a Task)
     Relations?: WorkItemRelation[]; // All relations from API
     IsExternal?: boolean;         // Flag to mark if this item is from another sprint
+
+    // State history for precise Cycle/Lead Time
+    StateHistory?: StateHistoryType[];
 }
