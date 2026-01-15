@@ -6,6 +6,7 @@ import { RiLogoutCircleLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 import { ActiveLink } from "../ActiveLink";
 import { useSidebarDrawer } from "../../contexts/SidebarDraweContext";
+import { useAuth } from "../../presentation/hooks/useAuth";
 
 interface MenuItem {
   itemName: string;
@@ -16,6 +17,7 @@ interface MenuItem {
 export default function HomeMenu() {
   const { isOpen, onOpen, onClose } = useSidebarDrawer();
   const router = useRouter();
+  const { logout } = useAuth();
 
   const menuItems: MenuItem[] = [
     { itemName: 'Dashboard', itemUrl: "/dashboard", icon: MdDashboard },
@@ -32,17 +34,17 @@ export default function HomeMenu() {
   };
 
   const handleLogout = () => {
-    router.push('/logout');
+    logout();
   };
 
   return (
     <>
       {/* Mobile menu button */}
-      <Box 
-        display={{ base: "block", lg: "none" }} 
-        position="static" 
-        top="4" 
-        left="4" 
+      <Box
+        display={{ base: "block", lg: "none" }}
+        position="static"
+        top="4"
+        left="4"
         zIndex="50"
       >
         <IconButton
@@ -139,9 +141,9 @@ export default function HomeMenu() {
                     fontWeight="medium"
                     transition="all 0.2s"
                   >
-                    <ListIcon 
-                      as={item.icon} 
-                      fontSize="20" 
+                    <ListIcon
+                      as={item.icon}
+                      fontSize="20"
                       color={isActive ? "blue.500" : "gray.400"}
                       mr="3"
                       flexShrink={0}
@@ -164,7 +166,7 @@ export default function HomeMenu() {
             py="2"
             borderRadius="md"
             color="red.600"
-            _hover={{ 
+            _hover={{
               bg: "red.50",
               color: "red.700",
               cursor: "pointer"

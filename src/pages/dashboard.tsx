@@ -1,9 +1,19 @@
-import { withSession } from "../services/auth/session";
-import { Grid, GridItem, Box, Heading, Text } from "@chakra-ui/react";
+import { Grid, GridItem, Box, Heading, Text, Center, Spinner } from "@chakra-ui/react";
 import HomeMenu from "../components/HomeMenu";
 import { SidebarDrawerProvider } from "../contexts/SidebarDraweContext";
+import { useAuth } from "../presentation/hooks/useAuth";
 
 export default function Dashboard() {
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" color="blue.500" />
+      </Center>
+    );
+  }
+
   return (
     <SidebarDrawerProvider>
       <Grid
@@ -32,11 +42,3 @@ export default function Dashboard() {
     </SidebarDrawerProvider>
   );
 }
-
-export const getServerSideProps = withSession((ctx: any) => {
-  return {
-    props: {
-      session: ctx.req.session,
-    },
-  };
-});

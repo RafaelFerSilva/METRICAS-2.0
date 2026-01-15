@@ -15,7 +15,6 @@ import ModernTeamSelect from "../TeamSelect/ModernTeamSelect";
 import ModernEmptyState from "../EmptyState/ModernEmptyState";
 import CompareSprints from "../CompareSprints";
 import { useSprintReport } from "../../presentation/hooks/useSprintReport";
-import { withSession } from "../../services/auth/session";
 import { Sprint } from "../../core/domain/entities/sprint.entity";
 
 interface Team {
@@ -138,10 +137,3 @@ export default function SprintCompare() {
   );
 }
 
-export const getServerSideProps = withSession((ctx: any) => {
-  return {
-    props: {
-      session: ctx.req.session,
-    },
-  };
-});

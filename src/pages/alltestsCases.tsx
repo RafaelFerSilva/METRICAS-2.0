@@ -1,10 +1,20 @@
-import { withSession } from "../services/auth/session";
-import { Grid, GridItem, Box } from "@chakra-ui/react";
+import { Grid, GridItem, Box, Center, Spinner } from "@chakra-ui/react";
+import { useAuth } from "../presentation/hooks/useAuth";
 import HomeMenu from "../components/HomeMenu";
 import AllTestsGraphics from "../components/AllTestsCases";
 import { SidebarDrawerProvider } from "../contexts/SidebarDraweContext";
 
 export default function AllTestsCasesPage() {
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" color="blue.500" />
+      </Center>
+    );
+  }
+
   return (
     <SidebarDrawerProvider>
       <Grid
@@ -25,11 +35,3 @@ export default function AllTestsCasesPage() {
     </SidebarDrawerProvider>
   );
 }
-
-export const getServerSideProps = withSession((ctx: any) => {
-  return {
-    props: {
-      session: ctx.req.session,
-    },
-  };
-});
