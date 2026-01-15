@@ -4,27 +4,15 @@ import {
     SimpleGrid,
     Center,
     Spinner,
-    Select,
     Text
 } from "@chakra-ui/react";
 import { useEffect, useState, useCallback } from "react";
-import { setupAPIMetrics } from "../../services/api";
-import { tokenService } from "../../services/auth/tokenService";
-import NewTasks from "../../model/tasks";
-import Report from "../../data/report";
 import { MultiLineChart } from "../Charts/MultiLineChart";
-import { Task } from "../../types/Task";
 import Chart from "../Chart";
 import SearchableSelect from "../SearchableSelect";
-
-export interface WorkRelations {
-    rel: string;
-    source: string;
-    target: {
-        id: number;
-        url: string;
-    };
-}
+import { useSprintComparison } from "../../presentation/hooks/useSprintComparison";
+import { SprintComparisonDTO } from "../../core/application/dtos/sprint-comparison.dto";
+import { Sprint } from "../../core/domain/entities/sprint.entity";
 
 interface Team {
     id: string;
@@ -32,40 +20,10 @@ interface Team {
 
 interface CompareSprintsProps {
     sprintTeam: Team;
-    sprint: Iterations[];
+    sprint: Sprint[]; // Usage of Domain Entity
 }
 
-export interface Iterations {
-    id: string;
-    name: string;
-    path: string;
-    attributes: {
-        startDate: string;
-        finishDate: string;
-        timeFrame: string;
-    };
-    url: string;
-}
-
-interface SprintTasks {
-    tasks: Task[];
-    sprintid: string;
-    sprintName: string;
-}
-
-interface SummarySprint {
-    id: string;
-    name: string;
-    userStories: number;
-    bugs: number;
-    defects: number;
-    problems: number;
-    improvements: number;
-    notExpected: number;
-    points: number;
-    pointsDelivery: number;
-    pointsNotDelivered: number;
-}
+interface SummarySprint extends SprintComparisonDTO { }
 
 interface CondensedSprintsData {
     id: string[];
@@ -81,125 +39,47 @@ interface CondensedSprintsData {
     pointsNotDelivered: number[];
 }
 
-const token = tokenService.getToken();
-const project_id = tokenService.getProjectId();
-const organization = tokenService.getOrganization();
-
-const axiosInstance = setupAPIMetrics({ organization, project_id, token });
-const tagsNotExpected = ["Não prevista", "Não previsto"];
-const report = new Report();
-
-
 const truncateLabel = (label: string, maxLength = 20) => {
     if (label.length <= maxLength) return label;
     return label.slice(0, maxLength) + "...";
-  };
+};
 
 const extractSprintData = <K extends keyof SummarySprint>(
     sprints: SummarySprint[],
     key: K
 ): SummarySprint[K][] => sprints.map((item) => item[key]);
 
-const fetchWorkItems = async (sprintId: string, sprintTeamId: string) => {
-    try {
-        const response = await axiosInstance.get(
-            `https://dev.azure.com/${organization}/${project_id}/${sprintTeamId}/_apis/work/teamsettings/iterations/${sprintId}/workitems?api-version=7.1-preview.1`
-        );
-        if (response.status === 200 && response.data.workItemRelations?.length > 0) {
-            return response.data.workItemRelations.map((item: WorkRelations) => item.target.id);
-        }
-        return [];
-    } catch (error) {
-        console.error("Erro ao buscar work items:", error);
-        return [];
-    }
-};
-
-const fetchAllSprintTasks = async (sprints: Iterations[], sprintTeamId: string) => {
-    const sprintTasksPromises = sprints.map(async (spt) => {
-        if (spt.attributes.timeFrame === "future") return undefined;
-
-        const workItems = await fetchWorkItems(spt.id, sprintTeamId);
-        if (!workItems || workItems.length === 0) return undefined;
-
-        try {
-            const response = await axiosInstance.get(
-                `wit/workitems?ids=${workItems}&expand=all&api-version=7.1`
-            );
-            if (response.status === 200) {
-                const newTasks = new NewTasks();
-                const formattedTasks: Task[] = newTasks.formatJson(response.data.value);
-                return {
-                    sprintid: spt.id,
-                    sprintName: spt.name,
-                    tasks: formattedTasks,
-                } as SprintTasks;
-            }
-        } catch (error) {
-            console.error("Erro ao buscar tasks do sprint:", error);
-        }
-        return undefined;
-    });
-
-    const results = await Promise.all(sprintTasksPromises);
-    return results.filter((item): item is SprintTasks => item !== undefined);
-};
-
 export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsProps) {
-    const [summarySprint, setSummarySprint] = useState<SummarySprint[]>([]);
     const [condensedSprintsData, setCondensedSprintsData] = useState<CondensedSprintsData>();
-    const [isLoading, setIsLoading] = useState(false);
     const [maxItems, setMaxItems] = useState("4");
     const toast = useToast();
 
+    const { fetchComparison, isLoading } = useSprintComparison();
+
     const loadSprintData = useCallback(async () => {
         if (sprint.length === 0) {
-            setSummarySprint([]);
             setCondensedSprintsData(undefined);
             return;
         }
 
-        setIsLoading(true);
         try {
-            const allSprintTasks = await fetchAllSprintTasks(sprint, sprintTeam.id);
+            const summaryData = await fetchComparison({ teamId: sprintTeam.id, sprints: sprint });
 
-            const summaryData: SummarySprint[] = allSprintTasks.map((data) => ({
-                id: data.sprintid,
-                name: data.sprintName,
-                userStories: report.returnAllTasksByWorkItemType(data.tasks, "User Story").length,
-                bugs: report.returnAllTasksByWorkItemType(data.tasks, "Bug").length,
-                defects: report.returnAllTasksByWorkItemType(data.tasks, "Defect").length,
-                problems: report.returnAllTasksByWorkItemType(data.tasks, "Problems").length,
-                improvements: report.returnAllTasksByWorkItemTag(data.tasks, "Melhoria").length,
-                notExpected: report.returnTagsList(tagsNotExpected, data.tasks).length,
-                points: report.returnTasksPoints(
-                    report.returnAllTasksByWorkItemType(data.tasks, "User Story")
-                ),
-                pointsDelivery: report.returnTasksPoints(
-                    report.returnAllTasksByWorkItemType(report.returnTasksCompleted(data.tasks), "User Story")
-                ),
-                pointsNotDelivered: report.returnTasksPoints(
-                    report.returnAllTasksByWorkItemType(report.returnTasksNotCompleted(data.tasks), "User Story")
-                ),
-            }));
-
-            summaryData.reverse();
-
+            // Logic for condensed data (last N items)
             const condensed: CondensedSprintsData = {
-                id: extractSprintData(summaryData, "id").slice(-maxItems),
-                name: extractSprintData(summaryData, "name").slice(-maxItems),
-                userStories: extractSprintData(summaryData, "userStories").slice(-maxItems),
-                bugs: extractSprintData(summaryData, "bugs").slice(-maxItems),
-                defects: extractSprintData(summaryData, "defects").slice(-maxItems),
-                problems: extractSprintData(summaryData, "problems").slice(-maxItems),
-                improvements: extractSprintData(summaryData, "improvements").slice(-maxItems),
-                notExpected: extractSprintData(summaryData, "notExpected").slice(-maxItems),
-                points: extractSprintData(summaryData, "points").slice(-maxItems),
-                pointsDelivery: extractSprintData(summaryData, "pointsDelivery").slice(-maxItems),
-                pointsNotDelivered: extractSprintData(summaryData, "pointsNotDelivered").slice(-maxItems),
+                id: extractSprintData(summaryData, "id").slice(-Number(maxItems)),
+                name: extractSprintData(summaryData, "name").slice(-Number(maxItems)),
+                userStories: extractSprintData(summaryData, "userStories").slice(-Number(maxItems)),
+                bugs: extractSprintData(summaryData, "bugs").slice(-Number(maxItems)),
+                defects: extractSprintData(summaryData, "defects").slice(-Number(maxItems)),
+                problems: extractSprintData(summaryData, "problems").slice(-Number(maxItems)),
+                improvements: extractSprintData(summaryData, "improvements").slice(-Number(maxItems)),
+                notExpected: extractSprintData(summaryData, "notExpected").slice(-Number(maxItems)),
+                points: extractSprintData(summaryData, "points").slice(-Number(maxItems)),
+                pointsDelivery: extractSprintData(summaryData, "pointsDelivery").slice(-Number(maxItems)),
+                pointsNotDelivered: extractSprintData(summaryData, "pointsNotDelivered").slice(-Number(maxItems)),
             };
 
-            setSummarySprint(summaryData);
             setCondensedSprintsData(condensed);
         } catch (error) {
             console.error("Erro ao carregar dados dos sprints:", error);
@@ -209,10 +89,8 @@ export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsPro
                 duration: 5000,
                 isClosable: true,
             });
-        } finally {
-            setIsLoading(false);
         }
-    }, [sprint, sprintTeam.id, toast, maxItems]);
+    }, [sprint, sprintTeam.id, toast, maxItems, fetchComparison]);
 
     useEffect(() => {
         void loadSprintData();
@@ -240,7 +118,7 @@ export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsPro
         <>
             <Box mb={4} maxW="300px">
                 <Text fontSize="md" fontWeight="semibold" mb={3} color="gray.700">
-                      Selecione a quantidade de sprints
+                    Selecione a quantidade de sprints
                 </Text>
                 <SearchableSelect
                     options={[{ value: "4", label: "4" }, { value: "6", label: "6" }, { value: "8", label: "8" }, { value: "10", label: "10" }]}

@@ -1,4 +1,4 @@
-import Report from "../../data/report";
+import { SprintMetricsService } from "../../core/domain/services/sprint-metrics.service";
 import { Box, Flex } from "@chakra-ui/react";
 import { ColumItemGraph } from "../ColumItemGraph";
 import { ColumItemTable } from "../ColumItemTable";
@@ -9,18 +9,19 @@ interface UsHistoryProps {
   workItemType: string;
 }
 
+const metricsService = new SprintMetricsService();
+
 export function Revisions({ tasks, workItemType }: UsHistoryProps) {
-  const report = new Report();
 
   return (
     <Flex >
       <Box >
-        {report
+        {metricsService
           .returnAllTasksByWorkItemType(tasks, workItemType)
           .map((item: Task) => {
             return (
               <Box key={item.ID} >
-                <ColumItemGraph  task={item} />
+                <ColumItemGraph task={item} />
                 <ColumItemTable task={item} />
               </Box>
             );

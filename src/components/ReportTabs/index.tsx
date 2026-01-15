@@ -1,6 +1,6 @@
 import { Box, Divider, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react"
 import { GraphicBoard } from "../GraphicBoard"
-import Report from "../../data/report";
+import { SprintMetricsService } from "../../core/domain/services/sprint-metrics.service";
 import { UsHistory } from "../UsHistory";
 import { Revisions } from "../Revisions";
 import { Task } from "../../types/Task";
@@ -9,9 +9,10 @@ interface ReportProps {
     tasks: Task[]
 }
 
+const metricsService = new SprintMetricsService();
+
 export default function ReportTabs(props: { tasks: Task[] }) {
     const tagsNotExpected = ["Não prevista", 'Não previsto', 'Adiantada']
-    const report = new Report();
 
     return (
         <Tabs size="sm" variant="enclosed" bg="white">
@@ -40,7 +41,7 @@ export default function ReportTabs(props: { tasks: Task[] }) {
                 </TabPanel>
                 <TabPanel>
                     {
-                        report.returnAllTasksByWorkItemTag(props.tasks, "Melhoria").map((item, key) => {
+                        metricsService.returnAllTasksByWorkItemTag(props.tasks, "Melhoria").map((item: any, key: number) => {
                             return (
                                 <Box key={key} mb="8">
                                     <Text>{item.ID} - {item.Title}</Text>
@@ -52,7 +53,7 @@ export default function ReportTabs(props: { tasks: Task[] }) {
                 </TabPanel>
                 < TabPanel>
                     {
-                        report.returnTagsList(tagsNotExpected, props.tasks).map((item, key) => {
+                        metricsService.returnTagsList(tagsNotExpected, props.tasks).map((item: any, key: number) => {
                             return (
                                 <Box key={key} mb="8">
                                     <Text>{item.ID} - {item.Title}</Text>
@@ -64,9 +65,9 @@ export default function ReportTabs(props: { tasks: Task[] }) {
                     }
                 </ TabPanel>
                 <TabPanel>
-                    {report
+                    {metricsService
                         .returnBugs(props.tasks)
-                        .map((bug, key) => {
+                        .map((bug: any, key: number) => {
                             return (
                                 <Box key={key} mb="8">
                                     <Text>{bug.ID} - {bug.Title}</Text>

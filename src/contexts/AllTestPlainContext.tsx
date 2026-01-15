@@ -1,21 +1,16 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-import { fetchAllTestCasesWiql } from '../services/azureDevOps'; // Ajuste o caminho conforme necessário
-
-interface TestCase {
-  id: number;
-  name: string;
-  // Adicione outros campos conforme necessário
-}
+import React, { createContext, useContext, ReactNode } from 'react';
+import { useTestCases as useTestCasesHook } from '../presentation/hooks/useTestCases';
+import { TestCase } from '../core/domain/entities/test-case.entity';
 
 interface TestCasesContextProps {
   testCases: TestCase[];
   loading: boolean;
-  error: string | null;
+  error: any;
 }
 
 const TestCasesContext = createContext<TestCasesContextProps | undefined>(undefined);
 
+// Context Consumer Hook (Legacy support)
 export const useTestCases = () => {
   const context = useContext(TestCasesContext);
   if (!context) {
@@ -29,28 +24,15 @@ interface TestCasesProviderProps {
 }
 
 export const TestCasesProvider: React.FC<TestCasesProviderProps> = ({ children }) => {
-  const [testCases, setTestCases] = useState<TestCase[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchCases = async () => {
-      setLoading(true);
-      try {
-        const cases = await fetchAllTestCasesWiql();
-        setTestCases(cases);
-      } catch (err) {
-        setError(`Failed to fetch test cases: ${err}`);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCases();
-  }, []);
+  // Delegate to Clean Architecture Hook
+  const { data: testCases, isLoading, error } = useTestCasesHook();
 
   return (
-    <TestCasesContext.Provider value={{ testCases, loading, error }}>
+    <TestCasesContext.Provider value={{
+      testCases: testCases || [],
+      loading: isLoading,
+      error
+    }}>
       {children}
     </TestCasesContext.Provider>
   );

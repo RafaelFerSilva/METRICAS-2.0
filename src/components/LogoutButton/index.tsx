@@ -1,18 +1,16 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { RiLogoutCircleLine } from "react-icons/ri";
-import { useRouter } from 'next/router';
-import { tokenService } from "../../services/auth/tokenService";
+import { useAuth } from "../../presentation/hooks/useAuth";
 
 interface LogoutButtonProps {
   onLogout?: () => void;
 }
 
 export default function LogoutButton({ onLogout }: LogoutButtonProps) {
-  const router = useRouter();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    tokenService.delete();
-    router.push('/');
+    logout();
     if (onLogout) {
       onLogout();
     }

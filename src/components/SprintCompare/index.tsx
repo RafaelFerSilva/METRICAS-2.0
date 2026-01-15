@@ -1,35 +1,22 @@
-// import { withSession } from "../services/auth/session";
 import {
   Badge,
   Box,
-  Center,
   Container,
-  Flex,
-  Grid,
-  GridItem,
   HStack,
-  Icon,
   SimpleGrid,
   Text,
   useColorModeValue,
   VStack
 } from "@chakra-ui/react";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TeamsProvider } from "../../contexts/TeamsContext";
-import TeamSelect from "../TeamSelect";
-import Loading from '../Loading';
-import { tokenService } from "../../services/auth/tokenService";
-import { setupAPIMetrics } from "../../services/api";
-import NewTasks from "../../model/tasks";
-import CompareSprints from "../CompareSprints";
-import { Task } from "../../types/Task";
-import { MdDashboard } from "react-icons/md";
-import ModernSelectSprintForm from "../SelectSprintForm/ModernSelectSprintForm";
 import ModernTeamSelect from "../TeamSelect/ModernTeamSelect";
 import ModernEmptyState from "../EmptyState/ModernEmptyState";
-import { SpinnerContent } from "../Spinner";
+import CompareSprints from "../CompareSprints";
+import { useSprintReport } from "../../presentation/hooks/useSprintReport";
 import { withSession } from "../../services/auth/session";
+import { Sprint } from "../../core/domain/entities/sprint.entity";
 
 interface Team {
   description: string;
@@ -41,37 +28,21 @@ interface Team {
   url: string;
 }
 
-export interface Iterations {
-  id: string;
-  name: string;
-  path: string;
-  attributes: {
-    startDate: string;
-    finishDate: string;
-    timeFrame: string;
-  };
-  url: string;
-}
-
-interface sprintTasks {
-  tasks: Task[];
-  sprintid: string
-  sprintName: string
-}
-
-const token = tokenService.getToken()
-const project_id = tokenService.getProjectId()
-const organization = tokenService.getOrganization()
-
-const axiosInstance = setupAPIMetrics({ organization, project_id, token });
-
 export default function SprintCompare() {
-  // const [sprintTasks, setSprintTasks] = useState<sprintTasks[]>([])
-  const [tasks, setTasks] = useState<Task[]>([]);
   const [sprintTeam, setSprintTeam] = useState<Team>();
-  const [sprint, setSprint] = useState<Iterations[]>([]);
+  const [sprint, setSprint] = useState<Sprint[]>([]);
   const bgColor = useColorModeValue('gray.50', 'gray.900');
-  
+  const { fetchSprints } = useSprintReport();
+
+  const handleTeamSelected = async (team: any) => {
+    setSprintTeam(team);
+    try {
+      const sprints = await fetchSprints(team.id);
+      setSprint(sprints);
+    } catch (error) {
+      console.error("Error fetching sprints:", error);
+    }
+  };
 
   const renderContent = () => {
     if (!sprintTeam) {
@@ -91,7 +62,7 @@ export default function SprintCompare() {
     }
 
     if (sprint.length > 0) {
-        return <CompareSprints sprint={sprint} sprintTeam={sprintTeam} />;
+      return <CompareSprints sprint={sprint} sprintTeam={sprintTeam} />;
     }
   };
 
@@ -121,9 +92,7 @@ export default function SprintCompare() {
                       Selecionar Time
                     </Text>
                     <ModernTeamSelect
-                      setSprint={setSprint}
-                      setTask={setTasks}
-                      setTeam={setSprintTeam}
+                      onTeamSelected={handleTeamSelected}
                     />
                   </Box>
                 </SimpleGrid>

@@ -1,5 +1,5 @@
 import { Box, Divider, Flex, SimpleGrid } from "@chakra-ui/react";
-import Report from "../../data/report";
+import { SprintMetricsService } from "../../core/domain/services/sprint-metrics.service";
 import { LineChart } from "../Charts/ChartLine";
 import { VerticalBar } from "../Charts/ChartVerticalBar";
 import { GenericTable } from "../GenericTable";
@@ -11,46 +11,48 @@ interface GraphicBoardProps {
   tasks: Task[];
 }
 
+const metricsService = new SprintMetricsService();
+
 export function GraphicBoard({ tasks }: GraphicBoardProps) {
   const tagsNotExpected = ["Não prevista", 'Não previsto']
-  const report = new Report();
+
   return (
     <>
       <Flex justifyContent="center">
         <Summary
           sprintTasks={
-            report.returnAllTasksByWorkItemType(tasks, "User Story").length
+            metricsService.returnAllTasksByWorkItemType(tasks, "User Story").length
           }
           resolvedTasks={
-            report.returnAllTasksByWorkItemType(
-              report.returnTasksCompleted(tasks),
+            metricsService.returnAllTasksByWorkItemType(
+              metricsService.returnTasksCompleted(tasks),
               "User Story"
             ).length
           }
           unresolvedTasks={
-            report.returnAllTasksByWorkItemType(
-              report.returnTasksNotCompleted(tasks),
+            metricsService.returnAllTasksByWorkItemType(
+              metricsService.returnTasksNotCompleted(tasks),
               "User Story"
             ).length
           }
-          sprintPoints={report.returnTasksPoints(
-            report.returnAllTasksByWorkItemType(tasks, "User Story")
+          sprintPoints={metricsService.returnTasksPoints(
+            metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
           )}
-          resolvedPoints={report.returnTasksPoints(
-            report.returnAllTasksByWorkItemType(
-              report.returnTasksCompleted(tasks),
+          resolvedPoints={metricsService.returnTasksPoints(
+            metricsService.returnAllTasksByWorkItemType(
+              metricsService.returnTasksCompleted(tasks),
               "User Story"
             )
           )}
-          unresolvedPoints={report.returnTasksPoints(
-            report.returnAllTasksByWorkItemType(
-              report.returnTasksNotCompleted(tasks),
+          unresolvedPoints={metricsService.returnTasksPoints(
+            metricsService.returnAllTasksByWorkItemType(
+              metricsService.returnTasksNotCompleted(tasks),
               "User Story"
             )
           )}
-          bugs={report.returnAllTasksByWorkItemType(tasks, "Bug").length}
+          bugs={metricsService.returnAllTasksByWorkItemType(tasks, "Bug").length}
           melhorias={
-            report.returnAllTasksByWorkItemType(tasks, "Melhoria").length
+            metricsService.returnAllTasksByWorkItemType(tasks, "Melhoria").length
           }
         />
       </Flex>
@@ -67,10 +69,10 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
         >
           <VerticalBar
             title="User Story Cycle Time"
-            labels={report.returnTaskTitle(
-              report.returnAllTasksByWorkItemType(tasks, "User Story")
+            labels={metricsService.returnTaskTitle(
+              metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
             )}
-            data={report.returnCicleTimeByWorkItemType(tasks, "User Story")}
+            data={metricsService.returnCicleTimeByWorkItemType(tasks, "User Story")}
             label="Cycle Time"
           />
         </Box>
@@ -88,11 +90,11 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
         >
           <VerticalBar
             title="Points per User Story"
-            labels={report.returnTaskTitle(
-              report.returnAllTasksByWorkItemType(tasks, "User Story")
+            labels={metricsService.returnTaskTitle(
+              metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
             )}
-            data={report.returnTasksStoryPoint(
-              report.returnAllTasksByWorkItemType(tasks, "User Story")
+            data={metricsService.returnTasksStoryPoint(
+              metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
             )}
             label="Story Points"
           />
@@ -111,21 +113,21 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
         >
           <VerticalBar
             title="User Story for State"
-            labels={report.returnStates(
-              report.returnAllTasksByWorkItemType(tasks, "User Story")
+            labels={metricsService.returnStates(
+              metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
             )}
-            data={report.returnArraySprintTasksStateCount(
-              report.returnAllTasksByWorkItemType(tasks, "User Story")
+            data={metricsService.returnArraySprintTasksStateCount(
+              metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
             )}
             label="Tasks by State State"
           />
           <GenericTable
             title=""
-            labels={report.returnStates(
-              report.returnAllTasksByWorkItemType(tasks, "User Story")
+            labels={metricsService.returnStates(
+              metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
             )}
-            data={report.returnArraySprintTasksStateCount(
-              report.returnAllTasksByWorkItemType(tasks, "User Story")
+            data={metricsService.returnArraySprintTasksStateCount(
+              metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
             )}
           />
         </Box>
@@ -145,15 +147,15 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
             title="Points delivered x Points to be delivered"
             labels={["Pontos Entregues", "Pontos A Entregar"]}
             data={[
-              report.returnTasksPoints(
-                report.returnAllTasksByWorkItemType(
-                  report.returnTasksCompleted(tasks),
+              metricsService.returnTasksPoints(
+                metricsService.returnAllTasksByWorkItemType(
+                  metricsService.returnTasksCompleted(tasks),
                   "User Story"
                 )
               ),
-              report.returnTasksPoints(
-                report.returnAllTasksByWorkItemType(
-                  report.returnTasksNotCompleted(tasks),
+              metricsService.returnTasksPoints(
+                metricsService.returnAllTasksByWorkItemType(
+                  metricsService.returnTasksNotCompleted(tasks),
                   "User Story"
                 )
               ),
@@ -164,15 +166,15 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
             title=""
             labels={["Pontos Entregues", "Pontos A Entregar"]}
             data={[
-              report.returnTasksPoints(
-                report.returnAllTasksByWorkItemType(
-                  report.returnTasksCompleted(tasks),
+              metricsService.returnTasksPoints(
+                metricsService.returnAllTasksByWorkItemType(
+                  metricsService.returnTasksCompleted(tasks),
                   "User Story"
                 )
               ),
-              report.returnTasksPoints(
-                report.returnAllTasksByWorkItemType(
-                  report.returnTasksNotCompleted(tasks),
+              metricsService.returnTasksPoints(
+                metricsService.returnAllTasksByWorkItemType(
+                  metricsService.returnTasksNotCompleted(tasks),
                   "User Story"
                 )
               ),
@@ -193,18 +195,18 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
         >
           <VerticalBar
             title="Bug Cycle Time"
-            labels={report.returnTaskTitle(
-              report.returnAllTasksByWorkItemType(tasks, "Bug")
+            labels={metricsService.returnTaskTitle(
+              metricsService.returnAllTasksByWorkItemType(tasks, "Bug")
             )}
-            data={report.returnCicleTimeByWorkItemType(tasks, "Bug")}
+            data={metricsService.returnCicleTimeByWorkItemType(tasks, "Bug")}
             label="Cycle Time"
           />
           <GenericTable
             title=""
-            labels={report.returnTaskID(
-              report.returnAllTasksByWorkItemType(tasks, "Bug")
+            labels={metricsService.returnTaskID(
+              metricsService.returnAllTasksByWorkItemType(tasks, "Bug")
             )}
-            data={report.returnCicleTimeByWorkItemType(tasks, "Bug")}
+            data={metricsService.returnCicleTimeByWorkItemType(tasks, "Bug")}
           />
         </Box>
       </Flex>
@@ -221,22 +223,22 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
         >
           <VerticalBar
             title="Bugs by state"
-            labels={report.returnStates(
-              report.returnAllTasksByWorkItemType(tasks, "Bug")
+            labels={metricsService.returnStates(
+              metricsService.returnAllTasksByWorkItemType(tasks, "Bug")
             )}
-            data={report.returnArraySprintTasksStateCount(
-              report.returnAllTasksByWorkItemType(tasks, "Bug")
+            data={metricsService.returnArraySprintTasksStateCount(
+              metricsService.returnAllTasksByWorkItemType(tasks, "Bug")
             )}
             label="Bugs by state"
           />
 
           <GenericTable
             title=""
-            labels={report.returnStates(
-              report.returnAllTasksByWorkItemType(tasks, "Bug")
+            labels={metricsService.returnStates(
+              metricsService.returnAllTasksByWorkItemType(tasks, "Bug")
             )}
-            data={report.returnArraySprintTasksStateCount(
-              report.returnAllTasksByWorkItemType(tasks, "Bug")
+            data={metricsService.returnArraySprintTasksStateCount(
+              metricsService.returnAllTasksByWorkItemType(tasks, "Bug")
             )}
           />
         </Box>
@@ -256,10 +258,10 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
             title="User Story X Bugs X Improvements"
             labels={["User Story", "Bug", "Improvements", "Not Expected"]}
             data={[
-              report.returnAllTasksByWorkItemType(tasks, "User Story").length,
-              report.returnAllTasksByWorkItemType(tasks, "Bug").length,
-              report.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
-              report.returnTagsList(tagsNotExpected, tasks).length
+              metricsService.returnAllTasksByWorkItemType(tasks, "User Story").length,
+              metricsService.returnAllTasksByWorkItemType(tasks, "Bug").length,
+              metricsService.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
+              metricsService.returnTagsList(tagsNotExpected, tasks).length
             ]}
             label="Amount of USs"
           />
@@ -268,10 +270,10 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
             title=""
             labels={["User Story", "Bug", "Improvements", "Not Expected"]}
             data={[
-              report.returnAllTasksByWorkItemType(tasks, "User Story").length,
-              report.returnAllTasksByWorkItemType(tasks, "Bug").length,
-              report.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
-              report.returnTagsList(tagsNotExpected, tasks).length
+              metricsService.returnAllTasksByWorkItemType(tasks, "User Story").length,
+              metricsService.returnAllTasksByWorkItemType(tasks, "Bug").length,
+              metricsService.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
+              metricsService.returnTagsList(tagsNotExpected, tasks).length
             ]}
           />
         </Box>

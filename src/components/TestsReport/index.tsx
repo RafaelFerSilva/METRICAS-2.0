@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Box, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { PipelineProvider } from "../../contexts/PipelineContext";
-import { AllRunsProvider } from "../../contexts/AllRunsContext";
 
 import PipelineSelect from "../PipelineSelect";
 import RunsSelect from "../RunsSelect";
@@ -60,36 +59,34 @@ export default function TestsReport() {
 
   return (
     <PipelineProvider>
-      <AllRunsProvider>
-        <Flex direction="column" h="100vh">
-          <Grid templateColumns="repeat(5, 1fr)">
-            <GridItem colSpan={5} >
-                <Flex direction="column"  justify="center">
-                  <Box display="flex" mt="1px" bg="white" p={3} gap="5" >
-                  <Text mt="1">Runs Report</Text>
-                    <PipelineSelect setPipelineRuns={setPipelineRuns} setRunCondensedData={setRunCondensedData} setRunTests={setRunTests}/>
-                    {selectPipelineRuns && (
-                      <Box display="flex" gap="4" as="form">
-                        <RunsSelect
-                          runs={selectPipelineRuns}
-                          setRunCondensedData={setRunCondensedData}
-                          setRunTests={setRunTests}
-                        />
-                      </Box>
-                    )}
+      <Flex direction="column" h="100vh">
+        <Grid templateColumns="repeat(5, 1fr)">
+          <GridItem colSpan={5} >
+            <Flex direction="column" justify="center">
+              <Box display="flex" mt="1px" bg="white" p={3} gap="5" >
+                <Text mt="1">Runs Report</Text>
+                <PipelineSelect setPipelineRuns={setPipelineRuns} setRunCondensedData={setRunCondensedData} setRunTests={setRunTests} />
+                {selectPipelineRuns && (
+                  <Box display="flex" gap="4" as="form">
+                    <RunsSelect
+                      runs={selectPipelineRuns}
+                      setRunCondensedData={setRunCondensedData}
+                      setRunTests={setRunTests}
+                    />
                   </Box>
-                </Flex>
-            </GridItem>
-          </Grid>
-          {runTests.length > 0 && (
-            <>
-              <RunSummary runCondensedData={runCondensedData} />
-              <RunTestSymmary runTests={runTests} state="Failed" />
-              <RunTestSymmary runTests={runTests} state="NotExecuted" />
-            </>
-          )}
-        </Flex>
-      </AllRunsProvider>
+                )}
+              </Box>
+            </Flex>
+          </GridItem>
+        </Grid>
+        {runTests.length > 0 && (
+          <>
+            <RunSummary runCondensedData={runCondensedData} />
+            <RunTestSymmary runTests={runTests} state="Failed" />
+            <RunTestSymmary runTests={runTests} state="NotExecuted" />
+          </>
+        )}
+      </Flex>
     </PipelineProvider>
 
   );

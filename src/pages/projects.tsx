@@ -1,37 +1,25 @@
-import { Grid, GridItem, Box, Heading, Text, SimpleGrid, VStack } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { Grid, GridItem, Box, Heading, Text, SimpleGrid, VStack, Spinner, Center } from "@chakra-ui/react";
 import SimpleCard from "../components/ModernCard/SimpleCard";
-import { authService } from '../services/auth/authService';
-import { useEffect, useState } from "react";
-import { tokenService } from "../services/auth/tokenService";
 import LogoutButton from "../components/LogoutButton";
+import { useProjects } from "../presentation/hooks/useProjects";
+import { useAuth } from "../presentation/hooks/useAuth";
+import { Project } from "../core/domain/entities/project.entity";
 
 export default function ProjectsPage() {
-  const router = useRouter();
-  const token = tokenService.getToken();
-  const organization = tokenService.getOrganization();
-  const [projects, setProjects] = useState([]);
+  const { isLoading: isAuthLoading, selectProject } = useAuth();
+  const { data: projects, isLoading: isProjectsLoading } = useProjects();
 
-  useEffect(() => {
-    if (!token || !organization) {
-      router.push('/login');
-      return;
-    }
-
-    const fetchProjects = async () => {
-      try {
-        const projectsData = await authService.login({ organization, token });
-        setProjects(projectsData);
-      } catch (error) {
-        console.error("Failed to fetch projects:", error);
-      }
-    };
-    fetchProjects();
-  }, [organization, token, router]);
+  if (isAuthLoading || isProjectsLoading) {
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" color="blue.500" />
+      </Center>
+    );
+  }
 
   return (
     <Grid>
-      <Box position="absolute" top="4" right="4" zIndex="1" borderColor="gray.200" borderRadius="md"> 
+      <Box position="absolute" top="4" right="4" zIndex="1" borderColor="gray.200" borderRadius="md">
         <LogoutButton />
       </Box>
       <GridItem marginBottom="10">
@@ -52,11 +40,8 @@ export default function ProjectsPage() {
           columns={{ base: 1, sm: 2, md: 3 }}
           spacing={{ base: 4, md: 6 }}
           w="90%">
-          {projects.map((project) => (
-            <SimpleCard key={project.id} title={project.name} onClick={() => {
-              tokenService.saveProjectId(project.id);
-              router.push('/dashboard');
-            }}>
+          {projects?.map((project: Project) => (
+            <SimpleCard key={project.id} title={project.name} onClick={() => selectProject(project.id)}>
             </SimpleCard>
           ))}
         </SimpleGrid>

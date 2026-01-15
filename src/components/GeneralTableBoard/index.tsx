@@ -1,4 +1,4 @@
-import Report from "../../data/report";
+import { SprintMetricsService } from "../../core/domain/services/sprint-metrics.service";
 import { GenericTable } from "../GenericTable";
 import { Box, Stack } from "@chakra-ui/react";
 import { Task } from "../../types/Task";
@@ -7,19 +7,20 @@ interface GeneralTableBoardProps {
   tasks: Task[]
 }
 
-export function GeneralTableBoard( { tasks }: GeneralTableBoardProps) {
-  const report = new Report();
+const metricsService = new SprintMetricsService();
+
+export function GeneralTableBoard({ tasks }: GeneralTableBoardProps) {
 
   return (
     <Box>
       <Stack gap="3">
         <GenericTable
           title="User Story for State"
-          labels={report.returnStates(
-            report.returnAllTasksByWorkItemType(tasks, "User Story")
+          labels={metricsService.returnStates(
+            metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
           )}
-          data={report.returnArraySprintTasksStateCount(
-            report.returnAllTasksByWorkItemType(tasks, "User Story")
+          data={metricsService.returnArraySprintTasksStateCount(
+            metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
           )}
         />
 
@@ -27,15 +28,15 @@ export function GeneralTableBoard( { tasks }: GeneralTableBoardProps) {
           title="Points delivered x Points to be delivered"
           labels={["Pontos Entregues", "Pontos A Entregar"]}
           data={[
-            report.returnTasksPoints(
-              report.returnAllTasksByWorkItemType(
-                report.returnTasksCompleted(tasks),
+            metricsService.returnTasksPoints(
+              metricsService.returnAllTasksByWorkItemType(
+                metricsService.returnTasksCompleted(tasks),
                 "User Story"
               )
             ),
-            report.returnTasksPoints(
-              report.returnAllTasksByWorkItemType(
-                report.returnTasksNotCompleted(tasks),
+            metricsService.returnTasksPoints(
+              metricsService.returnAllTasksByWorkItemType(
+                metricsService.returnTasksNotCompleted(tasks),
                 "User Story"
               )
             ),
@@ -44,21 +45,21 @@ export function GeneralTableBoard( { tasks }: GeneralTableBoardProps) {
 
         <GenericTable
           title="Bugs by state"
-          labels={report.returnStates(
-            report.returnAllTasksByWorkItemType(tasks, "Bug")
+          labels={metricsService.returnStates(
+            metricsService.returnAllTasksByWorkItemType(tasks, "Bug")
           )}
-          data={report.returnArraySprintTasksStateCount(
-            report.returnAllTasksByWorkItemType(tasks, "Bug")
+          data={metricsService.returnArraySprintTasksStateCount(
+            metricsService.returnAllTasksByWorkItemType(tasks, "Bug")
           )}
         />
         <GenericTable
           title="User Story X Bugs X Improvements"
           labels={["User Story", "Bug", "Improvements"]}
           data={[
-            report.returnAllTasksByWorkItemType(tasks, "User Story")
+            metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
               .length,
-            report.returnAllTasksByWorkItemType(tasks, "Bug").length,
-            report.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
+            metricsService.returnAllTasksByWorkItemType(tasks, "Bug").length,
+            metricsService.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
           ]}
         />
       </Stack>

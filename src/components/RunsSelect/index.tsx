@@ -1,9 +1,7 @@
-import { Select, SimpleGrid, VStack } from "@chakra-ui/react";
-import { useContext, useState } from "react";
-import { AllRunsContext } from "../../contexts/AllRunsContext";
-import { setupAPIMetrics } from "../../services/api";
-import { tokenService } from "../../services/auth/tokenService";
-import { useToast } from '@chakra-ui/react'
+import { Select, SimpleGrid, VStack, useToast } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { useTestRuns, useTestRunDetails, useTestRunResults } from "../../presentation/hooks/useTestRuns";
+import { RunDetails } from "../../core/domain/entities/run.entity";
 
 interface RunsCondensedData {
   id: string;
@@ -22,14 +20,10 @@ interface RunsCondensedData {
   url: string;
 }
 
-interface Run {
+// Ensure this matches whatever is passed in 'runs' prop (PipelineRun?)
+interface PipelineRunOption {
   id: string;
   name: string;
-  url: string;
-  finishedDate: string;
-  createdDate: string;
-  result: string;
-  state: string;
 }
 
 interface RunTestItens {
@@ -49,121 +43,108 @@ interface RunTestItens {
   errorMessage: string;
 }
 
-
-interface RunsId {
-  id: string;
-}
-
 interface SelectRunsProps {
-  runs: Run[];
+  runs: PipelineRunOption[];
   setRunsId?: (runs: any) => void;
   setRunCondensedData: (run: RunsCondensedData) => void;
   setRunTests: (tests: RunTestItens[]) => void;
 }
-
-const token = tokenService.getToken()
-const project_id = tokenService.getProjectId()
-const organization = tokenService.getOrganization()
-
-const axiosInstance = setupAPIMetrics({ organization, project_id, token });
 
 export default function RunsSelect({
   runs,
   setRunCondensedData,
   setRunTests
 }: SelectRunsProps) {
-  const [selectedRun, setSeletedRun] = useState("");
-  const runsItens = useContext(AllRunsContext);
-  const toast = useToast()
+  const [selectedPipelineRunId, setSelectedPipelineRunId] = useState("");
+  const toast = useToast();
 
-  const returnSelectRunsData = (id: string) => {
-    let selectedRunId: RunsId;
-    let selectRuns = runsItens.filter(function (run: any) {
-      return (
-        run.build.id === id
-      );
-    });
+  // Find Test Run associated with the selected Pipeline Run ID (Build ID)
+  // Only enabled when we have a selection
+  const { data: testRuns, isLoading: isLoadingTestRun } = useTestRuns(true, true, selectedPipelineRunId || undefined);
 
-    if(selectRuns.length !== 0){
-      selectedRunId = {
-        id: selectRuns[0].id,
-      }
-    }
+  const { mutate: fetchDetails } = useTestRunDetails();
+  const { mutate: fetchResults } = useTestRunResults();
 
-    return selectedRunId
-  }
-
-  const handleChange = async (event: any) => {
+  const handleChange = (event: any) => {
     event.preventDefault();
-    setSeletedRun(event.target.value);
-    const runsData = returnSelectRunsData(event.target.value)
-    let condensedData: RunsCondensedData;
+    setSelectedPipelineRunId(event.target.value);
+    // Logic continues in useEffect when testRuns updates
+  };
 
-    if (runsData !== undefined) {
-      await axiosInstance
-        .get(`https://dev.azure.com/${organization}/Satelital/_apis/test/Runs/${runsData.id}`)
-        .then((response) => {
-          if (response.status === 200) {
-            condensedData = {
-              id: response.data.id,
-              name: response.data.name,
-              startedDate: response.data.startedDate,
-              completedDate: response.data.completedDate,
-              state: response.data.state,
-              build: response.data.build.id,
-              pipelineId: response.data.pipelineReference.pipelineId,
-              totalTests: response.data.totalTests,
-              passedTests: response.data.passedTests,
-              incompleteTests: response.data.incompleteTests,
-              unanalyzedTests: response.data.unanalyzedTests,
-              notApplicableTests: response.data.notApplicableTests,
-              postProcessState: response.data.notApplicableTests,
-              url: `https://dev.azure.com/${organization}/Satelital/_build/results?buildId=${response.data.build.id}&view=results`,
-            }
-            setRunCondensedData(condensedData)
-          }
-        });
+  useEffect(() => {
+    if (!selectedPipelineRunId) return;
 
-      await axiosInstance
-        .get(`/test/Runs/${runsData.id}/results?api-version=7.1`)
-        .then((response) => {
-          if (response.status === 200) {
-            let tests: RunTestItens[] = []
-            response.data.value.map((test: any) => {
-              let testItem: RunTestItens = {
-                id: test.id,
-                automatedTestName: test.automatedTestName,
-                automatedTestStorage: test.automatedTestStorage,
-                build: test.build.id,
-                startedDate: test.startedDate,
-                completedDate: test.completedDate,
-                createdDate: test.createdDate,
-                durationInMs: test.durationInMs,
-                outcome: test.outcome,
-                priority: test.priority,
-                state: test.state,
-                testCaseReferenceId: test.testCaseReferenceId,
-                testRun: test.testRun.id,
-                errorMessage: test.errorMessage,
-              }
-
-              tests.push(testItem)
-            })
-            setRunTests(tests)
-          }
-        });
-
-    } else {
-      setRunTests([])
+    // If testRuns loaded and empty, it means no Test Run for this Pipeline Run
+    if (testRuns && testRuns.length === 0 && !isLoadingTestRun) {
+      setRunTests([]);
       toast({
-        title: `Esta pipeline não tem dados para serem exibidos. Provavelmente não foi finalizada ou foi cancelada. `,
+        title: `Esta pipeline não tem dados de teste.`,
+        description: "Provavelmente não foi finalizada, cancelada ou não gerou testes.",
         status: 'warning',
         position: 'top-right',
         isClosable: true,
-      })
+      });
+      return;
     }
 
-  };
+    if (testRuns && testRuns.length > 0) {
+      const testRunId = testRuns[0].id; // Assumption: 1-to-1 mapping or we take latest? Gateway returns list.
+
+      // Fetch Details
+      fetchDetails(testRunId, {
+        onSuccess: (data: RunDetails) => {
+          const condensed: RunsCondensedData = {
+            id: data.id,
+            name: data.name,
+            startedDate: data.createdDate, // Map created to started if started not avail? Interface usually has both.
+            // Entity has finishedDate, createdDate. Gateway maps them.
+            completedDate: data.finishedDate,
+            state: data.state,
+            build: data.buildId,
+            pipelineId: data.pipelineId,
+            totalTests: data.totalTests.toString(),
+            passedTests: data.passedTests.toString(),
+            incompleteTests: data.incompleteTests.toString(),
+            unanalyzedTests: data.unanalyzedTests.toString(),
+            notApplicableTests: data.notApplicableTests.toString(),
+            postProcessState: data.postProcessState,
+            url: data.url
+          };
+          setRunCondensedData(condensed);
+        },
+        onError: (err) => {
+          console.error("Error fetching details", err);
+        }
+      });
+
+      // Fetch Results
+      fetchResults(testRunId, {
+        onSuccess: (data) => {
+          const tests: RunTestItens[] = data.map(t => ({
+            id: t.id.toString(),
+            automatedTestName: t.automatedTestName,
+            automatedTestStorage: t.automatedTestStorage,
+            build: t.buildId,
+            startedDate: t.startedDate,
+            completedDate: t.completedDate,
+            createdDate: t.createdDate,
+            durationInMs: t.durationInMs.toString(),
+            outcome: t.outcome,
+            priority: t.priority.toString(),
+            state: t.state,
+            testCaseReferenceId: t.testCaseReferenceId.toString(),
+            testRun: t.testRunId,
+            errorMessage: t.errorMessage
+          }));
+          setRunTests(tests);
+        },
+        onError: (err) => {
+          console.error("Error fetching results", err);
+        }
+      });
+    }
+
+  }, [testRuns, selectedPipelineRunId, isLoadingTestRun]);
 
   return (
     <>
@@ -175,13 +156,13 @@ export default function RunsSelect({
         >
           <VStack spacing={3}>
             <Select
-              placeholder="Pepiline Runs"
+              placeholder="Pipeline Runs"
               borderRadius={6}
               size="sm"
-              onChange={(ev) => handleChange(ev)}
-              value={selectedRun}
+              onChange={handleChange}
+              value={selectedPipelineRunId}
             >
-              {runs.map((run: Run) => {
+              {runs.map((run: PipelineRunOption) => {
                 return (
                   <option key={run.id} value={run.id}>
                     {run.name}
