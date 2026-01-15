@@ -1,8 +1,8 @@
 import { Grid, GridItem, Box, Center, Spinner } from "@chakra-ui/react";
 import { useAuth } from "../presentation/hooks/useAuth";
-import HomeMenu from "../components/HomeMenu";
-import SprintReport from "../components/SprintReport";
-import { SidebarDrawerProvider } from "../contexts/SidebarDraweContext";
+import HomeMenu from "../presentation/components/HomeMenu";
+import SprintReport from "../presentation/components/SprintReport";
+import { SidebarDrawerProvider } from "../presentation/contexts/SidebarDraweContext";
 
 export default function SprintReportPage() {
   const { isLoading } = useAuth();

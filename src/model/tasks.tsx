@@ -1,7 +1,8 @@
 import moment from "moment";
-import { setupAPIMetrics } from "../services/api";
+import { AxiosInstance } from "axios"
 import { tokenService } from "../services/auth/tokenService";
-import { Task } from "../types/Task";
+import { setupAPIMetrics } from "../services/api";
+import { Task } from "../core/shared/types/Task";
 
 const organization = tokenService.getOrganization()
 

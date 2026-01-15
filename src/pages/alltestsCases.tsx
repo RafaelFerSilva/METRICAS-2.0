@@ -1,8 +1,8 @@
 import { Grid, GridItem, Box, Center, Spinner } from "@chakra-ui/react";
 import { useAuth } from "../presentation/hooks/useAuth";
-import HomeMenu from "../components/HomeMenu";
-import AllTestsGraphics from "../components/AllTestsCases";
-import { SidebarDrawerProvider } from "../contexts/SidebarDraweContext";
+import HomeMenu from "../presentation/components/HomeMenu";
+import AllTestsGraphics from "../presentation/components/AllTestsCases";
+import { SidebarDrawerProvider } from "../presentation/contexts/SidebarDraweContext";
 
 export default function AllTestsCasesPage() {
   const { isLoading } = useAuth();

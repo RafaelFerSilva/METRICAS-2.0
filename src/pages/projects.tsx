@@ -1,6 +1,6 @@
 import { Grid, GridItem, Box, Heading, Text, SimpleGrid, VStack, Spinner, Center } from "@chakra-ui/react";
-import SimpleCard from "../components/ModernCard/SimpleCard";
-import LogoutButton from "../components/LogoutButton";
+import SimpleCard from "../presentation/components/ModernCard/SimpleCard";
+import LogoutButton from "../presentation/components/LogoutButton";
 import { useProjects } from "../presentation/hooks/useProjects";
 import { useAuth } from "../presentation/hooks/useAuth";
 import { Project } from "../core/domain/entities/project.entity";

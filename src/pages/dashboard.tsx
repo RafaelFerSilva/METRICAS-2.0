@@ -1,6 +1,6 @@
 import { Grid, GridItem, Box, Heading, Text, Center, Spinner } from "@chakra-ui/react";
-import HomeMenu from "../components/HomeMenu";
-import { SidebarDrawerProvider } from "../contexts/SidebarDraweContext";
+import HomeMenu from "../presentation/components/HomeMenu";
+import { SidebarDrawerProvider } from "../presentation/contexts/SidebarDraweContext";
 import { useAuth } from "../presentation/hooks/useAuth";
 
 export default function Dashboard() {
