@@ -11,53 +11,59 @@ export class GetSprintComparisonUseCase {
         private metricsService: SprintMetricsService
     ) { }
 
-    async execute(teamId: string, sprints: Sprint[]): Promise<SprintComparisonDTO[]> {
+    async execute(teamId: string, sprints: Sprint[], filters?: { tags?: string[] }): Promise<SprintComparisonDTO[]> {
         const promises = sprints.map(async (sprint) => {
             if (sprint.attributes.timeFrame === 'future') return null;
 
-            const tasks = await this.sprintRepository.getSprintTasks(teamId, sprint.id);
+            let tasks = await this.sprintRepository.getSprintTasks(teamId, sprint.id);
             if (!tasks || tasks.length === 0) return null;
+
+            // ✅ NEW: Apply Tag Filters
+            if (filters?.tags?.length) {
+                tasks = tasks.filter(task => {
+                    const taskTags = (task.Tags || "").split("; ");
+                    // Check if task has AT LEAST ONE of the filter tags (OR logic)
+                    // Or ALL? Usually filters are "OR" for tags in this context? 
+                    // Let's implement OR logic: if task has any of the requested tags.
+                    return filters.tags!.some(tag => taskTags.includes(tag));
+                });
+            }
+
+            if (tasks.length === 0) return null; // Or return DTO with zeros?
+            // If filtering results in no tasks, we probably should return DTO with zeros to show "No data" for that filter
+            // rather than null which creates gaps in the chart
+
+            // ✅ Use SprintMetricsService to calculate full metrics including Cycle/Lead Time
+            const metrics = this.metricsService.calculateMetrics(tasks);
 
             const dto: SprintComparisonDTO = {
                 id: sprint.id,
                 name: sprint.name,
-                userStories: this.metricsService.returnAllTasksByWorkItemType(tasks, "User Story").length,
-                bugs: this.metricsService.returnAllTasksByWorkItemType(tasks, "Bug").length,
-                defects: this.metricsService.returnAllTasksByWorkItemType(tasks, "Defect").length,
-                problems: this.metricsService.returnAllTasksByWorkItemType(tasks, "Problems").length,
+                userStories: metrics.directUserStories.length,
+                bugs: metrics.bugs.length,
+                defects: metrics.defects.length,
+                problems: metrics.problems.length,
                 improvements: this.metricsService.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
                 notExpected: this.metricsService.returnTagsList(this.tagsNotExpected, tasks).length,
-                points: this.metricsService.returnTasksPoints(
-                    this.metricsService.returnAllTasksByWorkItemType(tasks, "User Story")
-                ),
-                pointsDelivery: this.metricsService.returnTasksPoints(
-                    this.metricsService.returnAllTasksByWorkItemType(
-                        this.metricsService.returnTasksCompleted(tasks),
-                        "User Story"
-                    )
-                ),
-                pointsNotDelivered: this.metricsService.returnTasksPoints(
-                    this.metricsService.returnAllTasksByWorkItemType(
-                        this.metricsService.returnTasksNotCompleted(tasks),
-                        "User Story"
-                    )
-                ),
+                points: metrics.completedStoryPoints, // Assuming this maps to 'points' (or total?) - Checking legacy
+                pointsDelivery: metrics.completedStoryPoints,
+                pointsNotDelivered: metrics.totalStoryPoints - metrics.completedStoryPoints,
+
+                // ✅ NEW: Trend Metrics
+                avgCycleTime: metrics.averageCycleTime,
+                avgLeadTime: metrics.averageLeadTime,
+                cycleTimeP95: metrics.cycleTimeStats.p95,
+                leadTimeP95: metrics.leadTimeStats.p95,
+                cycleTimeUCL: metrics.cycleTimeStats.ucl,
+                cycleTimeLCL: metrics.cycleTimeStats.lcl,
+                leadTimeUCL: metrics.leadTimeStats.ucl,
+                leadTimeLCL: metrics.leadTimeStats.lcl
             };
             return dto;
         });
 
         const results = await Promise.all(promises);
         const validResults = results.filter((item): item is SprintComparisonDTO => item !== null);
-
-        // Match legacy behavior: the component reversed the array. 
-        // We will return in chronological or input order? 
-        // Existing fetches ALL and then reverses. 
-        // If the input `sprints` is recent-first or old-first?
-        // Usually Azure gives recent first? Or old first? 
-        // `getSprints` does `response.data.value.reverse()`.
-        // So `sprints` input to this UseCase is likely "Reverse Chronological" (Newest first).
-        // Then `CompareSprints` reverses `summaryData`?
-        // `summaryData.reverse()` suggests it wants Chronological for charts.
 
         return validResults.reverse();
     }

@@ -40,4 +40,8 @@ export interface SprintMetrics {
     // Cycle Time and Lead Time metrics (in days)
     averageCycleTime: number;
     averageLeadTime: number;
+
+    // Detailed Stats (Percentiles & Control Limits)
+    cycleTimeStats: { avg: number, p50: number, p75: number, p95: number, stdDev: number, ucl: number, lcl: number };
+    leadTimeStats: { avg: number, p50: number, p75: number, p95: number, stdDev: number, ucl: number, lcl: number };
 }

@@ -4,18 +4,27 @@ import {
     SimpleGrid,
     Center,
     Spinner,
-    Text
+    Text,
+    Input,
+    Button,
+    HStack,
+    VStack,
+    Heading,
+    Divider,
+    Alert,
+    AlertIcon
 } from "@chakra-ui/react";
 import { useEffect, useState, useCallback } from "react";
-import { MultiLineChart } from "../Charts/MultiLineChart";
 import Chart from "../Chart";
 import SearchableSelect from "../SearchableSelect";
 import { useSprintComparison } from "../../hooks/useSprintComparison";
 import { SprintComparisonDTO } from "../../../core/application/dtos/sprint-comparison.dto";
 import { Sprint } from "../../../core/domain/entities/sprint.entity";
+import { KpiCard } from "./KpiCard";
 
 interface Team {
     id: string;
+    name: string;
 }
 
 interface CompareSprintsProps {
@@ -23,167 +32,294 @@ interface CompareSprintsProps {
     sprint: Sprint[]; // Usage of Domain Entity
 }
 
-interface SummarySprint extends SprintComparisonDTO { }
-
+// Data accumulator structure
 interface CondensedSprintsData {
-    id: string[];
     name: string[];
-    userStories: number[];
-    bugs: number[];
-    defects: number[];
-    problems: number[];
-    improvements: number[];
-    notExpected: number[];
     points: number[];
     pointsDelivery: number[];
     pointsNotDelivered: number[];
+    cycleTime: number[];
+    cycleTimeP95: number[];
+    cycleTimeUCL: number[];
+    leadTime: number[];
+    leadTimeP95: number[];
+    leadTimeUCL: number[];
+    userStories: number[];
+    bugs: number[];
+    defects: number[];
+
+    // Calculated Averages for KPIs
+    avgVelocity: number;
+    avgCycle: number;
+    avgLead: number;
+    avgDeliveryRate: number;
 }
 
 const truncateLabel = (label: string, maxLength = 20) => {
     if (label.length <= maxLength) return label;
-    return label.slice(0, maxLength) + "...";
+    return `${label.substring(0, maxLength)}...`;
 };
-
-const extractSprintData = <K extends keyof SummarySprint>(
-    sprints: SummarySprint[],
-    key: K
-): SummarySprint[K][] => sprints.map((item) => item[key]);
 
 export default function CompareSprints({ sprint, sprintTeam }: CompareSprintsProps) {
     const [condensedSprintsData, setCondensedSprintsData] = useState<CondensedSprintsData>();
-    const [maxItems, setMaxItems] = useState("4");
+    const [maxItems, setMaxItems] = useState("6"); // Default increased to 6 to show trends better
+    const [tagsFilterInput, setTagsFilterInput] = useState("");
+    const [tagsFilter, setTagsFilter] = useState<string[]>([]);
     const toast = useToast();
 
     const { fetchComparison, isLoading } = useSprintComparison();
 
     const loadSprintData = useCallback(async () => {
-        if (sprint.length === 0) {
-            setCondensedSprintsData(undefined);
-            return;
-        }
+        if (!sprint || sprint.length === 0) return;
 
         try {
-            const summaryData = await fetchComparison({ teamId: sprintTeam.id, sprints: sprint });
+            const filters = tagsFilter.length > 0 ? { tags: tagsFilter } : undefined;
+            const summaryData = await fetchComparison({ teamId: sprintTeam.id, sprints: sprint, filters });
 
-            // Logic for condensed data (last N items)
+            // Helper to get array from data
+            const extractSprintData = (data: SprintComparisonDTO[], key: keyof SprintComparisonDTO) => {
+                return data.map((item) => item ? Number(item[key]) || 0 : 0);
+            };
+
+            const slicedData = summaryData.slice(-Number(maxItems));
+
+            // Calculate Averages based on SLICED (visible) data
+            const totalPointsPlanned = extractSprintData(slicedData, "points").reduce((a, b) => a + b, 0);
+            const totalPointsDelivered = extractSprintData(slicedData, "pointsDelivery").reduce((a, b) => a + b, 0);
+            const avgVelocity = Number((totalPointsDelivered / slicedData.length).toFixed(1));
+            const avgDeliveryRate = totalPointsPlanned > 0 ? Number(((totalPointsDelivered / totalPointsPlanned) * 100).toFixed(1)) : 0;
+
+            const validCycle = extractSprintData(slicedData, "avgCycleTime").filter(v => v > 0);
+            const avgCycle = validCycle.length > 0 ? Number((validCycle.reduce((a, b) => a + b, 0) / validCycle.length).toFixed(1)) : 0;
+
+            const validLead = extractSprintData(slicedData, "avgLeadTime").filter(v => v > 0);
+            const avgLead = validLead.length > 0 ? Number((validLead.reduce((a, b) => a + b, 0) / validLead.length).toFixed(1)) : 0;
+
             const condensed: CondensedSprintsData = {
-                id: extractSprintData(summaryData, "id").slice(-Number(maxItems)),
-                name: extractSprintData(summaryData, "name").slice(-Number(maxItems)),
-                userStories: extractSprintData(summaryData, "userStories").slice(-Number(maxItems)),
-                bugs: extractSprintData(summaryData, "bugs").slice(-Number(maxItems)),
-                defects: extractSprintData(summaryData, "defects").slice(-Number(maxItems)),
-                problems: extractSprintData(summaryData, "problems").slice(-Number(maxItems)),
-                improvements: extractSprintData(summaryData, "improvements").slice(-Number(maxItems)),
-                notExpected: extractSprintData(summaryData, "notExpected").slice(-Number(maxItems)),
+                name: summaryData.map(item => item.name).slice(-Number(maxItems)),
                 points: extractSprintData(summaryData, "points").slice(-Number(maxItems)),
                 pointsDelivery: extractSprintData(summaryData, "pointsDelivery").slice(-Number(maxItems)),
                 pointsNotDelivered: extractSprintData(summaryData, "pointsNotDelivered").slice(-Number(maxItems)),
+
+                cycleTime: extractSprintData(summaryData, "avgCycleTime").slice(-Number(maxItems)),
+                cycleTimeP95: extractSprintData(summaryData, "cycleTimeP95").slice(-Number(maxItems)),
+                cycleTimeUCL: extractSprintData(summaryData, "cycleTimeUCL").slice(-Number(maxItems)),
+
+                leadTime: extractSprintData(summaryData, "avgLeadTime").slice(-Number(maxItems)),
+                leadTimeP95: extractSprintData(summaryData, "leadTimeP95").slice(-Number(maxItems)),
+                leadTimeUCL: extractSprintData(summaryData, "leadTimeUCL").slice(-Number(maxItems)),
+
+                userStories: extractSprintData(summaryData, "userStories").slice(-Number(maxItems)),
+                bugs: extractSprintData(summaryData, "bugs").slice(-Number(maxItems)),
+                defects: extractSprintData(summaryData, "defects").slice(-Number(maxItems)),
+
+                avgVelocity,
+                avgCycle,
+                avgLead,
+                avgDeliveryRate
             };
 
             setCondensedSprintsData(condensed);
         } catch (error) {
-            console.error("Erro ao carregar dados dos sprints:", error);
             toast({
-                title: "Erro ao carregar dados dos sprints",
+                title: "Erro ao carregar dados.",
+                description: "Não foi possível carregar o comparativo de sprints.",
                 status: "error",
                 duration: 5000,
                 isClosable: true,
             });
         }
-    }, [sprint, sprintTeam.id, toast, maxItems, fetchComparison]);
+    }, [sprint, sprintTeam.id, toast, maxItems, fetchComparison, tagsFilter]);
 
     useEffect(() => {
         void loadSprintData();
     }, [loadSprintData]);
 
+
     if (isLoading) {
         return (
-            <Center h="400px">
-                <Spinner size="xl" thickness="4px" speed="0.65s" color="blue.500" />
+            <Center h="200px">
+                <Spinner size="xl" color="blue.500" />
             </Center>
         );
     }
 
     if (!condensedSprintsData) {
         return (
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 4, md: 6 }} w="100%">
-                {[...Array(7)].map((_, i) => (
-                    <Box key={i} height="450px" borderRadius={8} boxShadow="md" bg="gray.100" />
-                ))}
-            </SimpleGrid>
+            <Alert status="info" borderRadius="md">
+                <AlertIcon />
+                Selecione sprints para visualizar o comparativo.
+            </Alert>
         );
     }
 
+    // Benchmark Calculations for Charts
+    const cycleBenchmarkData = Array(condensedSprintsData.cycleTime.length).fill(condensedSprintsData.avgCycle);
+    const leadBenchmarkData = Array(condensedSprintsData.leadTime.length).fill(condensedSprintsData.avgLead);
+
     return (
-        <>
-            <Box mb={4} maxW="300px">
-                <Text fontSize="md" fontWeight="semibold" mb={3} color="gray.700">
-                    Selecione a quantidade de sprints
-                </Text>
-                <SearchableSelect
-                    options={[{ value: "4", label: "4" }, { value: "6", label: "6" }, { value: "8", label: "8" }, { value: "10", label: "10" }]}
-                    value={maxItems}
-                    onChange={(selectedOption: string) => setMaxItems(selectedOption)}
-                    placeholder="Selecione a quantidade"
-                />
+        <Box w="100%" p={2}>
+            {/* Header & Filters */}
+            <Box bg="white" p={4} borderRadius="lg" shadow="sm" mb={6}>
+                <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} alignItems="end">
+                    <Box>
+                        <Heading size="md" mb={1}>Sprint Analytics</Heading>
+                        <Text color="gray.500" fontSize="sm">Comparativo e tendências de performance</Text>
+                    </Box>
+                    <Box>
+                        <Text fontSize="xs" fontWeight="bold" mb={1} color="gray.500" textTransform="uppercase">
+                            Período (Sprints)
+                        </Text>
+                        <SearchableSelect
+                            options={[{ value: "4", label: "Últimas 4" }, { value: "6", label: "Últimas 6" }, { value: "8", label: "Últimas 8" }, { value: "12", label: "Últimas 12" }]}
+                            value={maxItems}
+                            onChange={(selectedOption: string) => setMaxItems(selectedOption)}
+                            placeholder="Selecione"
+                        />
+                    </Box>
+                    <Box>
+                        <Text fontSize="xs" fontWeight="bold" mb={1} color="gray.500" textTransform="uppercase">
+                            Filtrar por Tags
+                        </Text>
+                        <HStack>
+                            <Input
+                                placeholder="Ex: Expedite, Bug..."
+                                value={tagsFilterInput}
+                                onChange={(e) => setTagsFilterInput(e.target.value)}
+                                size="sm"
+                            />
+                            <Button
+                                colorScheme="blue"
+                                size="sm"
+                                onClick={() => {
+                                    const tags = tagsFilterInput.split(",").map(t => t.trim()).filter(t => t.length > 0);
+                                    setTagsFilter(tags);
+                                }}
+                            >
+                                Filtrar
+                            </Button>
+                            {tagsFilter.length > 0 && (
+                                <Button
+                                    variant="ghost" colorScheme="red" size="sm"
+                                    onClick={() => { setTagsFilterInput(""); setTagsFilter([]); }}
+                                >
+                                    Limpar
+                                </Button>
+                            )}
+                        </HStack>
+                    </Box>
+                </SimpleGrid>
+                {tagsFilter.length > 0 && (
+                    <Text fontSize="xs" color="blue.500" mt={2} fontWeight="bold">
+                        Filtro Ativo: {tagsFilter.join(", ")}
+                    </Text>
+                )}
             </Box>
 
-            <SimpleGrid
-                columns={1}
-                spacing={{ base: 4, sm: 5, md: 4 }}
-                w="100%">
-                <Chart
-                    data={{ datasets: [{ data: condensedSprintsData.userStories }], labels: condensedSprintsData.name.map(label => truncateLabel(label)) }}
-                    title="User Stories"
-                    type="line"
-                    multiColor={true}
+            {/* KPI Cards */}
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4} mb={8}>
+                <KpiCard
+                    label="Velocidade Média"
+                    value={`${condensedSprintsData.avgVelocity} pts`}
+                    tooltip="Média de Story Points entregues nas sprints selecionadas."
+                    color="green.400"
                 />
-                <Chart
-                    data={{ datasets: [{ data: condensedSprintsData.bugs }], labels: condensedSprintsData.name.map(label => truncateLabel(label)) }}
-                    title="Bugs"
-                    type="line"
-                    multiColor={true}
+                <KpiCard
+                    label="Taxa de Entrega"
+                    value={`${condensedSprintsData.avgDeliveryRate}%`}
+                    tooltip="% de pontos planejados que foram efetivamente entregues."
+                    color={condensedSprintsData.avgDeliveryRate >= 80 ? "green.400" : "orange.400"}
                 />
-                <Chart
-                    data={{ datasets: [{ data: condensedSprintsData.defects }], labels: condensedSprintsData.name.map(label => truncateLabel(label)) }}
-                    title="Defects"
-                    type="line"
-                    multiColor={true}
+                <KpiCard
+                    label="Avg Cycle Time"
+                    value={`${condensedSprintsData.avgCycle}d`}
+                    subValue={`Benchmark: ${condensedSprintsData.avgCycle}d`}
+                    tooltip="Tempo médio que um item leva de 'In Progress' até 'Closed'."
+                    color="blue.400"
                 />
-                <Chart
-                    data={{ datasets: [{ data: condensedSprintsData.problems }], labels: condensedSprintsData.name.map(label => truncateLabel(label)) }}
-                    title="Problems"
-                    type="line"
-                    multiColor={true}
-                />
-                <Chart
-                    data={{ datasets: [{ data: condensedSprintsData.points }], labels: condensedSprintsData.name.map(label => truncateLabel(label)) }}
-                    title="Points by Sprint"
-                    type="line"
-                    multiColor={true}
-                />
-                <Chart
-                    data={{ datasets: [{ data: condensedSprintsData.pointsDelivery }], labels: condensedSprintsData.name.map(label => truncateLabel(label)) }}
-                    title="Points Delivered by Sprint"
-                    type="line"
-                    multiColor={true}
-                />
-                <Chart
-                    data={{ datasets: [{ data: condensedSprintsData.pointsNotDelivered }], labels: condensedSprintsData.name.map(label => truncateLabel(label)) }}
-                    title="Points Not Delivered by Sprint"
-                    type="line"
-                    multiColor={true}
+                <KpiCard
+                    label="Avg Lead Time"
+                    value={`${condensedSprintsData.avgLead}d`}
+                    tooltip="Tempo médio desde a criação (Backlog) até a entrega."
+                    color="purple.400"
                 />
             </SimpleGrid>
-            <MultiLineChart
-                title="Points by Sprint X Points delivered by sprint X Points not delivered by sprint"
-                labels={condensedSprintsData.name.map(label => truncateLabel(label))}
-                datasets={[
-                    { label: "Points by Sprint", data: condensedSprintsData.points },
-                    { label: "Points delivered by sprint", data: condensedSprintsData.pointsDelivery },
-                    { label: "Points not delivered by sprint", data: condensedSprintsData.pointsNotDelivered },
-                ]}
-            />
-        </>
+
+            {/* Section 1: Process Efficiency (Cycle & Lead Time Charts) */}
+            <Box mb={8}>
+                <Divider mb={4} />
+                <Heading size="sm" mb={4} color="gray.600">Eficiência de Fluxo & Estabilidade</Heading>
+                <SimpleGrid columns={{ base: 1, xl: 2 }} spacing={8}>
+                    <Chart
+                        data={{
+                            datasets: [
+                                { data: condensedSprintsData.cycleTime, label: 'Cycle Time (Avg)', borderColor: '#3182CE', backgroundColor: '#3182CE', tension: 0.3, pointRadius: 4 },
+                                { data: condensedSprintsData.cycleTimeP95, label: 'P95 (Risco)', borderColor: '#DD6B20', borderDash: [5, 5], backgroundColor: 'transparent', pointRadius: 0, borderWidth: 1.5 },
+                                { data: condensedSprintsData.cycleTimeUCL, label: 'UCL (Limite)', borderColor: '#E53E3E', backgroundColor: 'transparent', pointStyle: 'rect', borderWidth: 1, pointRadius: 0 },
+                                { data: cycleBenchmarkData, label: 'Benchmarks', borderColor: '#718096', borderDash: [2, 2], pointRadius: 0, borderWidth: 1, backgroundColor: 'transparent' }
+                            ],
+                            labels: condensedSprintsData.name.map(label => truncateLabel(label))
+                        }}
+                        title="Cycle Time: Trend"
+                        tip="Cycle Time é o tempo de trabalho ativo. A linha laranja (P95) mostra que 95% dos itens são entregues neste prazo. Pontos acima da linha vermelha (UCL) são anomalias que desviaram do padrão do processo."
+                        type="line"
+                        multiColor={false}
+                    />
+                    <Chart
+                        data={{
+                            datasets: [
+                                { data: condensedSprintsData.leadTime, label: 'Lead Time (Avg)', borderColor: '#805AD5', backgroundColor: '#805AD5', tension: 0.3, pointRadius: 4 },
+                                { data: condensedSprintsData.leadTimeP95, label: 'P95 (Risco)', borderColor: '#DD6B20', borderDash: [5, 5], backgroundColor: 'transparent', pointRadius: 0, borderWidth: 1.5 },
+                                { data: condensedSprintsData.leadTimeUCL, label: 'UCL (Limite)', borderColor: '#E53E3E', backgroundColor: 'transparent', pointStyle: 'rect', borderWidth: 1, pointRadius: 0 },
+                                { data: leadBenchmarkData, label: 'Benchmarks', borderColor: '#718096', borderDash: [2, 2], pointRadius: 0, borderWidth: 1, backgroundColor: 'transparent' }
+                            ],
+                            labels: condensedSprintsData.name.map(label => truncateLabel(label))
+                        }}
+                        title="Lead Time: Trend"
+                        tip="Lead Time é o tempo total desde a criação até a entrega. Inclui filas de espera. Se o Lead Time sobe enquanto o Cycle Time mantém-se estável, indica gargalos no backlog ou aprovações."
+                        type="line"
+                        multiColor={false}
+                    />
+                </SimpleGrid>
+            </Box>
+
+            {/* Section 2: Delivery & Work Distribution */}
+            <Box mb={8}>
+                <Divider mb={4} />
+                <Heading size="sm" mb={4} color="gray.600">Entregas & Distribuição de Trabalho</Heading>
+                <SimpleGrid columns={{ base: 1, xl: 2 }} spacing={8}>
+                    {/* Velocity Chart: Planned vs Delivered */}
+                    <Chart
+                        data={{
+                            datasets: [
+                                { data: condensedSprintsData.pointsDelivery, label: 'Entregue', backgroundColor: '#48BB78' },
+                                { data: condensedSprintsData.pointsNotDelivered, label: 'Não Entregue', backgroundColor: '#FED7D7' }
+                            ],
+                            labels: condensedSprintsData.name.map(label => truncateLabel(label))
+                        }}
+                        title="Velocity Trend (Pontos)"
+                        tip="Comparativo entre o que foi planejado vs entregue. Barras vermelhas altas indicam problemas constantes de planejamento ou bloqueios externos."
+                        type="bar-vertical"
+                        stacked={true}
+                    />
+
+                    {/* Work Item Type Distribution */}
+                    <Chart
+                        data={{
+                            datasets: [
+                                { data: condensedSprintsData.userStories, label: 'Stories', backgroundColor: '#4299E1' },
+                                { data: condensedSprintsData.bugs, label: 'Bugs', backgroundColor: '#F56565' },
+                                { data: condensedSprintsData.defects, label: 'Defects', backgroundColor: '#ECC94B' }
+                            ],
+                            labels: condensedSprintsData.name.map(label => truncateLabel(label))
+                        }}
+                        title="Throughput Profile"
+                        tip="Distribuição dos tipos de trabalho entregues. Uma proporção saudável depende do contexto, mas excesso de Bugs pode indicar problemas de qualidade ou dívida técnica."
+                        type="bar-vertical"
+                        stacked={true}
+                    />
+                </SimpleGrid>
+            </Box>
+        </Box>
     );
 }

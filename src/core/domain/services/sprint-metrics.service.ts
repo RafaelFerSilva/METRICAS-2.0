@@ -41,12 +41,12 @@ export class SprintMetricsService {
         const problemsRate = problems.length > 0 ? (problems.filter((problem: any) => problem.State === "Closed").length / problems.length) * 100 : 0;
         const tasksItensRate = taskItems.length > 0 ? (taskItems.filter((task: any) => task.State === "Closed").length / taskItems.length) * 100 : 0;
 
-        // ✅ NEW: Calculate Cycle Time and Lead Time
-        const averageCycleTime = this.calculateCycleTime(allUserStories);
-        const averageLeadTime = this.calculateLeadTime(allUserStories);
+        //   Calculate Cycle Time and Lead Time Stats
+        const cycleTimeStats = this.calculateCycleTimeStats(allUserStories);
+        const leadTimeStats = this.calculateLeadTimeStats(allUserStories);
 
         return {
-            // ✅ NEW: Separated User Stories
+            //   Separated User Stories
             directUserStories,
             relatedUserStories,
 
@@ -84,16 +84,42 @@ export class SprintMetricsService {
             tasksItensRate,
 
             // ✅ NEW: Cycle/Lead Time
-            averageCycleTime,
-            averageLeadTime
+            averageCycleTime: cycleTimeStats.avg,
+            averageLeadTime: leadTimeStats.avg,
+            cycleTimeStats,
+            leadTimeStats
         };
     }
 
-    // ✅ NEW: Calculate Cycle Time (In Progress → Closed)
-    private calculateCycleTime(userStories: Task[]): number {
+    // Generic Percentile Calculator
+    private calculatePercentile(values: number[], percentile: number): number {
+        if (values.length === 0) return 0;
+
+        // Sort numerically
+        const sorted = [...values].sort((a, b) => a - b);
+
+        // Calculate rank
+        const index = Math.ceil((percentile / 100) * sorted.length) - 1;
+
+        return sorted[Math.max(0, Math.min(index, sorted.length - 1))];
+    }
+
+    // Calculate Standard Deviation
+    private calculateStandardDeviation(values: number[]): number {
+        if (values.length <= 1) return 0;
+
+        const mean = values.reduce((a, b) => a + b, 0) / values.length;
+        const squareDiffs = values.map(value => Math.pow(value - mean, 2));
+        const avgSquareDiff = squareDiffs.reduce((a, b) => a + b, 0) / values.length;
+
+        return Math.sqrt(avgSquareDiff);
+    }
+
+    // Calculate Cycle Time Stats (In Progress → Closed)
+    private calculateCycleTimeStats(userStories: Task[]): { avg: number, p50: number, p75: number, p95: number, stdDev: number, ucl: number, lcl: number } {
         const closedUSs = userStories.filter(us => us.State === "Closed" && us.StateHistory);
 
-        if (closedUSs.length === 0) return 0;
+        if (closedUSs.length === 0) return { avg: 0, p50: 0, p75: 0, p95: 0, stdDev: 0, ucl: 0, lcl: 0 };
 
         const cycleTimes: number[] = [];
 
@@ -117,24 +143,39 @@ export class SprintMetricsService {
             }
         });
 
-        if (cycleTimes.length === 0) return 0;
+        if (cycleTimes.length === 0) return { avg: 0, p50: 0, p75: 0, p95: 0, stdDev: 0, ucl: 0, lcl: 0 };
 
         const sum = cycleTimes.reduce((a, b) => a + b, 0);
-        return sum / cycleTimes.length;
+        const avg = sum / cycleTimes.length;
+        const stdDev = this.calculateStandardDeviation(cycleTimes);
+
+        return {
+            avg,
+            p50: this.calculatePercentile(cycleTimes, 50),
+            p75: this.calculatePercentile(cycleTimes, 75),
+            p95: this.calculatePercentile(cycleTimes, 95),
+            stdDev,
+            ucl: avg + (3 * stdDev), // Upper Control Limit (3 Sigma)
+            lcl: Math.max(0, avg - (3 * stdDev)) // Lower Control Limit (3 Sigma), min 0
+        };
     }
 
-    // ✅ NEW: Calculate Lead Time (Created → Closed)
-    private calculateLeadTime(userStories: Task[]): number {
+    // ✅ NEW: Calculate Lead Time Stats (Created → Closed)
+    private calculateLeadTimeStats(userStories: Task[]): { avg: number, p50: number, p75: number, p95: number, stdDev: number, ucl: number, lcl: number } {
         const closedUSs = userStories.filter(us => us.State === "Closed");
 
-        if (closedUSs.length === 0) return 0;
+        if (closedUSs.length === 0) return { avg: 0, p50: 0, p75: 0, p95: 0, stdDev: 0, ucl: 0, lcl: 0 };
 
         const leadTimes: number[] = [];
 
         closedUSs.forEach(us => {
             const createdDate = new Date(us["Created Date"]);
 
-            // Find "Closed" state in history
+            // Find "Closed" state in history for exact date, or fallback to State Changed Date if history missing?
+            // Relying on history for consistency with Cycle Time, but fallback to State Change Date if history is missing 
+            // is safer for Lead Time which fundamentally just needs Created & Closed dates.
+            // However, existing code used history. Let's keep using history for precision on *when* it closed.
+
             const history = us.StateHistory || [];
             const closedState = history.find(h => h.toState === "Closed");
 
@@ -146,10 +187,21 @@ export class SprintMetricsService {
             }
         });
 
-        if (leadTimes.length === 0) return 0;
+        if (leadTimes.length === 0) return { avg: 0, p50: 0, p75: 0, p95: 0, stdDev: 0, ucl: 0, lcl: 0 };
 
         const sum = leadTimes.reduce((a, b) => a + b, 0);
-        return sum / leadTimes.length;
+        const avg = sum / leadTimes.length;
+        const stdDev = this.calculateStandardDeviation(leadTimes);
+
+        return {
+            avg,
+            p50: this.calculatePercentile(leadTimes, 50),
+            p75: this.calculatePercentile(leadTimes, 75),
+            p95: this.calculatePercentile(leadTimes, 95),
+            stdDev,
+            ucl: avg + (3 * stdDev), // Upper Control Limit (3 Sigma)
+            lcl: Math.max(0, avg - (3 * stdDev)) // Lower Control Limit (3 Sigma), min 0
+        };
     }
 
 
