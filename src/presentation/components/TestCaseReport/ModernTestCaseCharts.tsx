@@ -26,7 +26,7 @@ export default function ModernTestCaseCharts({ chartData }: Props) {
             <Chart
                 data={automationStatusChartData}
                 title="Status de Automação"
-                type="doughnut"
+                type="bar-vertical"
                 tip="Proporção de testes automatizados vs manuais."
             />
             <Chart
