@@ -1,16 +1,13 @@
-import { Flex, Heading, Box, Stack, Accordion } from "@chakra-ui/react";
-import { useState } from "react";
+import { Flex, Heading, Box, Stack, Accordion, Text } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 import FilterComponent from '../FilterComponent';
-import { SummaryTestsCases } from "../SummaryTestsCases";
-import TestCaseCharts from "../TestCaseCharts";
 import { AccordionSection } from "../AccordionSection";
 import { useTestCaseData } from "../../hooks/useTestCaseData";
 import TableTestCase from "../TableTestCase";
-
-export default function TestCaseReport({ testsCases }: any) {
-  const [filters, setFilters] = useState<{ field: string; value: string }[]>([]);
-  const { processedData, filteredData, countDistinctValues, preparePercentChartData, prepareRawChartData } = useTestCaseData(testsCases, filters);
-
+import { TestKpiCards } from "./TestKpiCards";
+import ModernTestCaseCharts from "./ModernTestCaseCharts";
+import Pagination from "../Pagination";
+import { AzureFields, KPI_VALUES } from "../../../core/config/azure-fields";
 
 const sortRiskData = (data: { [key: string]: number }) => {
   const order = ["1 - High", "2 - Medium", "3 - Low", "Blank"];
@@ -21,7 +18,6 @@ const sortRiskData = (data: { [key: string]: number }) => {
       return acc;
     }, {} as { [key: string]: number });
 
-
   if (!data["Blank"]) {
     sortedData["Blank"] = 0;
   }
@@ -29,61 +25,120 @@ const sortRiskData = (data: { [key: string]: number }) => {
   return sortedData;
 };
 
-const chartData = {
-  automationPercentStatusChartData: preparePercentChartData(countDistinctValues.automationStatus),
-  automationStatusChartData: prepareRawChartData(countDistinctValues.automationStatus),
-  riskPercentChartData: preparePercentChartData(sortRiskData(countDistinctValues.risk)), 
-  riskChartData: prepareRawChartData(sortRiskData(countDistinctValues.risk)),         
-  platformPercentChartData: preparePercentChartData(countDistinctValues.platform),
-  platformChartData: prepareRawChartData(countDistinctValues.platform),
-  origemPercentChartData: preparePercentChartData(countDistinctValues.origem),
-  origemChartData: prepareRawChartData(countDistinctValues.origem),
-  isSmokePercentChartData: preparePercentChartData(countDistinctValues.isSmoke),
-  isSmokeChartData: prepareRawChartData(countDistinctValues.isSmoke),
-  statePercentCharData: preparePercentChartData(countDistinctValues.state),
-  stateCharData: prepareRawChartData(countDistinctValues.state)
-};
+export default function TestCaseReport({ testsCases }: any) {
+  const [filters, setFilters] = useState<{ field: string; value: string }[]>([]);
+  const { processedData, filteredData, countDistinctValues, preparePercentChartData, prepareRawChartData } = useTestCaseData(testsCases, filters);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  // Pagination Logic
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Helper to sum counts based on allowed values
+  const sumCounts = (counts: { [key: string]: number }, allowedValues: string[]) => {
+    if (!counts) return 0;
+    return Object.keys(counts).reduce((acc, key) => {
+      // Check if key exactly matches or is contained (case insensitive)
+      const isMatch = allowedValues.some(val =>
+        key.toLowerCase().includes(val.toLowerCase())
+      );
+
+      const keyLower = key.toLowerCase();
+      const isNegative = keyLower.includes("not ") || keyLower.includes("não ") || keyLower === "not automated";
+
+      if (isMatch && !isNegative) return acc + counts[key];
+      return acc;
+    }, 0);
+  };
+
+  // KPI Calculations
+  const total = filteredData.length;
+
+  const automatedCount = sumCounts(countDistinctValues.automationStatus, KPI_VALUES.Automated);
+  const smokeCount = sumCounts(countDistinctValues.isSmoke, KPI_VALUES.Smoke);
+  const highRiskCount = sumCounts(countDistinctValues.risk, KPI_VALUES.HighRisk);
+
+  const chartData = {
+    automationPercentStatusChartData: preparePercentChartData(countDistinctValues.automationStatus),
+    automationStatusChartData: prepareRawChartData(countDistinctValues.automationStatus),
+    riskPercentChartData: preparePercentChartData(sortRiskData(countDistinctValues.risk)),
+    riskChartData: prepareRawChartData(sortRiskData(countDistinctValues.risk)),
+    platformPercentChartData: preparePercentChartData(countDistinctValues.platform),
+    platformChartData: prepareRawChartData(countDistinctValues.platform),
+    origemPercentChartData: preparePercentChartData(countDistinctValues.origem),
+    origemChartData: prepareRawChartData(countDistinctValues.origem),
+    isSmokePercentChartData: preparePercentChartData(countDistinctValues.isSmoke),
+    isSmokeChartData: prepareRawChartData(countDistinctValues.isSmoke),
+    statePercentCharData: preparePercentChartData(countDistinctValues.state),
+    stateCharData: prepareRawChartData(countDistinctValues.state)
+  };
 
   const labels = [
-    "id",
-    "System.AreaPath",
-    "System.Title",
-    "Microsoft.VSTS.Common.Risk",
-    "Custom.ec38de40-257b-4c45-9db9-284080382c3e",
-    "Custom.SmokeTest",
-    "Custom.Plataforma",
-    "Custom.e0ac16d1-5c7a-42f5-8111-be8b335c9e8e",
-    "System.State",
+    AzureFields.Id,
+    AzureFields.AreaPath,
+    AzureFields.Title,
+    AzureFields.Risk,
+    AzureFields.AutomationStatus,
+    AzureFields.CustomSmokeTest,
+    AzureFields.CustomPlatform,
+    AzureFields.CustomOrigin,
+    AzureFields.State,
   ];
 
   return (
-    <Box p="4" >
-      <Flex align="center">
-        <Heading size="md" fontWeight="normal">
-          Test Case Report
-        </Heading>
-      </Flex>
+    <Box p="4" w="100%">
+      <Stack spacing={8}>
+        <Flex align="center" justify="space-between">
+          <Heading size="lg" color="blue.600">
+            Test Case Report
+          </Heading>
+          <Text color="gray.500" fontSize="sm">{total} casos listados</Text>
+        </Flex>
 
-      <FilterComponent
-        filters={filters}
-        setFilters={setFilters}
-        processedData={processedData}
-        labels={labels}
-      />
+        <TestKpiCards
+          total={total}
+          automated={automatedCount}
+          smokeCount={smokeCount}
+          highRiskCount={highRiskCount}
+        />
 
-      <SummaryTestsCases
-        total={filteredData.length}
-        automated={countDistinctValues.automationStatus}
-      />
+        <FilterComponent
+          filters={filters}
+          setFilters={setFilters}
+          processedData={processedData}
+          labels={labels}
+        />
 
-      <Stack>
-        <Accordion allowToggle>
-          <AccordionSection title="Graphics">
-            <TestCaseCharts chartData={chartData} />
+        <Accordion allowToggle defaultIndex={[0]}>
+          <AccordionSection title="Strategic Analysis">
+            <Box py={4}>
+              <ModernTestCaseCharts chartData={chartData} />
+            </Box>
           </AccordionSection>
 
-          <AccordionSection title="Tests cases list">
-            <TableTestCase data={filteredData} headers={labels} />
+          <AccordionSection title="Detail List">
+            <TableTestCase data={paginatedData} headers={labels} />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              itemsPerPage={itemsPerPage}
+              onItemsPerPageChange={setItemsPerPage}
+              totalItems={totalItems}
+            />
           </AccordionSection>
         </Accordion>
       </Stack>

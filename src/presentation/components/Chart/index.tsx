@@ -7,13 +7,14 @@ import {
   BarElement,
   LineElement,
   PointElement,
+  ArcElement,
   Title,
   Tooltip as ChartTooltip,
   Legend,
   ChartOptions,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { Bar, Line } from "react-chartjs-2";
+import { Bar, Line, Doughnut } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
@@ -21,6 +22,7 @@ ChartJS.register(
   BarElement,
   LineElement,
   PointElement,
+  ArcElement,
   Title,
   ChartTooltip,
   Legend,
@@ -30,7 +32,7 @@ ChartJS.register(
 interface ChartProps {
   data: any;
   title: string;
-  type: "bar-vertical" | "bar-horizontal" | "line";
+  type: "bar-vertical" | "bar-horizontal" | "line" | "doughnut";
   maxWidth?: string;
   minWidth?: string;
   bg?: string;
@@ -197,6 +199,10 @@ const Chart: React.FC<ChartProps> = ({
 
         {type === "line" && (
           <Line data={dataWithColors} options={options} />
+        )}
+
+        {type === "doughnut" && (
+          <Doughnut data={dataWithColors} options={options} />
         )}
       </Box>
     </Box>

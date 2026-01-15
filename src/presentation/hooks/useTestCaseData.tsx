@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { AzureFields } from "../../core/config/azure-fields";
 
 export function useTestCaseData(testsCases: any[], filters: any[]) {
   const processedData = useMemo(() => {
@@ -28,13 +29,16 @@ export function useTestCaseData(testsCases: any[], filters: any[]) {
     };
 
     filteredData.forEach((item) => {
-      const state = item["System.State"];
-      const priority = item["Microsoft.VSTS.Common.Priority"];
-      const risk = item["Microsoft.VSTS.Common.Risk"];
-      const automationStatus = item["Custom.ec38de40-257b-4c45-9db9-284080382c3e"];
-      const platform = item["Custom.Plataforma"];
-      const origem = item["Custom.e0ac16d1-5c7a-42f5-8111-be8b335c9e8e"];
-      const isSmoke = item["Custom.SmokeTest"];
+      const state = item[AzureFields.State];
+      const priority = item[AzureFields.Priority];
+      const risk = item[AzureFields.Risk];
+
+      // Try Standard Automation Field first, then Custom
+      const automationStatus = item[AzureFields.AutomationStatus] || item[AzureFields.CustomAutomationStatus];
+
+      const platform = item[AzureFields.CustomPlatform];
+      const origem = item[AzureFields.CustomOrigin];
+      const isSmoke = item[AzureFields.CustomSmokeTest];
 
       // Contagem de cada item e valores em branco
       if (state) result.state[state] = (result.state[state] || 0) + 1;
@@ -123,7 +127,7 @@ export function useTestCaseData(testsCases: any[], filters: any[]) {
     const total = Object.values(data).reduce((acc, value) => acc + value, 0);
 
     const percentageData = Object.keys(data).reduce((acc, key) => {
-      acc[key] = ((data[key] / total) * 100).toFixed(2);
+      acc[key] = total > 0 ? ((data[key] / total) * 100).toFixed(2) : "0";
       return acc;
     }, {} as { [key: string]: string });
 

@@ -18,22 +18,14 @@ export class GetSprintComparisonUseCase {
             let tasks = await this.sprintRepository.getSprintTasks(teamId, sprint.id);
             if (!tasks || tasks.length === 0) return null;
 
-            // ✅ NEW: Apply Tag Filters
             if (filters?.tags?.length) {
                 tasks = tasks.filter(task => {
                     const taskTags = (task.Tags || "").split("; ");
-                    // Check if task has AT LEAST ONE of the filter tags (OR logic)
-                    // Or ALL? Usually filters are "OR" for tags in this context? 
-                    // Let's implement OR logic: if task has any of the requested tags.
                     return filters.tags!.some(tag => taskTags.includes(tag));
                 });
             }
 
-            if (tasks.length === 0) return null; // Or return DTO with zeros?
-            // If filtering results in no tasks, we probably should return DTO with zeros to show "No data" for that filter
-            // rather than null which creates gaps in the chart
-
-            // ✅ Use SprintMetricsService to calculate full metrics including Cycle/Lead Time
+            if (tasks.length === 0) return null;
             const metrics = this.metricsService.calculateMetrics(tasks);
 
             const dto: SprintComparisonDTO = {
