@@ -5,6 +5,7 @@ import { useAuth } from "../presentation/hooks/useAuth";
 import { MdReport, MdTrendingUp, MdAssessment, MdArrowForward } from "react-icons/md";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { useUserProfile } from "../presentation/contexts/UserProfileContext";
 
 export default function Dashboard() {
   const { isLoading } = useAuth();
@@ -30,12 +31,16 @@ export default function Dashboard() {
 function DashboardLayout() {
   const { isCollapsed } = useSidebarDrawer();
   const router = useRouter();
+  const { userProfile } = useUserProfile();
 
   // Premium Colors
   const bgGradient = useColorModeValue("linear(to-br, gray.50, gray.100)", "linear(to-br, gray.900, black)");
   const cardBg = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.600", "gray.400");
   const headingColor = useColorModeValue("gray.800", "white");
+
+  // Extract first name for personalized greeting
+  const firstName = userProfile?.displayName?.split(' ')[0] || "User";
 
   const modules = [
     {
@@ -89,7 +94,7 @@ function DashboardLayout() {
               Visão Geral
             </Text>
             <Heading as="h1" size="2xl" mb={4} color={headingColor} letterSpacing="tight">
-              Olá, Bem-vindo de volta! 👋
+              Olá, {firstName}! 👋
             </Heading>
             <Text fontSize="xl" color={textColor} maxW="3xl">
               Aqui está o resumo dos seus indicadores. Selecione um módulo abaixo para análises detalhadas.

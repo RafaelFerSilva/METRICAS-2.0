@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { authService } from '../services/auth/authService';
 import { tokenService } from '../services/auth/tokenService';
+import { useUserProfile } from '../presentation/contexts/UserProfileContext';
 import { useToast, Flex, Heading, Input, Button, FormControl, FormLabel, Box, Text, useColorModeValue } from '@chakra-ui/react';
 import Head from 'next/head';
 
@@ -16,6 +17,7 @@ export default function LoginPage() {
     // Modern Colors
     const bgColor = useColorModeValue("gray.50", "gray.900");
     const glassBg = useColorModeValue("rgba(255, 255, 255, 0.8)", "rgba(26, 32, 44, 0.8)");
+    const { refreshProfile } = useUserProfile();
 
     // Check if already authenticated
     useEffect(() => {
@@ -29,6 +31,7 @@ export default function LoginPage() {
         event.preventDefault();
         setIsLoading(true);
 
+
         try {
             await authService.login({
                 organization: organization,
@@ -40,6 +43,10 @@ export default function LoginPage() {
                 duration: 2000,
                 isClosable: true,
             });
+
+            // Fetch user profile immediately after login
+            await refreshProfile();
+
             router.push('/projects');
         } catch (err) {
             toast({

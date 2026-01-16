@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { ActiveLink } from "../ActiveLink";
 import { useSidebarDrawer } from "../../contexts/SidebarDraweContext";
 import { useAuth } from "../../hooks/useAuth";
+import { useUserProfile } from "../../contexts/UserProfileContext";
 
 interface MenuItem {
   itemName: string;
@@ -18,6 +19,7 @@ export default function HomeMenu() {
   const { isOpen, onOpen, onClose, isCollapsed, toggleCollapse } = useSidebarDrawer();
   const router = useRouter();
   const { logout } = useAuth();
+  const { userProfile, isLoading: isProfileLoading } = useUserProfile();
 
   const menuItems: MenuItem[] = [
     { itemName: 'Dashboard', itemUrl: "/dashboard", icon: MdDashboard },
@@ -151,22 +153,27 @@ export default function HomeMenu() {
           borderColor="gray.100"
           bg="linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%)"
           backdropFilter="blur(10px)"
+          cursor="pointer"
+          _hover={{ bg: "linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%)" }}
+          transition="all 0.2s"
+          onClick={() => router.push('/profile')}
         >
           <Flex align="center" justify={isCollapsed ? "center" : "flex-start"}>
             <Avatar
               size="sm"
               bg="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
               color="white"
-              name="User"
+              name={userProfile?.displayName || "User"}
+              src={userProfile?.imageUrl || ""}
               boxShadow="md"
             />
             {!isCollapsed && (
               <Box ml="3">
-                <Text fontSize="sm" fontWeight="bold" color="gray.800">
-                  Quality Assurance
+                <Text fontSize="sm" fontWeight="bold" color="gray.800" noOfLines={1}>
+                  {isProfileLoading ? "Carregando..." : (userProfile?.displayName || "User")}
                 </Text>
-                <Text fontSize="xs" color="gray.500">
-                  QA Team
+                <Text fontSize="xs" color="gray.500" noOfLines={1}>
+                  {isProfileLoading ? "" : (userProfile?.emailAddress || "Azure DevOps")}
                 </Text>
               </Box>
             )}
