@@ -1,7 +1,8 @@
-import { Select, SimpleGrid, VStack, Spinner } from "@chakra-ui/react";
+import { SimpleGrid, VStack, Spinner } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { PipelineContext } from "../../contexts/PipelineContext";
 import { usePipelineRuns } from "../../hooks/usePipelineRuns";
+import SearchableSelect from "../SearchableSelect";
 
 interface Pipeline {
   id: string;
@@ -31,13 +32,18 @@ export default function PipelineSelect({ setPipelineRuns, setRunCondensedData, s
     }
   }, [runsData, setPipelineRuns]);
 
-  const handleChange = (event: any) => {
-    event.preventDefault();
-    setSeletedPepiline(event.target.value);
+  const handleChange = (value: string) => {
+    setSeletedPepiline(value);
     setRunCondensedData([]);
     setRunTests([]);
     setPipelineRuns([]); // Clear runs while loading new ones
   };
+
+  // Convert pipelines to SearchableSelect options
+  const pipelineOptions = pipelines.map((pipeline: Pipeline) => ({
+    value: pipeline.id,
+    label: pipeline.name
+  }));
 
   return (
     <VStack spacing="8">
@@ -45,23 +51,18 @@ export default function PipelineSelect({ setPipelineRuns, setRunCondensedData, s
         minChildWidth="240px"
         spacing={["6", "8"]}
         alignSelf="flex-start"
+        w="100%"
       >
-        <VStack spacing={3}>
-          <Select
-            placeholder="Pipelines"
-            borderRadius={6}
-            size="sm"
-            onChange={handleChange}
+        <VStack spacing={3} align="stretch">
+          <SearchableSelect
+            options={pipelineOptions}
+            placeholder="Selecione um Pipeline"
             value={selectedPipeline}
-            isDisabled={isLoading && !!selectedPipeline} // Disable while loading
-          >
-            {pipelines.map((pipeline: Pipeline) => (
-              <option key={pipeline.id} value={pipeline.id}>
-                {pipeline.name}
-              </option>
-            ))}
-          </Select>
-          {isLoading && <Spinner size="sm" color="blue.500" />}
+            onChange={handleChange}
+            isDisabled={isLoading && !!selectedPipeline}
+            size="sm"
+          />
+          {isLoading && <Spinner size="sm" color="blue.500" alignSelf="center" />}
         </VStack>
       </SimpleGrid>
     </VStack>

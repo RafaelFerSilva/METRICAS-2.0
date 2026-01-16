@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Box, Center, Flex, Grid, GridItem, Select, SimpleGrid, VStack, Text } from "@chakra-ui/react";
-import { tokenService } from '../../../services/auth/tokenService';
+import { Box, Flex, Grid, GridItem, VStack, Text, useToast } from "@chakra-ui/react";
 import { setupAPIMetrics } from '../../../services/api';
-import { useToast } from '@chakra-ui/react'
-import AutoComplete from '../AutoComplete';
+import { tokenService } from '../../../services/auth/tokenService';
+import SearchableSelect from '../SearchableSelect';
 
 const token = tokenService.getToken()
 const project_id = tokenService.getProjectId()
@@ -30,12 +28,11 @@ export default function TestSuiteSelect({ setTestsCases, suites, setIsLoading }:
         return selectedSuite
     }
 
-    const handleChange = async (selectedItem: any) => {
+    const handleChange = async (id: string) => {
         setTestsCases([])
 
-        const id = selectedItem.id;
         if (id && String(id).trim() !== "") {
-            setIsLoading(true);
+            setIsLoading?.(true);
 
             const selectedSuite = returnSelectSuiteData(id)
 
@@ -69,26 +66,32 @@ export default function TestSuiteSelect({ setTestsCases, suites, setIsLoading }:
                         isClosable: true,
                     })
                 } finally {
-                    setIsLoading(false)
+                    setIsLoading?.(false)
                 }
             }
         }
     };
 
+    // Convert suites to SearchableSelect options
+    const suiteOptions = suites.map((suite: any) => ({
+        value: suite.id.toString(),
+        label: suite.name
+    }));
+
     return (
         <Grid templateColumns="repeat(5, 1fr)">
             <GridItem colSpan={5}>
                 <Flex direction="column" justify="center">
-                    <Box display="flex" mt="1px" bg="white" p="3" gap="5">
-                        <Text mt="1">Test Suites</Text>
-                        <VStack spacing="8">
-                            <AutoComplete
-                                options={suites} 
-                                displayKey="name" 
+                    <Box display="flex" mt="1px" bg="white" p="3" gap="5" alignItems="center">
+                        <Text mt="1" fontWeight="bold">Test Suites</Text>
+                        <Box w="300px">
+                            <SearchableSelect
+                                options={suiteOptions}
                                 placeholder="Search Suites"
-                                onSelect={handleChange} 
+                                onChange={handleChange}
+                                size="sm"
                             />
-                        </VStack>
+                        </Box>
                     </Box>
                 </Flex>
             </GridItem>

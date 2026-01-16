@@ -1,5 +1,6 @@
-import { Select, Button, VStack, HStack, Box, Stack, Text, Divider, Heading } from "@chakra-ui/react";
+import { Button, VStack, HStack, Box, Stack, Divider, Heading } from "@chakra-ui/react";
 import { useState } from "react";
+import SearchableSelect from "../SearchableSelect";
 
 interface FilterComponentProps {
   filters: { field: string; value: string }[];
@@ -60,38 +61,40 @@ export default function FilterComponent({
     return Array.from(uniqueValues);
   };
 
+  const fieldOptions = availableFields.map((label) => ({
+    value: label,
+    label: getHeaderDisplayName(label),
+  }));
+
+  const valueOptions = newFilter.field
+    ? availableValues(newFilter.field).map((value) => ({
+      value: value,
+      label: value,
+    }))
+    : [];
+
   return (
     <VStack spacing={4} mb={4} align="stretch">
-      <HStack spacing={2} wrap="wrap" justifyContent="flex-start">
-        <Select
-          placeholder="Select Field"
-          value={newFilter.field}
-          onChange={(e) => setNewFilter({ ...newFilter, field: e.target.value })}
-          size="sm"
-          width="250px"
-        >
-          {availableFields.map((label) => (
-            <option key={label} value={label}>
-              {getHeaderDisplayName(label)}
-            </option>
-          ))}
-        </Select>
-        <Select
-          placeholder="Select Value"
-          value={newFilter.value}
-          onChange={(e) => setNewFilter({ ...newFilter, value: e.target.value })}
-          isDisabled={!newFilter.field}
-          size="sm"
-          width="350px"
-        >
-          {newFilter.field
-            ? availableValues(newFilter.field).map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))
-            : null}
-        </Select>
+      <HStack spacing={2} wrap="wrap" justifyContent="flex-start" alignItems="flex-start">
+        <Box w="250px">
+          <SearchableSelect
+            placeholder="Select Field"
+            value={newFilter.field}
+            onChange={(val) => setNewFilter({ ...newFilter, field: val, value: "" })} // Reset value on field change
+            options={fieldOptions}
+            size="sm"
+          />
+        </Box>
+        <Box w="350px">
+          <SearchableSelect
+            placeholder="Select Value"
+            value={newFilter.value}
+            onChange={(val) => setNewFilter({ ...newFilter, value: val })}
+            options={valueOptions}
+            isDisabled={!newFilter.field}
+            size="sm"
+          />
+        </Box>
         <Button onClick={handleAddFilter} colorScheme="blue" size="sm">
           Add Filter
         </Button>

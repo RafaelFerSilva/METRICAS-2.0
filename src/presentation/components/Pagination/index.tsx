@@ -1,6 +1,7 @@
-import React from 'react';
-import { Button, HStack, Text, IconButton, Select, Flex } from "@chakra-ui/react";
+import React, { useMemo } from 'react';
+import { Button, HStack, Text, IconButton, Flex, Box } from "@chakra-ui/react";
 import { ChevronLeftIcon, ChevronRightIcon, ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
+import SearchableSelect from "../SearchableSelect";
 
 interface PaginationProps {
     currentPage: number;
@@ -29,6 +30,13 @@ const Pagination = ({
         }
     };
 
+    const pageSizeOptions = useMemo(() => [
+        { value: '10', label: '10' },
+        { value: '20', label: '20' },
+        { value: '50', label: '50' },
+        { value: '100', label: '100' },
+    ], []);
+
     return (
         <Flex justifyContent="space-between" alignItems="center" mt={4} p={2} borderTop="1px solid" borderColor="gray.100">
             <HStack spacing={4}>
@@ -39,17 +47,15 @@ const Pagination = ({
                 {itemsPerPage && onItemsPerPageChange && (
                     <HStack>
                         <Text fontSize="sm" color="gray.600">Show:</Text>
-                        <Select
-                            size="xs"
-                            width="70px"
-                            value={itemsPerPage}
-                            onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-                        >
-                            <option value={10}>10</option>
-                            <option value={20}>20</option>
-                            <option value={50}>50</option>
-                            <option value={100}>100</option>
-                        </Select>
+                        <Box w="80px">
+                            <SearchableSelect
+                                size="sm"
+                                options={pageSizeOptions}
+                                value={itemsPerPage.toString()}
+                                onChange={(val) => onItemsPerPageChange(Number(val))}
+                                placeholder=""
+                            />
+                        </Box>
                     </HStack>
                 )}
             </HStack>

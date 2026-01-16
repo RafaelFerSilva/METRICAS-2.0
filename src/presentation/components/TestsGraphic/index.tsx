@@ -1,10 +1,11 @@
 import { useContext, useState, useMemo } from 'react'
-import { Box, Center, Flex, Grid, GridItem, Select, SimpleGrid, VStack, Text } from "@chakra-ui/react";
+import { Box, Center, Flex, Grid, GridItem, SimpleGrid, VStack, Text } from "@chakra-ui/react";
 import { PipelineContext } from '../../contexts/PipelineContext';
 import TestReportGraphic from '../TestReportGraphic';
 import Loading from '../Loading';
 import { usePipelineRuns } from '../../hooks/usePipelineRuns';
 import { useTestRuns } from '../../hooks/useTestRuns';
+import SearchableSelect from '../SearchableSelect';
 
 interface Pipeline {
     id: string;
@@ -77,9 +78,8 @@ export default function TestGraphic() {
 
     const isLoading = (!!selectedPipelineId && isLoadingPipelineRuns) || (!!buildIds && isLoadingTestRuns);
 
-    const handleChange = (event: any) => {
-        event.preventDefault();
-        setSelectedPipelineId(event.target.value);
+    const handleChange = (value: string) => {
+        setSelectedPipelineId(value);
     };
 
     const renderGraphic = () => {
@@ -102,34 +102,32 @@ export default function TestGraphic() {
         return null; // Return null if no data
     }
 
+    // Convert pipelines to SearchableSelect options
+    const pipelineOptions = (pipelines || []).map((pipeline: Pipeline) => ({
+        value: pipeline.id,
+        label: pipeline.name
+    }));
+
     return (
         <Grid templateColumns="repeat(5, 1fr)">
             <GridItem colSpan={5} >
                 <Flex direction="column" justify="center">
-                    <Box display="flex" mt="1px" bg="white" p={3} gap="5" >
-                        <Text mt="1">Tests Graphics</Text>
+                    <Box display="flex" mt="1px" bg="white" p={3} gap="5" alignItems="center">
+                        <Text mt="1" fontWeight="bold">Tests Graphics</Text>
                         <VStack spacing="8">
                             <SimpleGrid
                                 minChildWidth="240px"
                                 spacing={["6", "8"]}
                                 alignSelf="flex-start"
                             >
-                                <VStack spacing={3}>
-                                    <Select
-                                        placeholder="Pipelines"
-                                        borderRadius={6}
-                                        size="sm"
-                                        onChange={handleChange}
+                                <VStack spacing={3} align="stretch" w="300px">
+                                    <SearchableSelect
+                                        options={pipelineOptions}
+                                        placeholder="Selecione um Pipeline"
                                         value={selectedPipelineId}
-                                    >
-                                        {pipelines && pipelines.map((pipeline: Pipeline) => {
-                                            return (
-                                                <option key={pipeline.id} value={pipeline.id}>
-                                                    {pipeline.name}
-                                                </option>
-                                            );
-                                        })}
-                                    </Select>
+                                        onChange={handleChange}
+                                        size="sm"
+                                    />
                                 </VStack>
                             </SimpleGrid>
                         </VStack>

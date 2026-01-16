@@ -1,7 +1,8 @@
-import { Select, SimpleGrid, VStack, useToast } from "@chakra-ui/react";
+import { SimpleGrid, VStack, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useTestRuns, useTestRunDetails, useTestRunResults } from "../../hooks/useTestRuns";
 import { RunDetails } from "../../../core/domain/entities/run.entity";
+import SearchableSelect from "../SearchableSelect";
 
 interface RunsCondensedData {
   id: string;
@@ -65,10 +66,8 @@ export default function RunsSelect({
   const { mutate: fetchDetails } = useTestRunDetails();
   const { mutate: fetchResults } = useTestRunResults();
 
-  const handleChange = (event: any) => {
-    event.preventDefault();
-    setSelectedPipelineRunId(event.target.value);
-    // Logic continues in useEffect when testRuns updates
+  const handleRunChange = (value: string) => {
+    setSelectedPipelineRunId(value);
   };
 
   useEffect(() => {
@@ -96,8 +95,7 @@ export default function RunsSelect({
           const condensed: RunsCondensedData = {
             id: data.id,
             name: data.name,
-            startedDate: data.createdDate, // Map created to started if started not avail? Interface usually has both.
-            // Entity has finishedDate, createdDate. Gateway maps them.
+            startedDate: data.createdDate,
             completedDate: data.finishedDate,
             state: data.state,
             build: data.buildId,
@@ -146,6 +144,12 @@ export default function RunsSelect({
 
   }, [testRuns, selectedPipelineRunId, isLoadingTestRun, fetchDetails, fetchResults, setRunCondensedData, setRunTests, toast]);
 
+  // Convert runs to SearchableSelect options format
+  const runOptions = runs.map(run => ({
+    value: run.id,
+    label: run.name
+  }));
+
   return (
     <>
       <VStack spacing="8">
@@ -153,23 +157,16 @@ export default function RunsSelect({
           minChildWidth="240px"
           spacing={["6", "8"]}
           alignSelf="flex-start"
+          w="100%"
         >
-          <VStack spacing={3}>
-            <Select
-              placeholder="Pipeline Runs"
-              borderRadius={6}
-              size="sm"
-              onChange={handleChange}
+          <VStack spacing={3} align="stretch">
+            <SearchableSelect
+              options={runOptions}
+              placeholder="Selecione um Pipeline Run"
               value={selectedPipelineRunId}
-            >
-              {runs.map((run: PipelineRunOption) => {
-                return (
-                  <option key={run.id} value={run.id}>
-                    {run.name}
-                  </option>
-                );
-              })}
-            </Select>
+              onChange={handleRunChange}
+              size="sm"
+            />
           </VStack>
         </SimpleGrid>
       </VStack>
