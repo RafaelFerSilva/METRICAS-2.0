@@ -21,6 +21,13 @@ const Pagination = ({
     totalItems
 }: PaginationProps) => {
 
+    const pageSizeOptions = useMemo(() => [
+        { value: '10', label: '10' },
+        { value: '20', label: '20' },
+        { value: '50', label: '50' },
+        { value: '100', label: '100' },
+    ], []);
+
     // Safety check
     if (totalPages <= 1) return null;
 
@@ -29,13 +36,6 @@ const Pagination = ({
             onPageChange(newPage);
         }
     };
-
-    const pageSizeOptions = useMemo(() => [
-        { value: '10', label: '10' },
-        { value: '20', label: '20' },
-        { value: '50', label: '50' },
-        { value: '100', label: '100' },
-    ], []);
 
     return (
         <Flex justifyContent="space-between" alignItems="center" mt={4} p={2} borderTop="1px solid" borderColor="gray.100">
