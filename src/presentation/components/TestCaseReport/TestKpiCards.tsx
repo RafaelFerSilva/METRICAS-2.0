@@ -43,17 +43,14 @@ const KpiCard = ({ title, value, subValue, icon, color, tip, progress }: KpiCard
 interface TestKpiCardsProps {
     total: number;
     automated: number;
-    smokeCount: number;
     highRiskCount: number;
 }
 
-export const TestKpiCards = ({ total, automated, smokeCount, highRiskCount }: TestKpiCardsProps) => {
+export const TestKpiCards = ({ total, automated, highRiskCount }: TestKpiCardsProps) => {
     const automatedPercent = total > 0 ? ((automated / total) * 100).toFixed(1) : "0";
-    const manualPercent = total > 0 ? (((total - automated) / total) * 100).toFixed(1) : "0";
-    const smokePercent = total > 0 ? ((smokeCount / total) * 100).toFixed(1) : "0";
 
     return (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} w="100%">
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} w="100%">
             <KpiCard
                 title="Total Test Cases"
                 value={total}
@@ -70,14 +67,6 @@ export const TestKpiCards = ({ total, automated, smokeCount, highRiskCount }: Te
                 color="green"
                 progress={Number(automatedPercent)}
                 tip="Cenários que possuem script de automação vinculado"
-            />
-            <KpiCard
-                title="Smoke Test"
-                value={smokeCount}
-                subValue={`${smokePercent}% do Total`}
-                icon={MdSpeed}
-                color="purple"
-                tip="Testes críticos rápidos para validação de build"
             />
             <KpiCard
                 title="Alto Risco"

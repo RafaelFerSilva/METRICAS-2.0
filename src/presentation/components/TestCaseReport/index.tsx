@@ -68,7 +68,6 @@ export default function TestCaseReport({ testsCases, onRefresh }: { testsCases: 
   const total = filteredData.length;
 
   const automatedCount = sumCounts(countDistinctValues.automationStatus, KPI_VALUES.Automated);
-  const smokeCount = sumCounts(countDistinctValues.isSmoke, KPI_VALUES.Smoke);
   const highRiskCount = sumCounts(countDistinctValues.risk, KPI_VALUES.HighRisk);
 
   const chartData = {
@@ -76,12 +75,6 @@ export default function TestCaseReport({ testsCases, onRefresh }: { testsCases: 
     automationStatusChartData: prepareRawChartData(countDistinctValues.automationStatus),
     riskPercentChartData: preparePercentChartData(sortRiskData(countDistinctValues.risk)),
     riskChartData: prepareRawChartData(sortRiskData(countDistinctValues.risk)),
-    platformPercentChartData: preparePercentChartData(countDistinctValues.platform),
-    platformChartData: prepareRawChartData(countDistinctValues.platform),
-    origemPercentChartData: preparePercentChartData(countDistinctValues.origem),
-    origemChartData: prepareRawChartData(countDistinctValues.origem),
-    isSmokePercentChartData: preparePercentChartData(countDistinctValues.isSmoke),
-    isSmokeChartData: prepareRawChartData(countDistinctValues.isSmoke),
     statePercentCharData: preparePercentChartData(countDistinctValues.state),
     stateCharData: prepareRawChartData(countDistinctValues.state)
   };
@@ -92,9 +85,6 @@ export default function TestCaseReport({ testsCases, onRefresh }: { testsCases: 
     AzureFields.Title,
     AzureFields.Risk,
     AzureFields.AutomationStatus,
-    AzureFields.CustomSmokeTest,
-    AzureFields.CustomPlatform,
-    AzureFields.CustomOrigin,
     AzureFields.State,
   ];
 
@@ -111,7 +101,6 @@ export default function TestCaseReport({ testsCases, onRefresh }: { testsCases: 
         <TestKpiCards
           total={total}
           automated={automatedCount}
-          smokeCount={smokeCount}
           highRiskCount={highRiskCount}
         />
 
