@@ -229,9 +229,9 @@ export class SprintMetricsService {
     }
 
     public returnProblems(tasks: Task[]) {
-        const problems_orbia = this.returnAllTasksByWorkItemType(tasks, "Orbia Problem");
+        const problems_item = this.returnAllTasksByWorkItemType(tasks, "Problem");
         const problems = this.returnAllTasksByWorkItemType(tasks, "Problem");
-        return problems.concat(problems_orbia);
+        return problems.concat(problems_item);
     }
 
     public returnTasksCompleted(tasks: Task[]) {

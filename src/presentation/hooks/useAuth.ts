@@ -25,9 +25,7 @@ export function useAuth() {
     };
 
     const logout = () => {
-        tokenService.deleteToken();
-        tokenService.deleteOrganization();
-        tokenService.deleteProjectId();
+        tokenService.delete();
         router.push('/login');
     };
 
