@@ -25,7 +25,7 @@ const sortRiskData = (data: { [key: string]: number }) => {
   return sortedData;
 };
 
-export default function TestCaseReport({ testsCases }: any) {
+export default function TestCaseReport({ testsCases, onRefresh }: { testsCases: any, onRefresh?: () => void }) {
   const [filters, setFilters] = useState<{ field: string; value: string }[]>([]);
   const { processedData, filteredData, countDistinctValues, preparePercentChartData, prepareRawChartData } = useTestCaseData(testsCases, filters);
 
@@ -130,7 +130,7 @@ export default function TestCaseReport({ testsCases }: any) {
           </AccordionSection>
 
           <AccordionSection title="Detail List">
-            <TableTestCase data={paginatedData} headers={labels} />
+            <TableTestCase data={paginatedData} headers={labels} onRefresh={onRefresh} />
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}

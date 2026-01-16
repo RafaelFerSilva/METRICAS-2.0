@@ -1,8 +1,25 @@
-
+import React, { useState } from "react";
+import {
+  Box,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  Link as ChakraLink,
+  Icon,
+  Button
+} from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { tokenService } from "../../../services/auth/tokenService";
+import { AzureFields } from "../../../core/config/azure-fields";
+import TestCaseDetailsModal from "../TestCaseDetailsModal/TestCaseDetailsModal";
 
 interface TableComponentProps {
-  data: Record<string, any>[]; // Define os tipos corretamente
-  headers: string[]; // As chaves que você deseja exibir na tabela
+  data: Record<string, any>[];
+  headers: string[];
+  onRefresh?: () => void;
 }
 
 // Função para acessar e formatar valores
@@ -29,15 +46,10 @@ const getHeaderDisplayName = (header: string) => {
   return parts[parts.length - 1];
 };
 
-import { Box, Table, Thead, Tr, Th, Tbody, Td, Link as ChakraLink, Icon } from "@chakra-ui/react";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { tokenService } from "../../../services/auth/tokenService";
-import { AzureFields } from "../../../core/config/azure-fields";
-
-// ... (Keep existing helpers)
-
-const TableTestCase: React.FC<TableComponentProps> = ({ data, headers }) => {
+const TableTestCase: React.FC<TableComponentProps> = ({ data, headers, onRefresh }) => {
   const organization = tokenService.getOrganization();
+  const [selectedTestCase, setSelectedTestCase] = useState<Record<string, any> | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Helper to construct URL
   const getWorkItemUrl = (id: string) => {
@@ -45,54 +57,82 @@ const TableTestCase: React.FC<TableComponentProps> = ({ data, headers }) => {
     return `https://dev.azure.com/${organization}/_workitems/edit/${id}`;
   };
 
-  return (
-    <Box mt="8" overflowX="auto">
-      <Table variant="striped" colorScheme="twitter" size="sm">
-        <Thead>
-          <Tr>
-            {headers.map((header, index) => (
-              <Th key={index} textAlign="center" fontSize="xs" fontWeight="bold">
-                {getHeaderDisplayName(header)}
-              </Th>
-            ))}
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data.map((row, rowIndex) => (
-            <Tr key={rowIndex}>
-              {headers.map((header, headerIndex) => {
-                const value = getValue(row, header);
-                const isTitle = header === AzureFields.Title;
-                const isId = header === AzureFields.Id;
-                const id = row[AzureFields.Id] || row["System.Id"] || row["id"]; // Ensure we have ID for the link
+  const handleOpenDetails = (row: Record<string, any>) => {
+    setSelectedTestCase(row);
+    setIsModalOpen(true);
+  };
 
-                if (isTitle || isId) {
+  const handleUpdate = () => {
+    if (onRefresh) {
+      onRefresh();
+    }
+  };
+
+  return (
+    <>
+      <Box mt="8" overflowX="auto">
+        <Table variant="striped" colorScheme="twitter" size="sm">
+          <Thead>
+            <Tr>
+              <Th textAlign="center" fontSize="xs" fontWeight="bold">Actions</Th>
+              {headers.map((header, index) => (
+                <Th key={index} textAlign="center" fontSize="xs" fontWeight="bold">
+                  {getHeaderDisplayName(header)}
+                </Th>
+              ))}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {data.map((row, rowIndex) => (
+              <Tr key={rowIndex}>
+                <Td textAlign="center">
+                  <Button size="xs" onClick={() => handleOpenDetails(row)} colorScheme="blue" variant="outline">
+                    Edit
+                  </Button>
+                </Td>
+                {headers.map((header, headerIndex) => {
+                  const value = getValue(row, header);
+                  const isTitle = header === AzureFields.Title;
+                  const isId = header === AzureFields.Id;
+                  const id = row[AzureFields.Id] || row["System.Id"] || row["id"]; // Ensure we have ID for the link
+
+                  if (isTitle || isId) {
+                    return (
+                      <Td key={headerIndex} textAlign="center" fontSize="xs">
+                        <ChakraLink href={getWorkItemUrl(id)} isExternal color="blue.600" fontWeight={isId ? "bold" : "normal"}>
+                          {value} {isTitle && <Icon as={ExternalLinkIcon} mx="2px" />}
+                        </ChakraLink>
+                      </Td>
+                    );
+                  }
+
                   return (
                     <Td key={headerIndex} textAlign="center" fontSize="xs">
-                      <ChakraLink href={getWorkItemUrl(id)} isExternal color="blue.600" fontWeight={isId ? "bold" : "normal"}>
-                        {value} {isTitle && <Icon as={ExternalLinkIcon} mx="2px" />}
-                      </ChakraLink>
+                      {header === AzureFields.AreaPath ? (
+                        <Box whiteSpace="normal" wordBreak="break-word">
+                          {value}
+                        </Box>
+                      ) : (
+                        value
+                      )}
                     </Td>
                   );
-                }
+                })}
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
 
-                return (
-                  <Td key={headerIndex} textAlign="center" fontSize="xs">
-                    {header === AzureFields.AreaPath ? (
-                      <Box whiteSpace="normal" wordBreak="break-word">
-                        {value}
-                      </Box>
-                    ) : (
-                      value
-                    )}
-                  </Td>
-                );
-              })}
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </Box>
+      {selectedTestCase && (
+        <TestCaseDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          testCase={selectedTestCase}
+          onUpdate={handleUpdate}
+        />
+      )}
+    </>
   );
 };
 

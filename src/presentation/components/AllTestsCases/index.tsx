@@ -5,7 +5,7 @@ import { TestCasesProvider, useTestCases } from '../../contexts/AllTestPlainCont
 import TestCaseReport from '../TestCaseReport';
 
 const TestCasesList = () => {
-  const { testCases, loading, error } = useTestCases();
+  const { testCases, loading, error, refetch } = useTestCases();
 
   if (loading) {
     return (
@@ -22,7 +22,7 @@ const TestCasesList = () => {
 
   return (
     <div>
-      <TestCaseReport testsCases={testCases} />
+      <TestCaseReport testsCases={testCases} onRefresh={refetch} />
     </div>
   );
 };
