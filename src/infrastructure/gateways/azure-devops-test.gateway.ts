@@ -36,19 +36,37 @@ export class AzureDevOpsTestGateway implements ITestRepository {
 
             const fieldsToFetch = [...standardFields, ...customFields].join(',');
 
-            // 2. Initial WIQL Query (Get IDs)
-            const wiqlUrl = `https://dev.azure.com/${organization}/_apis/wit/wiql?api-version=7.1-preview.2`;
-            const query = {
-                query: `
-                SELECT [System.Id]
-                FROM WorkItems 
-                WHERE [System.WorkItemType] = 'Test Case' 
-                `
-            };
-            // Note: Select column in WIQL doesn't strictly limit return of ID-only query, it's just for the query structure.
+            // 2. Initial WIQL Query (Get IDs) - Loop to handle > 20k items
+            // Using $top in URL instead of WIQL TOP clause to avoid TF51006 error
+            const BATCH_SIZE = 5000;
+            const wiqlUrl = `https://dev.azure.com/${organization}/_apis/wit/wiql?api-version=7.1-preview.2&$top=${BATCH_SIZE}`;
 
-            const response = await getAxiosClient().post(wiqlUrl, query);
-            const workItems = response.data.workItems;
+            let allWorkItems: any[] = [];
+            let lastId = 0;
+            let fetchMore = true;
+
+            while (fetchMore) {
+                // Remove TOP from WIQL, rely on URL parameter
+                const wiqlQuery = {
+                    query: `SELECT [System.Id] FROM WorkItems WHERE [System.WorkItemType] = 'Test Case' AND [System.Id] > ${lastId} ORDER BY [System.Id] ASC`
+                };
+
+                const response = await getAxiosClient().post(wiqlUrl, wiqlQuery);
+                const workItems = response.data.workItems;
+
+                if (workItems && workItems.length > 0) {
+                    allWorkItems = [...allWorkItems, ...workItems];
+                    lastId = workItems[workItems.length - 1].id;
+
+                    if (workItems.length < BATCH_SIZE) {
+                        fetchMore = false;
+                    }
+                } else {
+                    fetchMore = false;
+                }
+            }
+
+            const workItems = allWorkItems;
 
             if (workItems.length > 0) {
                 const allTestCases: TestCase[] = [];
