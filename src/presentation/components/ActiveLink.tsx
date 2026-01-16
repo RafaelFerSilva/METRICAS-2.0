@@ -27,7 +27,7 @@ export function ActiveLink({
   }
 
   return (
-    <Link {...rest}>
+    <Link {...rest} legacyBehavior passHref>
       {cloneElement(children, {
         bg: isActive ? "blue.100" : "transparent",
         color: isActive ? "blue.700" : "gray.600",

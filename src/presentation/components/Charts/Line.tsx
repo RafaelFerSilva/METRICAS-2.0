@@ -12,9 +12,9 @@ import {
   Tooltip,
   Legend,
   BarElement,
-  } from 'chart.js';
-  
-  ChartJS.register(
+} from 'chart.js';
+
+ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
@@ -23,7 +23,7 @@ import {
   Tooltip,
   Legend,
   BarElement,
-  );
+);
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -76,34 +76,33 @@ function returnOptions(tasks: any) {
   return options;
 }
 
-function returnSeries(item: any){
-    let data = item.map(data => {
-        return data.data;
-      })
+function returnSeries(item: any) {
+  let data = item.map(data => {
+    return data.data;
+  })
 
-      return [{ name: "series", data: data }];
+  return [{ name: "series", data: data }];
 }
 
 
 interface CharProps {
   title: string;
   type?:
-    | "line"
-    | "area"
-    | "bar"
-    | "histogram"
-    | "pie"
-    | "donut"
-    | "radialBar"
-    | "scatter"
-    | "bubble"
-    | "heatmap"
-    | "treemap"
-    | "boxPlot"
-    | "candlestick"
-    | "radar"
-    | "polarArea"
-    | "rangeBar";
+  | "line"
+  | "area"
+  | "bar"
+  | "pie"
+  | "donut"
+  | "radialBar"
+  | "scatter"
+  | "bubble"
+  | "heatmap"
+  | "treemap"
+  | "boxPlot"
+  | "candlestick"
+  | "radar"
+  | "polarArea"
+  | "rangeBar";
   categories: any;
   height?: number;
   width?: number;
@@ -113,8 +112,8 @@ export default function LineChat({
   title,
   type,
   categories,
-  height=500,
-  width=900
+  height = 500,
+  width = 900
 }: CharProps): JSX.Element {
   return (
     <>

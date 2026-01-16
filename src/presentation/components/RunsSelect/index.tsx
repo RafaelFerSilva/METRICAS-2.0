@@ -144,7 +144,7 @@ export default function RunsSelect({
       });
     }
 
-  }, [testRuns, selectedPipelineRunId, isLoadingTestRun]);
+  }, [testRuns, selectedPipelineRunId, isLoadingTestRun, fetchDetails, fetchResults, setRunCondensedData, setRunTests, toast]);
 
   return (
     <>
