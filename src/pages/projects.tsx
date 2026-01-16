@@ -14,6 +14,7 @@ export default function ProjectsPage() {
   const bgGradient = useColorModeValue("linear(to-br, gray.50, gray.100)", "linear(to-br, gray.900, black)");
   const cardBg = useColorModeValue("white", "gray.800");
   const glassBg = useColorModeValue("rgba(255, 255, 255, 0.9)", "rgba(26, 32, 44, 0.9)");
+  const headingColor = useColorModeValue("gray.700", "white");
 
   if (isAuthLoading || isProjectsLoading) {
     return (
@@ -57,7 +58,7 @@ export default function ProjectsPage() {
 
           {/* Hero & Search */}
           <VStack spacing={6} align="center" mb={16} textAlign="center">
-            <Heading as="h1" size="2xl" fontWeight="extrabold" color={useColorModeValue("gray.700", "white")}>
+            <Heading as="h1" size="2xl" fontWeight="extrabold" color={headingColor}>
               Selecione seu Workspace
             </Heading>
             <Text fontSize="xl" color="gray.500" maxW="2xl">

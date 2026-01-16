@@ -12,8 +12,7 @@ export const returnHeaders = (token: string) => {
   };
 }
 
-export function setupAPIMetrics({organization, project_id, token }) {
-  const projects = returnProjects(organization, returnHeaders(token))
+export function setupAPIMetrics({ organization, project_id, token }) {
 
   const axiosInstance = axios.create({
     baseURL: `https://dev.azure.com/${organization}/${project_id}/_apis/`,
