@@ -181,7 +181,7 @@ const Chart: React.FC<ChartProps> = ({
             {title}
           </Text>
           {tip && (
-            <ChakraTooltip label={tip} placement="top" hasArrow p={3} rounded="md" bg="gray.700">
+            <ChakraTooltip label={tip} placement="auto" hasArrow p={3} rounded="md" bg="gray.700">
               <Icon as={InfoOutlineIcon} color="blue.500" cursor="help" />
             </ChakraTooltip>
           )}

@@ -17,8 +17,8 @@ const KpiCard = ({ title, value, subValue, icon, color, tip, progress }: KpiCard
         <Flex justifyContent="space-between" alignItems="start" mb={2}>
             <Text fontSize="sm" color="gray.500" fontWeight="medium">{title}</Text>
             {tip && (
-                <Tooltip label={tip} placement="top" hasArrow>
-                    <span><Icon as={icon} color={`${color}.500`} boxSize={5} /></span>
+                <Tooltip label={tip} placement="auto" hasArrow>
+                    <Box as="span" display="inline-flex"><Icon as={icon} color={`${color}.500`} boxSize={5} /></Box>
                 </Tooltip>
             )}
             {!tip && <Icon as={icon} color={`${color}.500`} boxSize={5} />}

@@ -15,6 +15,7 @@ import {
   Switch,
   FormControl,
   FormLabel,
+  Heading,
 } from "@chakra-ui/react";
 import { MdList } from "react-icons/md";
 
@@ -262,13 +263,13 @@ export default function CompleteDashboard() {
       <Box w="100%" minH="100%">
         <Box w="100%" px={{ base: 4, md: 6, lg: 8 }}>
           <VStack spacing={8} align="stretch" py={6}>
-            <Box p={{ base: 4, md: 6 }} borderRadius="xl" boxShadow="sm" border="1px solid" borderColor="gray.200" position="relative" overflow="visible" zIndex={1}>
+            <Box p={6} bg="white" borderRadius="lg" shadow="md" position="relative" overflow="visible" zIndex={1}>
               <VStack spacing={6} align="stretch">
                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 4, md: 6 }} w="100%">
                   <Box data-testid="team-selector" position="relative" zIndex={30}>
-                    <Text fontSize="md" fontWeight="semibold" mb={3} color="gray.700">
+                    <Heading size="md" mb={6} color="gray.700">
                       Selecionar Time
-                    </Text>
+                    </Heading>
                     {/* @ts-ignore: Temporarily ignoring type check until Child Refactor */}
                     <ModernTeamSelect
                       onTeamSelected={handleTeamSelect}
@@ -277,9 +278,9 @@ export default function CompleteDashboard() {
 
                   {sprintTeam && (
                     <Box data-testid="sprint-selector" position="relative" zIndex={29}>
-                      <Text fontSize="md" fontWeight="semibold" mb={3} color="gray.700">
+                      <Heading size="md" mb={6} color="gray.700">
                         Selecionar Sprint
-                      </Text>
+                      </Heading>
                       {/* @ts-ignore: Temporarily ignoring type check until Child Refactor */}
                       <ModernSelectSprintForm
                         teamId={sprintTeam}
