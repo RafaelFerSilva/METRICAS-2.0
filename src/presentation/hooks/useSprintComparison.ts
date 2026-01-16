@@ -11,8 +11,8 @@ const getSprintComparisonUseCase = new GetSprintComparisonUseCase(sprintGateway,
 
 export function useSprintComparison() {
     const fetchComparisonMutation = useMutation(
-        ({ teamId, sprints, filters }: { teamId: string, sprints: Sprint[], filters?: { tags?: string[] } }) =>
-            getSprintComparisonUseCase.execute(teamId, sprints, filters)
+        ({ teamId, sprints }: { teamId: string, sprints: Sprint[] }) =>
+            getSprintComparisonUseCase.execute(teamId, sprints)
     );
 
     return {

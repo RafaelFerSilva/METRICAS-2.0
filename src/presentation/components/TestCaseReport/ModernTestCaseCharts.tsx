@@ -17,7 +17,7 @@ export default function ModernTestCaseCharts({ chartData }: Props) {
     } = chartData;
 
     return (
-        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={8} w="100%">
+        <SimpleGrid columns={{ base: 1, '2xl': 2 }} spacing={8} w="100%">
             <Chart
                 data={automationStatusChartData}
                 title="Status de Automação"

@@ -12,7 +12,6 @@ interface ReportProps {
 const metricsService = new SprintMetricsService();
 
 export default function ReportTabs(props: { tasks: Task[] }) {
-    const tagsNotExpected = ["Não prevista", 'Não previsto', 'Adiantada']
 
     return (
         <Tabs size="sm" variant="enclosed" bg="white">
@@ -21,8 +20,6 @@ export default function ReportTabs(props: { tasks: Task[] }) {
                 <Tab>State Graph</Tab>
                 <Tab>Board Column</Tab>
                 <Tab>Bugs</Tab>
-                <Tab>Improvements</Tab>
-                <Tab>Not Expected</Tab>
                 {/* <Tab>Related Bug</Tab> */}
                 <Tab>Bugs - Roots Causes</Tab>
             </TabList>
@@ -39,31 +36,6 @@ export default function ReportTabs(props: { tasks: Task[] }) {
                 <TabPanel>
                     <UsHistory tasks={props.tasks} workItemType="Bug" />
                 </TabPanel>
-                <TabPanel>
-                    {
-                        metricsService.returnAllTasksByWorkItemTag(props.tasks, "Melhoria").map((item: any, key: number) => {
-                            return (
-                                <Box key={key} mb="8">
-                                    <Text>{item.ID} - {item.Title}</Text>
-                                    <Divider />
-                                </Box>
-                            )
-                        })
-                    }
-                </TabPanel>
-                < TabPanel>
-                    {
-                        metricsService.returnTagsList(tagsNotExpected, props.tasks).map((item: any, key: number) => {
-                            return (
-                                <Box key={key} mb="8">
-                                    <Text>{item.ID} - {item.Title}</Text>
-                                    <Text></Text>
-                                    <Divider />
-                                </Box>
-                            )
-                        })
-                    }
-                </ TabPanel>
                 <TabPanel>
                     {metricsService
                         .returnBugs(props.tasks)

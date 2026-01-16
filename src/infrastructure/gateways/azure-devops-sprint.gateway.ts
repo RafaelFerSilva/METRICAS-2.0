@@ -40,29 +40,38 @@ export class AzureDevOpsSprintGateway implements ISprintRepository {
                 return [];
             }
 
-            // 2. Get Work Item Details (Batch)
-            const workItemDetailsResponse = await getAxiosClient().get(
-                `wit/workitems?ids=${workItemsIds.join(',')}&expand=all&api-version=7.1`
+            // 2. Get Work Item Details (Batch in chunks of 200)
+            const chunks = this.chunkArray(workItemsIds, 200);
+            const tasksPromises = chunks.map(chunk =>
+                getAxiosClient().get(
+                    `wit/workitems?ids=${chunk.join(',')}&expand=all&api-version=7.1`
+                )
             );
 
-            if (workItemDetailsResponse.status === 200) {
-                const newTasks = new NewTasks();
-                const tasks = newTasks.formatJson(workItemDetailsResponse.data.value);
+            const responses = await Promise.all(tasksPromises);
+            const newTasks = new NewTasks();
+            let allTasks: any[] = [];
 
-                // 3. Fetch state history for all work items
-                const tasksWithHistory = await Promise.all(
-                    tasks.map(async (task) => {
-                        const stateHistory = await this.getWorkItemHistory(task.ID);
-                        return {
-                            ...task,
-                            StateHistory: stateHistory
-                        };
-                    })
-                );
+            responses.forEach(response => {
+                if (response.status === 200 && response.data?.value) {
+                    allTasks = [...allTasks, ...response.data.value];
+                }
+            });
 
-                return tasksWithHistory;
-            }
-            return [];
+            const tasks = newTasks.formatJson(allTasks);
+
+            // 3. Fetch state history for all work items
+            const tasksWithHistory = await Promise.all(
+                tasks.map(async (task) => {
+                    const stateHistory = await this.getWorkItemHistory(task.ID);
+                    return {
+                        ...task,
+                        StateHistory: stateHistory
+                    };
+                })
+            );
+
+            return tasksWithHistory;
 
         } catch (error) {
             console.error("Error fetching sprint tasks:", error);
@@ -102,35 +111,53 @@ export class AzureDevOpsSprintGateway implements ISprintRepository {
         }
 
         try {
-            // Batch get work items by IDs
-            const workItemDetailsResponse = await getAxiosClient().get(
-                `wit/workitems?ids=${ids.join(',')}&expand=all&api-version=7.1`
+            // Batch get work items by IDs (chunks of 200)
+            const chunks = this.chunkArray(ids, 200);
+            const tasksPromises = chunks.map(chunk =>
+                getAxiosClient().get(
+                    `wit/workitems?ids=${chunk.join(',')}&expand=all&api-version=7.1`
+                )
             );
 
-            if (workItemDetailsResponse.status === 200 && workItemDetailsResponse.data?.value) {
-                const newTasks = new NewTasks();
-                const tasks = newTasks.formatJson(workItemDetailsResponse.data.value);
+            const responses = await Promise.all(tasksPromises);
+            const newTasks = new NewTasks();
+            let allTasks: any[] = [];
 
-                // Fetch state history for related USs and mark as external
-                const tasksWithHistory = await Promise.all(
-                    tasks.map(async (task) => {
-                        const stateHistory = await this.getWorkItemHistory(task.ID);
-                        return {
-                            ...task,
-                            IsExternal: true,
-                            StateHistory: stateHistory
-                        };
-                    })
-                );
+            responses.forEach(response => {
+                if (response.status === 200 && response.data?.value) {
+                    allTasks = [...allTasks, ...response.data.value];
+                }
+            });
 
-                return tasksWithHistory;
-            }
-            return [];
+            const tasks = newTasks.formatJson(allTasks);
+
+            // Fetch state history for related USs and mark as external
+            const tasksWithHistory = await Promise.all(
+                tasks.map(async (task) => {
+                    const stateHistory = await this.getWorkItemHistory(task.ID);
+                    return {
+                        ...task,
+                        IsExternal: true, // Mark related stories as external
+                        StateHistory: stateHistory
+                    };
+                })
+            );
+
+            return tasksWithHistory;
 
         } catch (error) {
             console.error("Error fetching user stories by IDs:", error);
             throw error;
         }
+    }
+
+    // Helper to split array into chunks
+    private chunkArray(array: any[], size: number): any[][] {
+        const result = [];
+        for (let i = 0; i < array.length; i += size) {
+            result.push(array.slice(i, i + size));
+        }
+        return result;
     }
 
     private mapToSprint(raw: any): Sprint {

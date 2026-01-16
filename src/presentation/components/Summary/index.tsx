@@ -8,7 +8,6 @@ export function Summary(props: {
   resolvedPoints: number;
   unresolvedPoints: number;
   bugs: number;
-  melhorias: number;
 }) {
   return (
     <SimpleGrid columns={[2, null, 3]} spacing='250px' mb="3">

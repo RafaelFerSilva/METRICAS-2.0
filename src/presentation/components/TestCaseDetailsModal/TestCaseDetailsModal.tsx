@@ -37,7 +37,7 @@ interface TestCaseDetailsModalProps {
 const TestCaseDetailsModal: React.FC<TestCaseDetailsModalProps> = ({ isOpen, onClose, testCase, onUpdate }) => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [automationStatus, setAutomationStatus] = useState(
-        testCase[AzureFields.AutomationStatus] || testCase[AzureFields.CustomAutomationStatus] || 'Not Automated'
+        testCase[AzureFields.AutomationStatus] || 'Not Automated'
     );
 
     const toast = useToast();
@@ -50,7 +50,6 @@ const TestCaseDetailsModal: React.FC<TestCaseDetailsModalProps> = ({ isOpen, onC
             const id = testCase[AzureFields.Id] || testCase['System.Id'] || testCase['id'];
             const updates = {
                 [AzureFields.AutomationStatus]: automationStatus,
-                // [AzureFields.CustomAutomationStatus]: automationStatus 
             };
 
             // 1. API Update

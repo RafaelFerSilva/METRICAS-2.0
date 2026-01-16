@@ -14,7 +14,6 @@ interface GraphicBoardProps {
 const metricsService = new SprintMetricsService();
 
 export function GraphicBoard({ tasks }: GraphicBoardProps) {
-  const tagsNotExpected = ["Não prevista", 'Não previsto']
 
   return (
     <>
@@ -51,9 +50,6 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
             )
           )}
           bugs={metricsService.returnAllTasksByWorkItemType(tasks, "Bug").length}
-          melhorias={
-            metricsService.returnAllTasksByWorkItemType(tasks, "Melhoria").length
-          }
         />
       </Flex>
 
@@ -255,25 +251,21 @@ export function GraphicBoard({ tasks }: GraphicBoardProps) {
           minWidth="920px"
         >
           <VerticalBar
-            title="User Story X Bugs X Improvements"
-            labels={["User Story", "Bug", "Improvements", "Not Expected"]}
+            title="User Story X Bugs"
+            labels={["User Story", "Bug"]}
             data={[
               metricsService.returnAllTasksByWorkItemType(tasks, "User Story").length,
-              metricsService.returnAllTasksByWorkItemType(tasks, "Bug").length,
-              metricsService.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
-              metricsService.returnTagsList(tagsNotExpected, tasks).length
+              metricsService.returnAllTasksByWorkItemType(tasks, "Bug").length
             ]}
             label="Amount of USs"
           />
 
           <GenericTable
             title=""
-            labels={["User Story", "Bug", "Improvements", "Not Expected"]}
+            labels={["User Story", "Bug"]}
             data={[
               metricsService.returnAllTasksByWorkItemType(tasks, "User Story").length,
-              metricsService.returnAllTasksByWorkItemType(tasks, "Bug").length,
-              metricsService.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
-              metricsService.returnTagsList(tagsNotExpected, tasks).length
+              metricsService.returnAllTasksByWorkItemType(tasks, "Bug").length
             ]}
           />
         </Box>

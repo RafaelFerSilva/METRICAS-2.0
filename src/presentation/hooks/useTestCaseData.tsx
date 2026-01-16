@@ -23,9 +23,6 @@ export function useTestCaseData(testsCases: any[], filters: any[]) {
       automationStatus: {} as { [key: string]: number },
       priority: {} as { [key: string]: number },
       risk: {} as { [key: string]: number },
-      platform: {} as { [key: string]: number },
-      origem: {} as { [key: string]: number },
-      isSmoke: {} as { [key: string]: number },
     };
 
     filteredData.forEach((item) => {
@@ -33,12 +30,8 @@ export function useTestCaseData(testsCases: any[], filters: any[]) {
       const priority = item[AzureFields.Priority];
       const risk = item[AzureFields.Risk];
 
-      // Try Standard Automation Field first, then Custom
-      const automationStatus = item[AzureFields.AutomationStatus] || item[AzureFields.CustomAutomationStatus];
-
-      const platform = item[AzureFields.CustomPlatform];
-      const origem = item[AzureFields.CustomOrigin];
-      const isSmoke = item[AzureFields.CustomSmokeTest];
+      // Standard Automation Field
+      const automationStatus = item[AzureFields.AutomationStatus];
 
       // Contagem de cada item e valores em branco
       if (state) result.state[state] = (result.state[state] || 0) + 1;
@@ -46,8 +39,6 @@ export function useTestCaseData(testsCases: any[], filters: any[]) {
         result.automationStatus[automationStatus] =
           (result.automationStatus[automationStatus] || 0) + 1;
       if (priority) result.priority[priority] = (result.priority[priority] || 0) + 1;
-      if (platform) result.platform[platform] = (result.platform[platform] || 0) + 1;
-      if (origem) result.origem[origem] = (result.origem[origem] || 0) + 1;
 
       // Contagem de risk
       if (risk) {
@@ -55,24 +46,14 @@ export function useTestCaseData(testsCases: any[], filters: any[]) {
       } else {
         result.risk["Blank"] = (result.risk["Blank"] || 0) + 1; // Contagem de riscos em branco
       }
-
-      // Contagem de smoke
-      if (isSmoke) {
-        result.isSmoke[isSmoke] = (result.isSmoke[isSmoke] || 0) + 1;
-      } else {
-        result.isSmoke["Blank"] = (result.isSmoke["Blank"] || 0) + 1; // Contagem de smoke em branco
-      }
     });
 
     // Ordenação e manutenção de valores em branco para todos os campos
     const orderedLevels = {
       risk: ["1 - High", "2 - Medium", "3 - Low", "Blank"],
-      smoke: ["Yes", "No", "Blank"],
       state: Object.keys(result.state).concat("Blank"),
       automationStatus: Object.keys(result.automationStatus).concat("Blank"),
       priority: Object.keys(result.priority).concat("Blank"),
-      platform: Object.keys(result.platform).concat("Blank"),
-      origem: Object.keys(result.origem).concat("Blank"),
     };
 
     Object.keys(orderedLevels).forEach((key) => {

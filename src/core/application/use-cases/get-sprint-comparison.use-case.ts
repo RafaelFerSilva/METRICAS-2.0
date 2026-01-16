@@ -4,26 +4,19 @@ import { SprintComparisonDTO } from '../dtos/sprint-comparison.dto';
 import { Sprint } from '../../domain/entities/sprint.entity';
 
 export class GetSprintComparisonUseCase {
-    private tagsNotExpected = ["Não prevista", "Não previsto"];
+
 
     constructor(
         private sprintRepository: ISprintRepository,
         private metricsService: SprintMetricsService
     ) { }
 
-    async execute(teamId: string, sprints: Sprint[], filters?: { tags?: string[] }): Promise<SprintComparisonDTO[]> {
+    async execute(teamId: string, sprints: Sprint[]): Promise<SprintComparisonDTO[]> {
         const promises = sprints.map(async (sprint) => {
             if (sprint.attributes.timeFrame === 'future') return null;
 
             let tasks = await this.sprintRepository.getSprintTasks(teamId, sprint.id);
             if (!tasks || tasks.length === 0) return null;
-
-            if (filters?.tags?.length) {
-                tasks = tasks.filter(task => {
-                    const taskTags = (task.Tags || "").split("; ");
-                    return filters.tags!.some(tag => taskTags.includes(tag));
-                });
-            }
 
             if (tasks.length === 0) return null;
             const metrics = this.metricsService.calculateMetrics(tasks);
@@ -35,8 +28,6 @@ export class GetSprintComparisonUseCase {
                 bugs: metrics.bugs.length,
                 defects: metrics.defects.length,
                 problems: metrics.problems.length,
-                improvements: this.metricsService.returnAllTasksByWorkItemTag(tasks, "Melhoria").length,
-                notExpected: this.metricsService.returnTagsList(this.tagsNotExpected, tasks).length,
                 points: metrics.completedStoryPoints, // Assuming this maps to 'points' (or total?) - Checking legacy
                 pointsDelivery: metrics.completedStoryPoints,
                 pointsNotDelivered: metrics.totalStoryPoints - metrics.completedStoryPoints,

@@ -81,8 +81,6 @@ function SprintTrendsContent() {
 
     const [condensedSprintsData, setCondensedSprintsData] = useState<CondensedSprintsData>();
     const [maxItems, setMaxItems] = useState("6");
-    const [tagsFilterInput, setTagsFilterInput] = useState("");
-    const [tagsFilter, setTagsFilter] = useState<string[]>([]);
     const toast = useToast();
 
     const { fetchComparison, isLoading: isLoadingComparison } = useSprintComparison();
@@ -111,10 +109,9 @@ function SprintTrendsContent() {
         if (!selectedTeam || sprints.length === 0) return;
 
         try {
-            const filters = tagsFilter.length > 0 ? { tags: tagsFilter } : undefined;
             // Use all fetched sprints for trends? Or limit? 
             // We slice inside the logic anyway, so passing "all" sprints is fine.
-            const summaryData = await fetchComparison({ teamId: selectedTeam.id, sprints: sprints, filters });
+            const summaryData = await fetchComparison({ teamId: selectedTeam.id, sprints: sprints });
 
             const slicedData = summaryData.slice(-Number(maxItems));
 
@@ -165,7 +162,7 @@ function SprintTrendsContent() {
                 isClosable: true,
             });
         }
-    }, [selectedTeam, sprints, toast, maxItems, fetchComparison, tagsFilter]);
+    }, [selectedTeam, sprints, toast, maxItems, fetchComparison]);
 
     useEffect(() => {
         void loadSprintData();
@@ -231,46 +228,14 @@ function SprintTrendsContent() {
                         />
                     </Box>
                     <Box>
-                        <Text fontSize="xs" fontWeight="bold" mb={1} color="gray.500" textTransform="uppercase">
-                            Filtrar por Tags
-                        </Text>
-                        <HStack>
-                            <Input
-                                placeholder="Ex: Expedite, Bug..."
-                                value={tagsFilterInput}
-                                onChange={(e) => setTagsFilterInput(e.target.value)}
-                                size="sm"
-                            />
-                            <Button
-                                colorScheme="blue"
-                                size="sm"
-                                onClick={() => {
-                                    const tags = tagsFilterInput.split(",").map(t => t.trim()).filter(t => t.length > 0);
-                                    setTagsFilter(tags);
-                                }}
-                            >
-                                Filtrar
-                            </Button>
-                            {tagsFilter.length > 0 && (
-                                <Button
-                                    variant="ghost" colorScheme="red" size="sm"
-                                    onClick={() => { setTagsFilterInput(""); setTagsFilter([]); }}
-                                >
-                                    Limpar
-                                </Button>
-                            )}
-                        </HStack>
+                        {/* Placeholder for layout balance or removal */}
                     </Box>
                 </SimpleGrid>
-                {tagsFilter.length > 0 && (
-                    <Text fontSize="xs" color="blue.500" mt={2} fontWeight="bold">
-                        Filtro Ativo: {tagsFilter.join(", ")}
-                    </Text>
-                )}
+
             </Box>
 
             {/* KPI Cards */}
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4} mb={8}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 2, '2xl': 4 }} spacing={4} mb={8}>
                 <KpiCard
                     label="Velocidade Média"
                     value={`${condensedSprintsData.avgVelocity} pts`}
@@ -302,7 +267,7 @@ function SprintTrendsContent() {
             <Box mb={8}>
                 <Divider mb={4} />
                 <Heading size="sm" mb={4} color="gray.600">Eficiência de Fluxo & Estabilidade</Heading>
-                <SimpleGrid columns={{ base: 1, xl: 2 }} spacing={8}>
+                <SimpleGrid columns={{ base: 1, '2xl': 2 }} spacing={8}>
                     <Chart
                         data={{
                             datasets: [
@@ -340,7 +305,7 @@ function SprintTrendsContent() {
             <Box mb={8}>
                 <Divider mb={4} />
                 <Heading size="sm" mb={4} color="gray.600">Entregas & Distribuição de Trabalho</Heading>
-                <SimpleGrid columns={{ base: 1, xl: 2 }} spacing={8}>
+                <SimpleGrid columns={{ base: 1, '2xl': 2 }} spacing={8}>
                     {/* Velocity Chart: Planned vs Delivered */}
                     <Chart
                         data={{
