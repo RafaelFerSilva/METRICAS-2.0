@@ -12,38 +12,23 @@ https://docs.microsoft.com/en-us/rest/api/azure/devops/?view=azure-devops-rest-6
 
 https://docs.microsoft.com/pt-br/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows
 
-É necessário criar um arquivo .env com o token e os dados do projeto (Ex: .env.exemple)
-
-    # Personal token
-    NEXT_PUBLIC_TOKEN=""
-
-    # https://dev.azure.com/${organization}
-    NEXT_PUBLIC_ORGANIZATION=""
-
-    # id do projeto e pode ser achado via api
-    # https://dev.azure.com/{organization}/_apis/projects?api-version=7.1-preview.3
-    NEXT_PUBLIC_PROJECT=""
-
-
+É necessário saber o Organization do projeto para realizar o login. Normalmente encontramos o Organization na url quando estamos navegando no azure devops. Exemplo: https://dev.azure.com/Orbia/Engineering que o Organization é "Orbia".
 
 
 ---
 ## Como executar o projeto localmente?
 
-Para executar o projeto é necessário instalar o yarn: https://yarnpkg.com/getting-started/install e executar os seguintes comandos:
+Para executar o projeto utilizamos o pnpm, para instalar o pnpm basta executar o comando abaixo:
 
-- Para instalar as dependências do projeto:
-  
-  ``yarn install ``
+``npm install -g pnpm``
 
-- Observação: Caso retornado erro na instalação do yarn "Error: https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-5.2.0.tgz: ESOCKETTIMEDOUT", basta executar o comando abaixo:
+Para instalar as dependências do projeto:
 
-  ``yarn install --network-timeout 500000`` ou
-  ``yarn add @mui/icons-material --network-timeout 500000``
+``pnpm install``
 
-- Para executar o projeto
+Para executar o projeto:
 
-  ``yarn dev``
+``pnpm dev``
 
 ---
 ## Tecnologias utilizadas
